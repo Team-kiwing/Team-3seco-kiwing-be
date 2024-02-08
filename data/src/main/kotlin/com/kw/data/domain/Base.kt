@@ -10,13 +10,14 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-abstract class Base(
+abstract class Base {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    val createdAt: LocalDateTime? = LocalDateTime.now(),
+    val createdAt: LocalDateTime? = LocalDateTime.now()
 
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
     var updatedAt: LocalDateTime? = LocalDateTime.now()
-)
+        private set
+}

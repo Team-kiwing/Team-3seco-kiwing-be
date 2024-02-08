@@ -5,24 +5,30 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-class Member(
+class Member(username: String, nickname: String, email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    val id: String,
+    val id: String? = null
+
+    @Column(name = "name", nullable = false)
+    val username: String = username
 
     @Column(name = "nickname", nullable = false)
-    var nickname: String,
+    var nickname: String = nickname
+        private set
 
     @Column(name = "email", nullable = false, updatable = false)
-    val email: String,
+    val email: String = email
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false, updatable = false)
-    val provider: ProviderType,
+    val provider: ProviderType = ProviderType.GOOGLE
 
     @Column(name = "last_logined_at", nullable = false)
-    var lastLoginedAt: LocalDateTime,
+    var lastLoginedAt: LocalDateTime = LocalDateTime.now()
+        private set
 
     @Column(name = "deleted_at")
-    var deletedAt: LocalDateTime? = null,
-) : Base()
+    var deletedAt: LocalDateTime? = null
+        private set
+}

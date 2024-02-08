@@ -4,15 +4,17 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Sns(
+class Sns(name: String, url: String) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
-    val id: Int? = null,
+    val id: Int? = null
 
     @Column(name = "name", nullable = false)
-    var name: String,
+    var name: String = name
+        private set
 
     @Column(name = "url", nullable = false)
-    var url: String,
-) : Base()
+    var url: String = url
+        private set
+}
