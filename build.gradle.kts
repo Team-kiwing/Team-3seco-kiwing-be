@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.22" apply false
     id("org.springframework.boot") version "3.2.2" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.22" apply false
 }
 
 java {
@@ -26,6 +27,7 @@ subprojects {
         plugin("kotlin-spring")
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.plugin.jpa")
     }
 
     dependencies {
