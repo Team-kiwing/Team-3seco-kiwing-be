@@ -22,7 +22,7 @@ class Member(username: String, nickname: String, email: String) : Base() {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", nullable = false, updatable = false)
-    val provider: ProviderType = ProviderType.GOOGLE
+    val provider: Provider = Provider.GOOGLE
 
     @Column(name = "last_logined_at", nullable = false)
     var lastLoginedAt: LocalDateTime = LocalDateTime.now()
@@ -31,4 +31,8 @@ class Member(username: String, nickname: String, email: String) : Base() {
     @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null
         private set
+
+    enum class Provider {
+        GOOGLE,
+    }
 }

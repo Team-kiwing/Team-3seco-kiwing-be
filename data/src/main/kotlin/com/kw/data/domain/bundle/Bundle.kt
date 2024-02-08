@@ -16,10 +16,17 @@ class Bundle(name: String) : Base() {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "share_status", nullable = false)
-    var shareStatus: BundleShareStatus = BundleShareStatus.PRIVATE
+    var shareStatus: ShareStatus = ShareStatus.PRIVATE
         private set
 
     @Column(name = "share_count", nullable = false)
     var shareCount: Int? = 0
         private set
+
+    enum class ShareStatus {
+        PUBLIC,
+        PRIVATE,
+    }
 }
+
+
