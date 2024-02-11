@@ -1,9 +1,10 @@
 package com.kw.data.domain.tag
 
+import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Tag(content : String) {
+class Tag(content : String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

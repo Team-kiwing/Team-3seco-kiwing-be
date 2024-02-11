@@ -1,9 +1,10 @@
 package com.kw.data.domain.question
 
+import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class QuestionReport(reason : String, question: Question) {
+class QuestionReport(reason : String, question: Question) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

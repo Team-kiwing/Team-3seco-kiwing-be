@@ -1,9 +1,10 @@
 package com.kw.data.domain.question
 
+import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Question(content : String, answer : String, originId : Long) {
+class Question(content : String, answer : String, originId : Long) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null

@@ -1,10 +1,11 @@
 package com.kw.data.domain.question
 
+import com.kw.data.domain.Base
 import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
 @Entity
-class QuestionTag(question: Question, tag: Tag) {
+class QuestionTag(question: Question, tag: Tag) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
