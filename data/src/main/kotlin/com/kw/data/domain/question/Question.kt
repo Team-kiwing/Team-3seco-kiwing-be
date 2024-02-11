@@ -4,7 +4,7 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Question(content : String, answer : String, originId : Long) : Base() {
+class Question(content : String, answer : String?, originId : Long?, shareStatus: ShareStatus) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
