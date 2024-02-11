@@ -1,4 +1,4 @@
-package com.kw.api.common.dto
+package com.kw.api.common.dto.response
 
 data class ApiResponse<T>(val message: String, val data: T) {
     companion object {
