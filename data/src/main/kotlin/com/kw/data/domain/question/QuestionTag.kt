@@ -1,5 +1,6 @@
-package com.kw.data.domain.entity
+package com.kw.data.domain.question
 
+import com.kw.data.domain.tag.Tag
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType

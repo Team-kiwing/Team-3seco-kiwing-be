@@ -1,4 +1,4 @@
-package com.kw.data.domain.entity
+package com.kw.data.domain.claim
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
