@@ -12,16 +12,16 @@ class Bundle(name: String) : Base() {
 
     @Column(name = "name", nullable = false)
     var name: String = name
-        private set
+        protected set
 
     @Enumerated(EnumType.STRING)
     @Column(name = "share_status", nullable = false)
     var shareStatus: ShareStatus = ShareStatus.PRIVATE
-        private set
+        protected set
 
     @Column(name = "share_count", nullable = false)
     var shareCount: Int? = 0
-        private set
+        protected set
 
     enum class ShareStatus {
         PUBLIC,

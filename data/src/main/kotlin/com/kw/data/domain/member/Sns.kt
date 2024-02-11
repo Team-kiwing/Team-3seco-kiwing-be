@@ -12,9 +12,9 @@ class Sns(name: String, url: String) : Base() {
 
     @Column(name = "name", nullable = false)
     var name: String = name
-        private set
+        protected set
 
     @Column(name = "url", nullable = false)
     var url: String = url
-        private set
+        protected set
 }

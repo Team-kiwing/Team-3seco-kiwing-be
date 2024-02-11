@@ -12,5 +12,5 @@ class BundleQuestionOrder(bundleId: Long, questionOrderList: String) : Base() {
 
     @Column(name = "question_order_list", nullable = false)
     var questionOrderList: String = questionOrderList
-        private set
+        protected set
 }

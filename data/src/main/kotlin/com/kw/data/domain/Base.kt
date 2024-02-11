@@ -19,5 +19,5 @@ abstract class Base {
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
     var updatedAt: LocalDateTime? = LocalDateTime.now()
-        private set
+        protected set
 }
