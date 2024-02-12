@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 class Member(username: String, nickname: String, email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    val id: String? = null
+    val id: Long? = null
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "username", nullable = false)
     val username: String = username
 
     @Column(name = "nickname", nullable = false)

@@ -8,7 +8,7 @@ class Bundle(name: String) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
-    val id: Int? = null
+    val id: Long? = null
 
     @Column(name = "name", nullable = false)
     var name: String = name
@@ -20,7 +20,7 @@ class Bundle(name: String) : Base() {
         protected set
 
     @Column(name = "share_count", nullable = false)
-    var shareCount: Int? = 0
+    var shareCount: Long? = 0
         protected set
 
     enum class ShareStatus {
