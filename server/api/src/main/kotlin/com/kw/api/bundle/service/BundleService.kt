@@ -1,8 +1,10 @@
 package com.kw.api.bundle.service
 
+import com.kw.api.bundle.dto.request.*
 import com.kw.api.bundle.dto.response.BundleCreateResponse
 import com.kw.api.bundle.dto.response.BundleGetResponse
-import com.kw.api.bundle.dto.response.BundleSearchResponse
+import com.kw.api.common.dto.request.PageCondition
+import com.kw.api.common.dto.response.PageResponse
 import com.kw.data.domain.bundle.repository.BundleRepository
 import org.springframework.stereotype.Service
 
@@ -11,20 +13,32 @@ class BundleService(
     private val bundleRepository: BundleRepository
 ) {
 
-    fun createBundle(): BundleCreateResponse {}
+    fun createBundle(request: BundleCreateRequest): BundleCreateResponse {
+    }
 
-    fun searchBundles(): BundleSearchResponse {}
+    fun getBundles(
+        getCondition: BundleGetCondition,
+        pageCondition: PageCondition
+    ): PageResponse<BundleGetResponse> {
+    }
 
-    fun getBundle(): BundleGetResponse {}
+    fun searchBundles(
+        searchCondition: BundleSearchCondition,
+        pageCondition: PageCondition
+    ): PageResponse<BundleGetResponse> {
+    }
 
-    fun updateBundle() {}
+    fun getBundle(id: Long): BundleGetResponse {
+    }
 
-    fun deleteBundle() {}
+    fun updateBundle(id: Long) {}
 
-    fun addQuestion() {}
+    fun deleteBundle(id: Long) {}
 
-    fun removeQuestion() {}
+    fun addQuestion(id: Long, request: BundleQuestionAddRequest) {}
 
-    fun updateQuestionOrderList() {}
+    fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {}
+
+    fun updateQuestionOrderList(id: Long, request: BundleQuestionOrderListUpdateRequest) {}
 
 }
