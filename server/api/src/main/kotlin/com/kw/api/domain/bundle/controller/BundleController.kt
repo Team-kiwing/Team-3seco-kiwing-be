@@ -1,10 +1,10 @@
-package com.kw.api.bundle.controller
+package com.kw.api.domain.bundle.controller
 
-import com.kw.api.bundle.dto.request.BundleCreateRequest
-import com.kw.api.bundle.dto.request.BundleUpdateRequest
-import com.kw.api.bundle.dto.response.BundleGetResponse
-import com.kw.api.bundle.service.BundleService
 import com.kw.api.common.dto.response.ApiResponse
+import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.response.BundleGetResponse
+import com.kw.api.domain.bundle.service.BundleService
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -49,7 +49,7 @@ class BundleController(
         return bundleService.updateBundle(id, request)
     }
 
-    @PatchMapping("/bundles/{id}")
+    @DeleteMapping("/bundles/{id}")
     fun deleteBundle(@PathVariable id: Long) {
         return bundleService.deleteBundle(id)
     }

@@ -1,8 +1,8 @@
-package com.kw.api.bundle.service
+package com.kw.api.domain.bundle.service
 
-import com.kw.api.bundle.dto.request.BundleCreateRequest
-import com.kw.api.bundle.dto.request.BundleUpdateRequest
-import com.kw.api.bundle.dto.response.BundleGetResponse
+import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.tag.Tag

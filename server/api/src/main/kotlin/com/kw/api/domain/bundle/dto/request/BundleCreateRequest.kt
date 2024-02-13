@@ -1,4 +1,4 @@
-package com.kw.api.bundle.dto.request
+package com.kw.api.domain.bundle.dto.request
 
 import com.kw.data.domain.bundle.Bundle
 import jakarta.validation.constraints.Max

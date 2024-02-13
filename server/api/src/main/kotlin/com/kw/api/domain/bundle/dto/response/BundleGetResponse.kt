@@ -1,4 +1,4 @@
-package com.kw.api.bundle.dto.response
+package com.kw.api.domain.bundle.dto.response
 
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.tag.Tag
