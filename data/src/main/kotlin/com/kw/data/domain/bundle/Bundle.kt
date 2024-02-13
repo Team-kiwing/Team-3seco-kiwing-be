@@ -1,32 +1,71 @@
 package com.kw.data.domain.bundle
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.question.Question
+import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
 @Entity
-class Bundle(name: String) : Base() {
+class Bundle(
+    name: String,
+    shareType: ShareType
+) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
-    val id: Int? = null
+    val id: Long? = null
 
     @Column(name = "name", nullable = false)
     var name: String = name
-        private set
+        protected set
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "share_status", nullable = false)
-    var shareStatus: ShareStatus = ShareStatus.PRIVATE
-        private set
+    @Column(name = "share_type", nullable = false)
+    var shareType: ShareType = shareType
+        protected set
 
     @Column(name = "share_count", nullable = false)
-    var shareCount: Int? = 0
-        private set
+    var shareCount: Long? = 0
+        protected set
 
-    enum class ShareStatus {
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var bundleTags: MutableList<BundleTag> = mutableListOf()
+
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    var questions: MutableList<Question> = mutableListOf()
+
+    enum class ShareType {
         PUBLIC,
-        PRIVATE,
+        PRIVATE;
+
+        companion object {
+            fun from(input: String): ShareType {
+                try {
+                    return ShareType.valueOf(input)
+                } catch (e: Exception) {
+                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다.")
+                }
+            }
+        }
     }
+
+    fun addQuestions(questions: List<Question>) {
+        this.questions.addAll(questions)
+    }
+
+    fun removeQuestions(questions: List<Question>) {
+        this.questions.removeAll(questions)
+    }
+
+    fun updateNameAndShareType(name: String, shareType: ShareType) {
+        this.name = name
+        this.shareType = shareType
+    }
+
+    fun updateBundleTags(tags: List<Tag>) {
+        this.bundleTags = tags.map { BundleTag(this, it) }.toMutableList()
+    }
+
 }
 
 
