@@ -2,6 +2,7 @@ package com.kw.data.domain.question
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
+import kotlin.Exception
 
 @Entity
 class Question(content : String, originId : Long?, shareStatus: ShareStatus) : Base() {
@@ -31,7 +32,17 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
         protected set
 
     enum class ShareStatus {
-        AVAILABLE, NON_AVAILABLE
+        AVAILABLE, NON_AVAILABLE;
+
+        companion object {
+            fun of(input : String) : ShareStatus {
+                try {
+                    return valueOf(input)
+                } catch (e : Exception) {
+                    throw IllegalArgumentException("존재하지 않는 공유 상태입니다")
+                }
+            }
+        }
     }
 
     fun updateQuestionAnswer(answer : String) {
@@ -40,5 +51,13 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
 
     fun updateQuestionContent(content: String) {
         this.content = content
+    }
+
+    fun updateQuestionStatus(shareStatus: ShareStatus) {
+        this.shareStatus = shareStatus
+    }
+
+    fun addShareCount() {
+        this.shareCount++;
     }
 }
