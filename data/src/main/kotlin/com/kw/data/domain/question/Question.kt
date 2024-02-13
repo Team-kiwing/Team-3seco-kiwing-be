@@ -4,7 +4,7 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Question(content: String, originId: Long?) : Base() {
+class Question(content: String, originId: Long?, shareStatus: ShareStatus) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
@@ -64,7 +64,7 @@ class Question(content: String, originId: Long?) : Base() {
         increaseShareCount()
         return Question(
             content = this.content,
-            shareStatus = ShareStatus.NON_AVAILABLE,
+            shareStatus = ShareStatus.AVAILABLE,
             originId = this.id,
         )
     }
