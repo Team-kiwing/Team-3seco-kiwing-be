@@ -28,7 +28,7 @@ class Bundle(
         protected set
 
     @OneToMany(mappedBy = "bundle")
-    val bundleTags: MutableList<BundleTag> = mutableListOf()
+    var bundleTags: MutableList<BundleTag> = mutableListOf()
 
     enum class ShareType {
         PUBLIC,
@@ -37,6 +37,15 @@ class Bundle(
 
     fun addTag(tag: Tag) {
         bundleTags.add(BundleTag(this, tag))
+    }
+
+    fun updateNameAndShareType(name: String, shareType: ShareType) {
+        this.name = name
+        this.shareType = shareType
+    }
+
+    fun updateBundleTags(tags: List<Tag>) {
+        this.bundleTags = tags.map { BundleTag(this, it) }.toMutableList()
     }
 }
 

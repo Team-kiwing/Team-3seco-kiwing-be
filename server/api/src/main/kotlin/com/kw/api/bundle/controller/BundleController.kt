@@ -1,6 +1,7 @@
 package com.kw.api.bundle.controller
 
 import com.kw.api.bundle.dto.request.BundleCreateRequest
+import com.kw.api.bundle.dto.request.BundleUpdateRequest
 import com.kw.api.bundle.dto.response.BundleGetResponse
 import com.kw.api.bundle.service.BundleService
 import com.kw.api.common.dto.response.ApiResponse
@@ -17,6 +18,10 @@ class BundleController(
         return ApiResponse.ok(bundleService.createBundle(request))
     }
 
+//    @GetMapping("/bundles/my")
+//    fun getMyBundles(): ApiResponse<List<BundleGetResponse>> {
+//    }
+//
 //    @GetMapping("/bundles")
 //    fun getBundles(
 //        @ModelAttribute getCondition: BundleGetCondition,
@@ -36,19 +41,19 @@ class BundleController(
         return ApiResponse.ok(bundleService.getBundle(id))
     }
 
-//    @PatchMapping("/bundles/{id}")
-//    fun updateBundle(
-//        @PathVariable id: Long,
-//        @RequestBody request: BundleUpdateRequest
-//    ) {
-//        return bundleService.updateBundle(id)
-//    }
-//
-//    @PatchMapping("/bundles/{id}")
-//    fun deleteBundle(@PathVariable id: Long) {
-//        return bundleService.deleteBundle(id)
-//    }
-//
+    @PatchMapping("/bundles/{id}")
+    fun updateBundle(
+        @PathVariable id: Long,
+        @RequestBody request: BundleUpdateRequest
+    ) {
+        return bundleService.updateBundle(id, request)
+    }
+
+    @PatchMapping("/bundles/{id}")
+    fun deleteBundle(@PathVariable id: Long) {
+        return bundleService.deleteBundle(id)
+    }
+
 //    @PostMapping("/bundles/{id}/questions")
 //    fun addQuestion(
 //        @PathVariable id: Long,
