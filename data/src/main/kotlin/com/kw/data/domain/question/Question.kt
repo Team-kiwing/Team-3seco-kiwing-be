@@ -4,7 +4,7 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Question(content: String, originId: Long?, shareStatus: ShareStatus) : Base() {
+class Question(content: String, originId: Long?, shareStatus: ShareStatus = ShareStatus.AVAILABLE) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
@@ -23,7 +23,7 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus) : Bas
 
     @Enumerated(EnumType.STRING)
     @Column(name = "share_status", nullable = false, updatable = true)
-    var shareStatus: ShareStatus = ShareStatus.AVAILABLE
+    var shareStatus: ShareStatus = shareStatus
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
