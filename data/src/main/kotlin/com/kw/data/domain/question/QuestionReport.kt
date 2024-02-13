@@ -14,6 +14,6 @@ class QuestionReport(reason : String, question: Question) : Base() {
     var reason : String? = reason
 
     @ManyToOne
-    @Column(name = "question_id", nullable = false, updatable = false)
+    @JoinColumn(name = "question_id")
     var question : Question = question
 }

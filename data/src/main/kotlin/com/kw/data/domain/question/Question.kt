@@ -18,7 +18,7 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
     var answer : String? = null
         protected set
 
-    @Column(name = "shareCount", nullable = false, updatable = true)
+    @Column(name = "share_count", nullable = false, updatable = true)
     var shareCount : Long = 0
         protected set
 

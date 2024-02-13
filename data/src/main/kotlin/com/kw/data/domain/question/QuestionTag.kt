@@ -12,10 +12,10 @@ class QuestionTag(question: Question, tag: Tag) : Base() {
     val id : Long? = null
 
     @ManyToOne
-    @Column(name = "question_id", nullable = false, updatable = false)
+    @JoinColumn(name = "question_id")
     var question : Question = question
 
     @ManyToOne
-    @Column(name = "tag_id", nullable = false, updatable = false)
+    @JoinColumn(name = "tag_id")
     var tag : Tag = tag
 }

@@ -6,7 +6,7 @@ data class QuestionReportResponse(val id : Long?,
         val reason : String?,
         val questionId : Long?) {
     companion object {
-        fun of(questionReport: QuestionReport) : QuestionReportResponse {
+        fun from(questionReport: QuestionReport) : QuestionReportResponse {
             return QuestionReportResponse(id = questionReport.id,
                     reason = questionReport.reason,
                     questionId = questionReport.question.id)

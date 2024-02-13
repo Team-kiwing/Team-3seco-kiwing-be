@@ -11,7 +11,7 @@ data class QuestionResponse(
         val originId : Long?
 ) {
     companion object {
-        fun of(question: Question): QuestionResponse {
+        fun from(question: Question): QuestionResponse {
             return QuestionResponse(
                     id = question.id,
                     content = question.content,

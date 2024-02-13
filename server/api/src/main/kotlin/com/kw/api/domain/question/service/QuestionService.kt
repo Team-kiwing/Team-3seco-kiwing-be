@@ -21,25 +21,25 @@ class QuestionService(val questionRepository : QuestionRepository,
     val questionCustomRepository: QuestionCustomRepository) {
     fun createQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
         val question = questionRepository.save(questionCreateRequest.toEntity())
-        return QuestionResponse.of(question)
+        return QuestionResponse.from(question)
     }
 
     fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionAnswer(answerRequest.answer)
-        return QuestionResponse.of(question)
+        return QuestionResponse.from(question)
     }
 
     fun updateQuestionContent(id: Long, request: QuestionUpdateRequest) : QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionContent(request.content)
-        return QuestionResponse.of(question)
+        return QuestionResponse.from(question)
     }
 
     fun updateQuestionStatus(id: Long, status: String): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionStatus(Question.ShareStatus.valueOf(status));
-        return QuestionResponse.of(question);
+        return QuestionResponse.from(question);
     }
 
     fun createQuestionCopy(id: Long) : QuestionResponse {
@@ -49,7 +49,7 @@ class QuestionService(val questionRepository : QuestionRepository,
         val copyQuestion = Question(content = question.content,
                 originId = question.id,
                 shareStatus = Question.ShareStatus.NON_AVAILABLE)
-        return QuestionResponse.of(questionRepository.save(copyQuestion))
+        return QuestionResponse.from(questionRepository.save(copyQuestion))
     }
 
     fun reportQuestion(reason: String, id: Long) : QuestionReportResponse {
@@ -57,14 +57,14 @@ class QuestionService(val questionRepository : QuestionRepository,
 
         val report = QuestionReport(reason = reason,
                 question = question)
-        return QuestionReportResponse.of(questionReportRepository.save(report))
+        return QuestionReportResponse.from(questionReportRepository.save(report))
     }
 
     fun searchQuestion(keyword: String): List<QuestionResponse> {
         val questions = questionCustomRepository.searchQuestion(keyword)
         return questions.map {
             question ->
-            QuestionResponse.of(question)
+            QuestionResponse.from(question)
         }
     }
 

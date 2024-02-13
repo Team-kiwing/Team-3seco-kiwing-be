@@ -11,7 +11,7 @@ class TagService(val tagRepository: TagRepository) {
     fun getTags() : List<TagResponse> {
         val tags = tagRepository.findAll()
         return tags.map { tag ->
-            TagResponse.of(tag)
+            TagResponse.from(tag)
         }
     }
 }
