@@ -49,12 +49,16 @@ class Bundle(
         }
     }
 
-    fun addBundleTag(tag: Tag) {
-        bundleTags.add(BundleTag(this, tag))
+    fun addBundleTag(tags: List<Tag>) {
+        this.bundleTags.addAll(tags.map { BundleTag(this, it) })
     }
 
-    fun addQuestion(question: Question) {
-        questions.add(question)
+    fun addQuestions(questions: List<Question>) {
+        this.questions.addAll(questions)
+    }
+
+    fun removeQuestions(questions: List<Question>) {
+        this.questions.removeAll(questions)
     }
 
     fun updateNameAndShareType(name: String, shareType: ShareType) {
@@ -65,6 +69,7 @@ class Bundle(
     fun updateBundleTags(tags: List<Tag>) {
         this.bundleTags = tags.map { BundleTag(this, it) }.toMutableList()
     }
+
 }
 
 
