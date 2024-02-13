@@ -10,6 +10,7 @@ jar.enabled = true
 
 plugins {
     kotlin("plugin.jpa") version "1.9.22" // JPA를 사용하기 위한 플러그인
+    kotlin("kapt")
 }
 
 allOpen {
@@ -19,7 +20,13 @@ allOpen {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // queryDsl
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    implementation("com.querydsl:querydsl-core:5.0.0")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    kapt("com.querydsl:querydsl-kotlin-codegen:5.0.0")
+
     runtimeOnly("com.h2database:h2")
 }
