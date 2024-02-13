@@ -1,7 +1,9 @@
 package com.kw.api.domain.question.controller
 
+import com.kw.api.common.dto.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.api.domain.question.service.QuestionService
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController
 class QuestionController(val questionService : QuestionService) {
 
     @PostMapping("/questions")
-    fun postQuestion(@ModelAttribute questionCreateRequest: QuestionCreateRequest) {
+    fun postQuestion(@ModelAttribute questionCreateRequest: QuestionCreateRequest) : ApiResponse<QuestionResponse> {
         val response = questionService.postQuestion(questionCreateRequest)
-        return
+        return ApiResponse.created(response);
     }
 
     @PostMapping("/questions/{id}/answer")
     fun postAnswer(@RequestBody answerRequest: QuestionAnswerRequest,
-                   @PathVariable id : Long){
+                   @PathVariable id : Long) : ApiResponse<QuestionResponse>{
         val response = questionService.postAnswer(id, answerRequest)
-        return
+        return ApiResponse.ok(response);
     }
 }
