@@ -9,7 +9,7 @@ data class BundleCreateRequest(
     val name: String,
 
     @NotBlank(message = "공개 범위 설정은 필수입니다.")
-    val shareType: Bundle.ShareType,
+    val shareType: String,
 
     @Max(value = 3, message = "태그는 최대 3개까지 지정 가능합니다.")
     val tagIds: List<Long>?
@@ -17,7 +17,7 @@ data class BundleCreateRequest(
     fun toEntity(): Bundle {
         return Bundle(
             name = name,
-            shareType = shareType
+            shareType = Bundle.ShareType.from(shareType),
         )
     }
 }

@@ -2,6 +2,7 @@ package com.kw.api.domain.bundle.controller
 
 import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
 import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
@@ -54,14 +55,14 @@ class BundleController(
         return bundleService.deleteBundle(id)
     }
 
-//    @PostMapping("/bundles/{id}/questions")
-//    fun addQuestion(
-//        @PathVariable id: Long,
-//        @RequestBody request: BundleQuestionAddRequest
-//    ) {
-//        return bundleService.addQuestion(id, request)
-//    }
-//
+    @PostMapping("/bundles/{id}/questions")
+    fun addQuestion(
+        @PathVariable id: Long,
+        @RequestBody request: BundleQuestionAddRequest
+    ) {
+        return bundleService.addQuestion(id, request)
+    }
+
 //    @DeleteMapping("/bundles/{id}/questions")
 //    fun removeQuestion(
 //        @PathVariable id: Long,

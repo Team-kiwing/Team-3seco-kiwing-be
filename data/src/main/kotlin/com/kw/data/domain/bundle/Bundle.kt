@@ -1,6 +1,7 @@
 package com.kw.data.domain.bundle
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.question.Question
 import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
@@ -30,13 +31,30 @@ class Bundle(
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var questions: MutableList<Question> = mutableListOf()
+
     enum class ShareType {
         PUBLIC,
-        PRIVATE,
+        PRIVATE;
+
+        companion object {
+            fun from(input: String): ShareType {
+                try {
+                    return ShareType.valueOf(input)
+                } catch (e: Exception) {
+                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다.")
+                }
+            }
+        }
     }
 
     fun addBundleTag(tag: Tag) {
         bundleTags.add(BundleTag(this, tag))
+    }
+
+    fun addQuestion(question: Question) {
+        questions.add(question)
     }
 
     fun updateNameAndShareType(name: String, shareType: ShareType) {

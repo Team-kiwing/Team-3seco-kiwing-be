@@ -1,6 +1,7 @@
 package com.kw.api.domain.bundle.service
 
 import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
 import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.data.domain.bundle.repository.BundleRepository
@@ -61,7 +62,11 @@ class BundleService(
         bundleRepository.delete(bundle)
     }
 
-//    fun addQuestion(id: Long, request: BundleQuestionAddRequest) {}
+    fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
+        val bundle = bundleRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        bundle.addQuestion(request.toEntity())
+    }
 //
 //    fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {}
 //
