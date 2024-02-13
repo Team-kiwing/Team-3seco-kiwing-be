@@ -3,11 +3,14 @@ package com.kw.api.domain.question.controller
 import com.kw.api.common.dto.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.api.domain.question.service.QuestionService
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -24,8 +27,15 @@ class QuestionController(val questionService : QuestionService) {
 
     @PostMapping("/questions/{id}/answer")
     fun postAnswer(@RequestBody answerRequest: QuestionAnswerRequest,
-                   @PathVariable id : Long) : ApiResponse<QuestionResponse>{
+                   @PathVariable id : Long) : ApiResponse<QuestionResponse> {
         val response = questionService.postAnswer(id, answerRequest)
-        return ApiResponse.ok(response);
+        return ApiResponse.ok(response)
+    }
+
+    @PatchMapping("/questions/{id}/content")
+    fun updateQuestion(@RequestBody request: QuestionUpdateRequest,
+                       @PathVariable id : Long) : ApiResponse<QuestionResponse> {
+        val response = questionService.updateQuestion(id, request)
+        return ApiResponse.ok(response)
     }
 }

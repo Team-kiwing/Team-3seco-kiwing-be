@@ -2,6 +2,7 @@ package com.kw.api.domain.question.service
 
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
@@ -20,7 +21,13 @@ class QuestionService(val questionRepository : QuestionRepository) {
 
     fun postAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
         val question = getQuestion(id)
-        question.updateQuestionAnswer(answerRequest.answer);
+        question.updateQuestionAnswer(answerRequest.answer)
+        return QuestionResponse.of(question)
+    }
+
+    fun updateQuestion(id: Long, request: QuestionUpdateRequest) : QuestionResponse {
+        val question = getQuestion(id)
+        question.updateQuestionContent(request.content)
         return QuestionResponse.of(question)
     }
 

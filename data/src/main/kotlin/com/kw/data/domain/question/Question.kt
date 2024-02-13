@@ -35,6 +35,10 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
     }
 
     fun updateQuestionAnswer(answer : String) {
-        this.answer = answer;
+        this.answer = answer
+    }
+
+    fun updateQuestionContent(content: String) {
+        this.content = content
     }
 }
