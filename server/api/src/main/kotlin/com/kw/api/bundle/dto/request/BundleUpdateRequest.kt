@@ -1,3 +1,3 @@
 package com.kw.api.bundle.dto.request
 
-data class BundleUpdateRequest()
+//data class BundleUpdateRequest()

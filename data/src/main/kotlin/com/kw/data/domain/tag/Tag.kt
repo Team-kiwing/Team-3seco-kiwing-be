@@ -6,9 +6,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 
 @Entity
-class Tag(content : String) {
+class Tag(name: String) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long? = null
-    var content : String = content
+    val id: Long? = null
+    var name: String = name
 }

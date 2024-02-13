@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @Configuration
 @EntityScan("com.kw.data")
 @EnableJpaAuditing
-@EnableTransactionManagement
 @EnableJpaRepositories("com.kw.data")
+@EnableTransactionManagement
 class DataConfig {
 }

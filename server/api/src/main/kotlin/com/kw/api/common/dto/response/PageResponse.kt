@@ -6,7 +6,7 @@ data class PageResponse<T>(
     val totalPages: Int,
     val currentPage: Int,
     val pageSize: Int,
-    val content: MutableList<T>
+    val content: List<T>
 ) {
     companion object {
         fun <T> of(page: Page<T>): PageResponse<T> {
