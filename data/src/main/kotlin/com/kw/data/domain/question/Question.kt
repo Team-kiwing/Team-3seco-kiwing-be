@@ -57,7 +57,7 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
         this.shareStatus = shareStatus
     }
 
-    fun addShareCount() {
+    fun increaseShareCount() {
         this.shareCount++;
     }
 }

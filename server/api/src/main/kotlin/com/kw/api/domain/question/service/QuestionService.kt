@@ -44,7 +44,7 @@ class QuestionService(val questionRepository : QuestionRepository,
 
     fun createQuestionCopy(id: Long) : QuestionResponse {
         val question = getQuestion(id)
-        question.addShareCount()
+        question.increaseShareCount()
 
         val copyQuestion = Question(content = question.content,
                 originId = question.id,
