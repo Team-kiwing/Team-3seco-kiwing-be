@@ -24,13 +24,6 @@ class BundleController(
 //    @GetMapping("/bundles/my")
 //    fun getMyBundles(): ApiResponse<List<BundleGetResponse>> {
 //    }
-
-//    @GetMapping("/bundles")
-//    fun getBundles(
-//        @ModelAttribute getCondition: BundleGetCondition,
-//        @ModelAttribute pageCondition: PageCondition
-//    ): ApiResponse<PageResponse<BundleGetResponse>> {
-//    }
 //
 //    @GetMapping("/bundles/search")
 //    fun searchBundles(

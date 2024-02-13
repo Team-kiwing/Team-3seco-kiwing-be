@@ -35,12 +35,6 @@ class BundleService(
 //    ): <List<BundleGetResponse>> {
 //    }
 //
-//    fun getBundles(
-//        getCondition: BundleGetCondition,
-//        pageCondition: PageCondition
-//    ): PageResponse<BundleGetResponse> {
-//    }
-//
 //    fun searchBundles(
 //        searchCondition: BundleSearchCondition,
 //        pageCondition: PageCondition
