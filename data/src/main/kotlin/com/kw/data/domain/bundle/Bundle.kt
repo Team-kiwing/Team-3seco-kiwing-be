@@ -31,7 +31,7 @@ class Bundle(
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
-    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     var questions: MutableList<Question> = mutableListOf()
 
     enum class ShareType {
@@ -47,10 +47,6 @@ class Bundle(
                 }
             }
         }
-    }
-
-    fun addBundleTag(tags: List<Tag>) {
-        this.bundleTags.addAll(tags.map { BundleTag(this, it) })
     }
 
     fun addQuestions(questions: List<Question>) {

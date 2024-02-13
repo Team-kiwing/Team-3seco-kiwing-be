@@ -49,7 +49,7 @@ class BundleService(
 
     @Transactional(readOnly = true)
     fun getBundle(id: Long): BundleGetResponse {
-        val bundle = bundleRepository.findWithTagsById(id)
+        val bundle = bundleRepository.findDetailById(id)
             ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
         return BundleGetResponse.from(bundle)
     }

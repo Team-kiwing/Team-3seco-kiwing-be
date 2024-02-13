@@ -11,8 +11,9 @@ interface BundleRepository : JpaRepository<Bundle, Long> {
                 "FROM Bundle b " +
                 "JOIN FETCH b.bundleTags bt " +
                 "JOIN FETCH bt.tag " +
+                "JOIN FETCH b.questions q " +
                 "WHERE b.id = :id"
     )
-    fun findWithTagsById(id: Long): Bundle?
+    fun findDetailById(id: Long): Bundle?
 
 }
