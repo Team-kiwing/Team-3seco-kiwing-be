@@ -19,12 +19,12 @@ import kotlin.RuntimeException
 class QuestionService(val questionRepository : QuestionRepository,
         val questionReportRepository : QuestionReportRepository,
     val questionCustomRepository: QuestionCustomRepository) {
-    fun postQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
+    fun createQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
         val question = questionRepository.save(questionCreateRequest.toEntity())
         return QuestionResponse.of(question)
     }
 
-    fun postAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
+    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionAnswer(answerRequest.answer)
         return QuestionResponse.of(question)

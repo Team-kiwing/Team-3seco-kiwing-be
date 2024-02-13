@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RestController
 class QuestionController(val questionService : QuestionService) {
 
     @PostMapping("/questions")
-    fun postQuestion(@ModelAttribute questionCreateRequest: QuestionCreateRequest) : ApiResponse<QuestionResponse> {
-        val response = questionService.postQuestion(questionCreateRequest)
+    fun createQuestion(@ModelAttribute questionCreateRequest: QuestionCreateRequest) : ApiResponse<QuestionResponse> {
+        val response = questionService.createQuestion(questionCreateRequest)
         return ApiResponse.created(response);
     }
 
     @PostMapping("/questions/{id}/answer")
-    fun postAnswer(@RequestBody answerRequest: QuestionAnswerRequest,
+    fun createAnswer(@RequestBody answerRequest: QuestionAnswerRequest,
                    @PathVariable id : Long) : ApiResponse<QuestionResponse> {
-        val response = questionService.postAnswer(id, answerRequest)
+        val response = questionService.createAnswer(id, answerRequest)
         return ApiResponse.ok(response)
     }
 
