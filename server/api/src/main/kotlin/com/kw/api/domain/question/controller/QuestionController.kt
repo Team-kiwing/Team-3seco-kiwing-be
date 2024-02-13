@@ -7,6 +7,7 @@ import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.api.domain.question.service.QuestionService
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -58,5 +59,11 @@ class QuestionController(val questionService : QuestionService) {
                        @PathVariable id : Long) : ApiResponse<QuestionReportResponse> {
         val response = questionService.reportQuestion(reason, id)
         return ApiResponse.created(response)
+    }
+
+    @GetMapping("/question/search")
+    fun searchQuestion(@RequestParam keyword : String) : ApiResponse<List<QuestionResponse>> {
+        val responses = questionService.searchQuestion(keyword)
+        return ApiResponse.ok(responses)
     }
 }

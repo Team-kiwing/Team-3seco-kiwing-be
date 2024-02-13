@@ -9,6 +9,7 @@ import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
+import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import kotlin.RuntimeException
@@ -16,7 +17,8 @@ import kotlin.RuntimeException
 @Service
 @Transactional
 class QuestionService(val questionRepository : QuestionRepository,
-        val questionReportRepository : QuestionReportRepository) {
+        val questionReportRepository : QuestionReportRepository,
+    val questionCustomRepository: QuestionCustomRepository) {
     fun postQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
         val question = questionRepository.save(questionCreateRequest.toEntity())
         return QuestionResponse.of(question)
@@ -56,6 +58,14 @@ class QuestionService(val questionRepository : QuestionRepository,
         val report = QuestionReport(reason = reason,
                 question = question)
         return QuestionReportResponse.of(questionReportRepository.save(report))
+    }
+
+    fun searchQuestion(keyword: String): List<QuestionResponse> {
+        val questions = questionCustomRepository.searchQuestion(keyword)
+        return questions.map {
+            question ->
+            QuestionResponse.of(question)
+        }
     }
 
     private fun getQuestion(id: Long) : Question {
