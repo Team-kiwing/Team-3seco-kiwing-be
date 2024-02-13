@@ -1,19 +1,21 @@
 package com.kw.data.domain.question
 
+import com.kw.data.domain.Base
 import com.kw.data.domain.tag.Tag
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 
 @Entity
-class QuestionTag(question: Question, tag: Tag) {
+class QuestionTag(question: Question, tag: Tag) : Base() {
     @Id
+    @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
+
     @ManyToOne
+    @JoinColumn(name = "question_id")
     var question : Question = question
+
     @ManyToOne
+    @JoinColumn(name = "tag_id")
     var tag : Tag = tag
 }
