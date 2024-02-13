@@ -11,11 +11,11 @@ class BundleTag(bundle: Bundle, tag: Tag) : Base() {
     @Column(name = "id", nullable = false, updatable = false)
     val id: Long? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id", nullable = false)
     val bundle: Bundle = bundle
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
     val tag: Tag = tag
 }

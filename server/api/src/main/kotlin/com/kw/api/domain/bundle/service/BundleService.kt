@@ -3,13 +3,14 @@ package com.kw.api.domain.bundle.service
 import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
 import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
-import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class BundleService(
     private val bundleRepository: BundleRepository,
     private val tagRepository: TagRepository
@@ -17,13 +18,8 @@ class BundleService(
 
     fun createBundle(request: BundleCreateRequest): BundleGetResponse {
         val foundTags: List<Tag> = request.tagIds?.let { getExistTags(it) } ?: emptyList()
-        val createdBundle = bundleRepository.save(
-            Bundle(
-                name = request.name,
-                shareType = request.shareType,
-            )
-        )
-        foundTags.forEach(createdBundle::addTag)
+        val createdBundle = bundleRepository.save(request.toEntity())
+        foundTags.forEach(createdBundle::addBundleTag)
         return getBundle(createdBundle.id!!)
     }
 
@@ -43,6 +39,7 @@ class BundleService(
 //    ): PageResponse<BundleGetResponse> {
 //    }
 
+    @Transactional(readOnly = true)
     fun getBundle(id: Long): BundleGetResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")

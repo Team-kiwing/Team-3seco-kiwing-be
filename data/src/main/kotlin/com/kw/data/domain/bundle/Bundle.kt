@@ -27,7 +27,7 @@ class Bundle(
     var shareCount: Long? = 0
         protected set
 
-    @OneToMany(mappedBy = "bundle")
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
     enum class ShareType {
@@ -35,7 +35,7 @@ class Bundle(
         PRIVATE,
     }
 
-    fun addTag(tag: Tag) {
+    fun addBundleTag(tag: Tag) {
         bundleTags.add(BundleTag(this, tag))
     }
 
