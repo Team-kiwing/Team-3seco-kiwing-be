@@ -4,6 +4,8 @@ import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 //TODO: 전체적으로 member, shareType 연동
@@ -14,8 +16,9 @@ class BundleController(
 ) {
 
     @PostMapping("/bundles")
-    fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleGetResponse> {
-        return ApiResponse.ok(bundleService.createBundle(request))
+    fun createBundle(@RequestBody request: BundleCreateRequest): ResponseEntity<ApiResponse<BundleGetResponse>> {
+        val response: ApiResponse<BundleGetResponse> = ApiResponse.created(bundleService.createBundle(request))
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping("/bundles/my")
@@ -52,8 +55,9 @@ class BundleController(
     fun addQuestion(
         @PathVariable id: Long,
         @RequestBody request: BundleQuestionAddRequest
-    ) {
-        return bundleService.addQuestion(id, request)
+    ): ResponseEntity<Unit> {
+        bundleService.addQuestion(id, request)
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @DeleteMapping("/bundles/{id}/questions")
