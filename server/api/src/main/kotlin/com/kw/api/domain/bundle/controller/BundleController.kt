@@ -1,14 +1,12 @@
 package com.kw.api.domain.bundle.controller
 
 import com.kw.api.common.dto.response.ApiResponse
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
 import org.springframework.web.bind.annotation.*
 
+//TODO: 전체적으로 member, shareType 연동
 @RestController
 @RequestMapping("/api/v1")
 class BundleController(
@@ -20,11 +18,11 @@ class BundleController(
         return ApiResponse.ok(bundleService.createBundle(request))
     }
 
-    //TODO
-//    @GetMapping("/bundles/my")
-//    fun getMyBundles(): ApiResponse<List<BundleGetResponse>> {
-//    }
-//
+    @GetMapping("/bundles/my")
+    fun getMyBundles(): ApiResponse<List<BundlesGetResponse>> {
+        return ApiResponse.ok(bundleService.getMyBundles())
+    }
+
 //    @GetMapping("/bundles/search")
 //    fun searchBundles(
 //        @ModelAttribute searchCondition: BundleSearchCondition,

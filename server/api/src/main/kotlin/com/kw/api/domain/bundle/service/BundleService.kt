@@ -1,9 +1,6 @@
 package com.kw.api.domain.bundle.service
 
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.question.service.QuestionService
 import com.kw.data.domain.bundle.Bundle
@@ -31,10 +28,11 @@ class BundleService(
         return getBundle(bundle.id!!)
     }
 
-//    fun getMyBundles(
-//    ): <List<BundleGetResponse>> {
-//    }
-//
+    fun getMyBundles(): List<BundlesGetResponse> {
+        val bundles = bundleRepository.findAllByMemberId(1L) //TODO: 임시 memberId, 인증 기능 추가 후 수정
+        return bundles.map { BundlesGetResponse.from(it) }
+    }
+
 //    fun searchBundles(
 //        searchCondition: BundleSearchCondition,
 //        pageCondition: PageCondition

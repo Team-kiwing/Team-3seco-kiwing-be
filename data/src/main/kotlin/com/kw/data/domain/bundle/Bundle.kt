@@ -1,6 +1,7 @@
 package com.kw.data.domain.bundle
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
@@ -27,6 +28,10 @@ class Bundle(
     @Column(name = "share_count", nullable = false)
     var shareCount: Long? = 0
         protected set
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    val member: Member? = null //TODO: Member? -> Member 타입 수정
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
