@@ -7,30 +7,31 @@ import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
+import com.kw.data.domain.question.repository.QuestionCustomRepository
 import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
-import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import kotlin.RuntimeException
 
 @Service
 @Transactional
-class QuestionService(val questionRepository : QuestionRepository,
-        val questionReportRepository : QuestionReportRepository,
-    val questionCustomRepository: QuestionCustomRepository) {
-    fun createQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
+class QuestionService(
+    val questionRepository: QuestionRepository,
+    val questionReportRepository: QuestionReportRepository,
+    val questionCustomRepository: QuestionCustomRepository
+) {
+    fun createQuestion(questionCreateRequest: QuestionCreateRequest): QuestionResponse {
         val question = questionRepository.save(questionCreateRequest.toEntity())
         return QuestionResponse.from(question)
     }
 
-    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
+    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionAnswer(answerRequest.answer)
         return QuestionResponse.from(question)
     }
 
-    fun updateQuestionContent(id: Long, request: QuestionUpdateRequest) : QuestionResponse {
+    fun updateQuestionContent(id: Long, request: QuestionUpdateRequest): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionContent(request.content)
         return QuestionResponse.from(question)
@@ -42,34 +43,37 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionResponse.from(question);
     }
 
-    fun createQuestionCopy(id: Long) : QuestionResponse {
+    fun createQuestionCopy(id: Long): QuestionResponse {
         val question = getQuestion(id)
         question.increaseShareCount()
 
-        val copyQuestion = Question(content = question.content,
-                originId = question.id,
-                shareStatus = Question.ShareStatus.NON_AVAILABLE)
+        val copyQuestion = Question(
+            content = question.content,
+            originId = question.id,
+            shareStatus = Question.ShareStatus.NON_AVAILABLE
+        )
         return QuestionResponse.from(questionRepository.save(copyQuestion))
     }
 
-    fun reportQuestion(reason: String, id: Long) : QuestionReportResponse {
+    fun reportQuestion(reason: String, id: Long): QuestionReportResponse {
         val question = getQuestion(id)
 
-        val report = QuestionReport(reason = reason,
-                question = question)
+        val report = QuestionReport(
+            reason = reason,
+            question = question
+        )
         return QuestionReportResponse.from(questionReportRepository.save(report))
     }
 
     fun searchQuestion(keyword: String): List<QuestionResponse> {
         val questions = questionCustomRepository.searchQuestion(keyword)
-        return questions.map {
-            question ->
+        return questions.map { question ->
             QuestionResponse.from(question)
         }
     }
 
-    private fun getQuestion(id: Long) : Question {
+    private fun getQuestion(id: Long): Question {
         return questionRepository.findById(id)
-                .orElseThrow{throw RuntimeException("question이 존재하지 않습니다.")}
+            .orElseThrow { throw RuntimeException("question이 존재하지 않습니다.") }
     }
 }

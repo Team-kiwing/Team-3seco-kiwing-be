@@ -1,4 +1,4 @@
-package com.kw.infraquerydsl.domain.question
+package com.kw.data.domain.question.repository
 
 import com.kw.data.domain.question.QQuestion.Companion.question
 import com.kw.data.domain.question.Question
@@ -7,8 +7,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory ) : QuestionCustomRepository {
-    override fun searchQuestion(keyword: String) : List<Question> {
+class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : QuestionCustomRepository {
+    override fun searchQuestion(keyword: String): List<Question> {
         return jpaQueryFactory.selectFrom(question)
             .where(
                 containsKeyword(keyword)
