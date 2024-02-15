@@ -11,7 +11,7 @@ class QuerydslConfig(
 ) {
 
     @Bean
-    fun querydsl(): JPAQueryFactory {
+    fun jpaQueryFactory(): JPAQueryFactory {
         return JPAQueryFactory(em)
     }
 
