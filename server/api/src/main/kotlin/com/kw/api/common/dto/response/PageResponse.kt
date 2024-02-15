@@ -9,7 +9,7 @@ data class PageResponse<T>(
     val content: List<T>
 ) {
     companion object {
-        fun <T> of(page: Page<T>): PageResponse<T> {
+        fun <T> from(page: Page<T>): PageResponse<T> {
             return PageResponse(
                 totalPages = page.totalPages,
                 currentPage = page.pageable.pageNumber + 1,

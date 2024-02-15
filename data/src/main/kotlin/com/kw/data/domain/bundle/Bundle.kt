@@ -1,6 +1,7 @@
 package com.kw.data.domain.bundle
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
@@ -28,6 +29,10 @@ class Bundle(
     var shareCount: Long? = 0
         protected set
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    val member: Member? = null //TODO: Member? -> Member 타입 수정
+
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
@@ -41,9 +46,9 @@ class Bundle(
         companion object {
             fun from(input: String): ShareType {
                 try {
-                    return ShareType.valueOf(input)
+                    return ShareType.valueOf(input.uppercase())
                 } catch (e: Exception) {
-                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다.")
+                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다: $input")
                 }
             }
         }

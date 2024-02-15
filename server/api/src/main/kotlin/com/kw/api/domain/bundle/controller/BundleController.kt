@@ -1,36 +1,44 @@
 package com.kw.api.domain.bundle.controller
 
+import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.ApiResponse
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.common.dto.response.PageResponse
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
+import com.kw.data.domain.bundle.dto.request.BundleGetCondition
+import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
+//TODO: 전체적으로 member, shareType 연동
 @RestController
 @RequestMapping("/api/v1")
 class BundleController(
     private val bundleService: BundleService
 ) {
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles")
     fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleGetResponse> {
-        return ApiResponse.ok(bundleService.createBundle(request))
+        return ApiResponse.created(bundleService.createBundle(request))
     }
 
-    //TODO
-//    @GetMapping("/bundles/my")
-//    fun getMyBundles(): ApiResponse<List<BundleGetResponse>> {
-//    }
-//
-//    @GetMapping("/bundles/search")
-//    fun searchBundles(
-//        @ModelAttribute searchCondition: BundleSearchCondition,
-//        @ModelAttribute pageCondition: PageCondition
-//    ): ApiResponse<PageResponse<BundleGetResponse>> {
-//    }
+    //TODO: ES
+    @GetMapping("/bundles/search")
+    fun searchBundles(
+        @ModelAttribute searchCondition: BundleSearchCondition,
+        @ModelAttribute pageCondition: PageCondition
+    ): ApiResponse<PageResponse<BundlesGetResponse>> {
+        return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
+    }
+
+    @GetMapping("/bundles/my")
+    fun getMyBundles(
+        @ModelAttribute getCondition: BundleGetCondition
+    ): ApiResponse<List<BundlesGetResponse>> {
+        return ApiResponse.ok(bundleService.getMyBundles(getCondition))
+    }
 
     @GetMapping("/bundles/{id}")
     fun getBundle(@PathVariable id: Long): ApiResponse<BundleGetResponse> {
@@ -50,12 +58,13 @@ class BundleController(
         return bundleService.deleteBundle(id)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles/{id}/questions")
     fun addQuestion(
         @PathVariable id: Long,
         @RequestBody request: BundleQuestionAddRequest
     ) {
-        return bundleService.addQuestion(id, request)
+        bundleService.addQuestion(id, request)
     }
 
     @DeleteMapping("/bundles/{id}/questions")
