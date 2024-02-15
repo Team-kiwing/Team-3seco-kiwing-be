@@ -1,11 +1,13 @@
 package com.kw.api.domain.question.dto.request
 
 import com.kw.data.domain.question.Question
+import com.kw.data.domain.tag.Tag
 
 data class QuestionCreateRequest(
         val content : String,
         val shareStatus : Question.ShareStatus,
-        val originId : Long?
+        val originId : Long?,
+        val tagIds : List<Long>?
 ) {
     fun toEntity() : Question {
         return Question(content = content,

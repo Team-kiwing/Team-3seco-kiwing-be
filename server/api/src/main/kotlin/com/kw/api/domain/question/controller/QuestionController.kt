@@ -66,4 +66,10 @@ class QuestionController(val questionService : QuestionService) {
         val responses = questionService.searchQuestion(keyword)
         return ApiResponse.ok(responses)
     }
+
+    @PatchMapping("/question/{id}/tags")
+    fun updateQuestionTags(@RequestParam tagIds : List<Long>?,
+                           @PathVariable id : Long) {
+        questionService.updateQuestionQuestionTags(tagIds, id)
+    }
 }

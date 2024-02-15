@@ -11,11 +11,11 @@ class QuestionTag(question: Question, tag: Tag) : Base() {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     var question : Question = question
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
     var tag : Tag = tag
 }

@@ -2,6 +2,7 @@ package com.kw.data.domain.question
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
+import javax.swing.text.html.HTML.Tag
 import kotlin.Exception
 
 @Entity
@@ -31,6 +32,9 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
     var originId : Long? = originId
         protected set
 
+    @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
+    var questionTags : List<QuestionTag>? = arrayListOf();
+
     enum class ShareStatus {
         AVAILABLE, NON_AVAILABLE;
 
@@ -59,5 +63,9 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
 
     fun increaseShareCount() {
         this.shareCount++;
+    }
+
+    fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
+        this.questionTags = questionTags
     }
 }
