@@ -46,9 +46,9 @@ class Bundle(
         companion object {
             fun from(input: String): ShareType {
                 try {
-                    return ShareType.valueOf(input)
+                    return ShareType.valueOf(input.uppercase())
                 } catch (e: Exception) {
-                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다.")
+                    throw IllegalArgumentException("존재하지 않는 공개 범위 타입입니다: $input")
                 }
             }
         }

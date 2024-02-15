@@ -4,8 +4,8 @@ import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
+import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 //TODO: 전체적으로 member, shareType 연동
@@ -15,15 +15,10 @@ class BundleController(
     private val bundleService: BundleService
 ) {
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles")
-    fun createBundle(@RequestBody request: BundleCreateRequest): ResponseEntity<ApiResponse<BundleGetResponse>> {
-        val response: ApiResponse<BundleGetResponse> = ApiResponse.created(bundleService.createBundle(request))
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
-    }
-
-    @GetMapping("/bundles/my")
-    fun getMyBundles(): ApiResponse<List<BundlesGetResponse>> {
-        return ApiResponse.ok(bundleService.getMyBundles())
+    fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleGetResponse> {
+        return ApiResponse.created(bundleService.createBundle(request))
     }
 
 //    @GetMapping("/bundles/search")
@@ -31,7 +26,15 @@ class BundleController(
 //        @ModelAttribute searchCondition: BundleSearchCondition,
 //        @ModelAttribute pageCondition: PageCondition
 //    ): ApiResponse<PageResponse<BundleGetResponse>> {
+//        return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
 //    }
+
+    @GetMapping("/bundles/my")
+    fun getMyBundles(
+        @ModelAttribute getCondition: BundleGetCondition
+    ): ApiResponse<List<BundlesGetResponse>> {
+        return ApiResponse.ok(bundleService.getMyBundles(getCondition))
+    }
 
     @GetMapping("/bundles/{id}")
     fun getBundle(@PathVariable id: Long): ApiResponse<BundleGetResponse> {
@@ -51,13 +54,13 @@ class BundleController(
         return bundleService.deleteBundle(id)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles/{id}/questions")
     fun addQuestion(
         @PathVariable id: Long,
         @RequestBody request: BundleQuestionAddRequest
-    ): ResponseEntity<Unit> {
+    ) {
         bundleService.addQuestion(id, request)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     @DeleteMapping("/bundles/{id}/questions")

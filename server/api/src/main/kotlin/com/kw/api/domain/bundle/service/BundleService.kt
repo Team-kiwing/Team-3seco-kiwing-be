@@ -2,8 +2,8 @@ package com.kw.api.domain.bundle.service
 
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
-import com.kw.api.domain.question.service.QuestionService
 import com.kw.data.domain.bundle.Bundle
+import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
@@ -18,7 +18,6 @@ class BundleService(
     private val bundleRepository: BundleRepository,
     private val tagRepository: TagRepository,
     private val questionRepository: QuestionRepository,
-    private val questionService: QuestionService
 ) {
 
     fun createBundle(request: BundleCreateRequest): BundleGetResponse {
@@ -28,16 +27,17 @@ class BundleService(
         return getBundle(bundle.id!!)
     }
 
-    fun getMyBundles(): List<BundlesGetResponse> {
-        val bundles = bundleRepository.findAllByMemberId(1L) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-        return bundles.map { BundlesGetResponse.from(it) }
-    }
-
 //    fun searchBundles(
 //        searchCondition: BundleSearchCondition,
 //        pageCondition: PageCondition
 //    ): PageResponse<BundleGetResponse> {
+//        val pageable: Pageable = PageRequest.of(pageCondition.page - 1, pageCondition.size)
 //    }
+
+    fun getMyBundles(getCondition: BundleGetCondition): List<BundlesGetResponse> {
+        val bundles = bundleRepository.findAllByMemberId(1L, getCondition) //TODO: 임시 memberId, 인증 기능 추가 후 수정
+        return bundles.map { BundlesGetResponse.from(it) }
+    }
 
     @Transactional(readOnly = true)
     fun getBundle(id: Long): BundleGetResponse {
