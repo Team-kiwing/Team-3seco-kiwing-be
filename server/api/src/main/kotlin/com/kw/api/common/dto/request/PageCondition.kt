@@ -1,8 +1,8 @@
 package com.kw.api.common.dto.request
 
 data class PageCondition(
-    val page: Int? = DEFAULT_PAGE,
-    val size: Int? = DEFAULT_SIZE
+    val page: Int = DEFAULT_PAGE,
+    val size: Int = DEFAULT_SIZE
 ) {
     companion object {
         private const val DEFAULT_PAGE = 1

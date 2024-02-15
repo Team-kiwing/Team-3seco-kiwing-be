@@ -1,10 +1,13 @@
 package com.kw.api.domain.bundle.controller
 
+import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.ApiResponse
+import com.kw.api.common.dto.response.PageResponse
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.api.domain.bundle.service.BundleService
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
+import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -21,13 +24,14 @@ class BundleController(
         return ApiResponse.created(bundleService.createBundle(request))
     }
 
-//    @GetMapping("/bundles/search")
-//    fun searchBundles(
-//        @ModelAttribute searchCondition: BundleSearchCondition,
-//        @ModelAttribute pageCondition: PageCondition
-//    ): ApiResponse<PageResponse<BundleGetResponse>> {
-//        return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
-//    }
+    //TODO: ES
+    @GetMapping("/bundles/search")
+    fun searchBundles(
+        @ModelAttribute searchCondition: BundleSearchCondition,
+        @ModelAttribute pageCondition: PageCondition
+    ): ApiResponse<PageResponse<BundlesGetResponse>> {
+        return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
+    }
 
     @GetMapping("/bundles/my")
     fun getMyBundles(

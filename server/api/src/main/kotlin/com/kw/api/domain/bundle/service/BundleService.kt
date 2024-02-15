@@ -1,16 +1,23 @@
 package com.kw.api.domain.bundle.service
 
+import com.kw.api.common.dto.request.PageCondition
+import com.kw.api.common.dto.response.PageResponse
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
+import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.function.LongSupplier
 
 @Service
 @Transactional
@@ -27,12 +34,19 @@ class BundleService(
         return getBundle(bundle.id!!)
     }
 
-//    fun searchBundles(
-//        searchCondition: BundleSearchCondition,
-//        pageCondition: PageCondition
-//    ): PageResponse<BundleGetResponse> {
-//        val pageable: Pageable = PageRequest.of(pageCondition.page - 1, pageCondition.size)
-//    }
+    fun searchBundles(
+        searchCondition: BundleSearchCondition,
+        pageCondition: PageCondition
+    ): PageResponse<BundlesGetResponse> {
+        val pageable: Pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
+        val bundles: List<BundlesGetResponse> = bundleRepository.findAll(searchCondition, pageable)
+            .map { BundlesGetResponse.from(it) }
+        return PageResponse.from(
+            PageableExecutionUtils.getPage(
+                bundles, pageable, LongSupplier { bundleRepository.count(searchCondition) }
+            )
+        )
+    }
 
     fun getMyBundles(getCondition: BundleGetCondition): List<BundlesGetResponse> {
         val bundles = bundleRepository.findAllByMemberId(1L, getCondition) //TODO: 임시 memberId, 인증 기능 추가 후 수정
