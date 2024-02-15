@@ -3,6 +3,7 @@ package com.kw.api.domain.question.controller
 import com.kw.api.common.dto.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
@@ -62,8 +63,8 @@ class QuestionController(val questionService : QuestionService) {
     }
 
     @GetMapping("/question/search")
-    fun searchQuestion(@RequestParam keyword : String) : ApiResponse<List<QuestionResponse>> {
-        val responses = questionService.searchQuestion(keyword)
+    fun searchQuestion(@ModelAttribute questionSearchRequest: QuestionSearchRequest) : ApiResponse<List<QuestionResponse>> {
+        val responses = questionService.searchQuestion(questionSearchRequest)
         return ApiResponse.ok(responses)
     }
 

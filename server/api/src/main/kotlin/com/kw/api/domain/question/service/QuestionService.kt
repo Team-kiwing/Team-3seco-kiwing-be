@@ -2,6 +2,7 @@ package com.kw.api.domain.question.service
 
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
@@ -12,6 +13,7 @@ import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.repository.TagRepository
 import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
+import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import kotlin.RuntimeException
@@ -66,8 +68,10 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionReportResponse.from(questionReportRepository.save(report))
     }
 
-    fun searchQuestion(keyword: String): List<QuestionResponse> {
-        val questions = questionCustomRepository.searchQuestion(keyword)
+    fun searchQuestion(questionSearchRequest: QuestionSearchRequest): List<QuestionResponse> {
+        val questionSearchDto = QuestionSearchDto(keyword = questionSearchRequest.keyword,
+            page = questionSearchRequest.page)
+        val questions = questionCustomRepository.searchQuestion(questionSearchDto)
         return questions.map {
             question ->
             QuestionResponse.from(question)
