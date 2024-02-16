@@ -34,6 +34,7 @@ class BundleService(
         return getBundle(bundle.id!!)
     }
 
+    @Transactional(readOnly = true)
     fun searchBundles(
         searchCondition: BundleSearchCondition,
         pageCondition: PageCondition
@@ -48,14 +49,15 @@ class BundleService(
         )
     }
 
+    @Transactional(readOnly = true)
     fun getMyBundles(getCondition: BundleGetCondition): List<BundlesGetResponse> {
         val bundles = bundleRepository.findAllByMemberId(1L, getCondition) //TODO: 임시 memberId, 인증 기능 추가 후 수정
         return bundles.map { BundlesGetResponse.from(it) }
     }
 
     @Transactional(readOnly = true)
-    fun getBundle(id: Long): BundleGetResponse {
-        val bundle = bundleRepository.findDetailById(id)
+    fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleGetResponse {
+        val bundle = bundleRepository.findDetailById(id, showOnlyMyQuestion, 1L) //TODO: 임시 memberId, 인증 기능 추가 후 수정
             ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
         return BundleGetResponse.from(bundle)
     }

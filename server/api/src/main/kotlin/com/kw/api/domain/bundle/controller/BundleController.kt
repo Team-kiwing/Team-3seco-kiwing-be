@@ -41,8 +41,11 @@ class BundleController(
     }
 
     @GetMapping("/bundles/{id}")
-    fun getBundle(@PathVariable id: Long): ApiResponse<BundleGetResponse> {
-        return ApiResponse.ok(bundleService.getBundle(id))
+    fun getBundle(
+        @PathVariable id: Long,
+        @RequestParam("showOnlyMyQuestions", required = false, defaultValue = "false") showOnlyMyQuestions: Boolean,
+    ): ApiResponse<BundleGetResponse> {
+        return ApiResponse.ok(bundleService.getBundle(id, showOnlyMyQuestions))
     }
 
     @PatchMapping("/bundles/{id}")

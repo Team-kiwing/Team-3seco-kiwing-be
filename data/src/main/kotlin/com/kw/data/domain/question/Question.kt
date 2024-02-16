@@ -1,6 +1,7 @@
 package com.kw.data.domain.question
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.member.Member
 import jakarta.persistence.*
 
 @Entity
@@ -29,6 +30,10 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
     @Column(name = "origin_id", nullable = true, updatable = true)
     var originId: Long? = originId
         protected set
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    val member: Member? = null //TODO: Member? -> Member 타입 수정
 
     enum class ShareStatus {
         AVAILABLE, NON_AVAILABLE;
