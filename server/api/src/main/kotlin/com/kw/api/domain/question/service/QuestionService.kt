@@ -77,7 +77,8 @@ class QuestionService(val questionRepository : QuestionRepository,
     @Transactional(readOnly = true)
     fun searchQuestion(questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
         val questionSearchDto = QuestionSearchDto(keyword = questionSearchRequest.keyword,
-            page = questionSearchRequest.page)
+            page = questionSearchRequest.page,
+            size = questionSearchRequest.size)
         val questions = questionCustomRepository.searchQuestion(questionSearchDto)
         val questionResponses = questions.map { question ->
             val tagIds = getQuestionTagIds(question)

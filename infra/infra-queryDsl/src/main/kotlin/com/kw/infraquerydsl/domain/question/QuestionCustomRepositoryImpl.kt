@@ -9,18 +9,17 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory ) : QuestionCustomRepository {
-    val PAGE_OFFSET : Long = 10L
-
     override fun searchQuestion(questionSearchDto: QuestionSearchDto) : List<Question> {
         val keyword = questionSearchDto.keyword
         val page = questionSearchDto.page
+        val size = questionSearchDto.size
 
         return jpaQueryFactory.selectFrom(question)
             .where(
                 containsKeyword(keyword)
             )
-            .offset((page - 1) * PAGE_OFFSET)
-            .limit(PAGE_OFFSET)
+            .offset((page - 1) * size)
+            .limit(size)
             .fetch()
     }
 
@@ -31,6 +30,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory ) : Ques
     override fun getPageNum(questionSearchDto: QuestionSearchDto): Long {
         val keyword = questionSearchDto.keyword
         val page = questionSearchDto.page
+        val size = questionSearchDto.size
 
         val count = jpaQueryFactory.select(question.count())
             .from(question)
@@ -41,8 +41,8 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory ) : Ques
         if (count == 0L) {
             return 1L
         }
-        return if (count!! % PAGE_OFFSET != 0L) {
-            count / PAGE_OFFSET + 1
-        } else count / PAGE_OFFSET
+        return if (count!! % size != 0L) {
+            count / size + 1
+        } else count / size
     }
 }
