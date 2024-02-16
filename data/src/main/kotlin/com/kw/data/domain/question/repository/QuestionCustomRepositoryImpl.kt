@@ -1,4 +1,4 @@
-package com.kw.infraquerydsl.domain.question
+package com.kw.data.domain.question.repository
 
 import com.kw.data.domain.question.QQuestion.Companion.question
 import com.kw.data.domain.question.Question

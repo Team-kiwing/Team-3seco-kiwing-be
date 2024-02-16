@@ -8,14 +8,14 @@ import java.time.LocalDateTime
 class Member(username: String, nickname: String, email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    val id: String? = null
+    val id: Long? = null
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "username", nullable = false)
     val username: String = username
 
     @Column(name = "nickname", nullable = false)
     var nickname: String = nickname
-        private set
+        protected set
 
     @Column(name = "email", nullable = false, updatable = false)
     val email: String = email
@@ -26,11 +26,11 @@ class Member(username: String, nickname: String, email: String) : Base() {
 
     @Column(name = "last_logined_at", nullable = false)
     var lastLoginedAt: LocalDateTime = LocalDateTime.now()
-        private set
+        protected set
 
     @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null
-        private set
+        protected set
 
     enum class Provider {
         GOOGLE,

@@ -10,9 +10,9 @@ jar.enabled = false
 
 dependencies {
     implementation(project(":data"))
-    implementation(project(":infra:infra-queryDsl"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 

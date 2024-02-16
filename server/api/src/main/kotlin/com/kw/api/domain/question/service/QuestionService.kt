@@ -11,10 +11,10 @@ import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.QuestionTag
-import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.repository.TagRepository
-import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
+import com.kw.data.domain.question.repository.QuestionReportRepository
+import com.kw.data.domain.question.repository.QuestionCustomRepository
 import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,14 +34,14 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionResponse.from(question, tagIds)
     }
 
-    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
+    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionAnswer(answerRequest.answer)
         val tagIds = getQuestionTagIds(question)
         return QuestionResponse.from(question, tagIds)
     }
 
-    fun updateQuestionContent(id: Long, request: QuestionUpdateRequest) : QuestionResponse {
+    fun updateQuestionContent(id: Long, request: QuestionUpdateRequest): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionContent(request.content)
         val tagIds = getQuestionTagIds(question)
@@ -55,7 +55,7 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionResponse.from(question, tagIds);
     }
 
-    fun createQuestionCopy(id: Long) : QuestionResponse {
+    fun createQuestionCopy(id: Long): QuestionResponse {
         val question = getQuestion(id)
         question.increaseShareCount()
 
@@ -66,11 +66,13 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionResponse.from(questionRepository.save(copyQuestion), tagIds)
     }
 
-    fun reportQuestion(reason: String, id: Long) : QuestionReportResponse {
+    fun reportQuestion(reason: String, id: Long): QuestionReportResponse {
         val question = getQuestion(id)
 
-        val report = QuestionReport(reason = reason,
-                question = question)
+        val report = QuestionReport(
+            reason = reason,
+            question = question
+        )
         return QuestionReportResponse.from(questionReportRepository.save(report))
     }
 
@@ -117,8 +119,8 @@ class QuestionService(val questionRepository : QuestionRepository,
         return questionTags
     }
 
-    private fun getQuestion(id: Long) : Question {
+    private fun getQuestion(id: Long): Question {
         return questionRepository.findById(id)
-                .orElseThrow{throw RuntimeException("question이 존재하지 않습니다.")}
+            .orElseThrow { throw RuntimeException("question이 존재하지 않습니다.") }
     }
 }

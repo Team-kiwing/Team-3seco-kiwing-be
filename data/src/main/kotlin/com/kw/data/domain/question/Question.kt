@@ -4,30 +4,30 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Question(content : String, originId : Long?, shareStatus: ShareStatus) : Base() {
+class Question(content: String, originId: Long?, shareStatus: ShareStatus = ShareStatus.AVAILABLE) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long? = null
+    val id: Long? = null
 
     @Column(name = "content", nullable = false, updatable = true)
-    var content : String = content
+    var content: String = content
         protected set
 
     @Column(name = "answer", nullable = true, updatable = true)
-    var answer : String? = null
+    var answer: String? = null
         protected set
 
     @Column(name = "share_count", nullable = false, updatable = true)
-    var shareCount : Long = 0
+    var shareCount: Long = 0
         protected set
 
     @Enumerated(EnumType.STRING)
     @Column(name = "share_status", nullable = false, updatable = true)
-    var shareStatus : ShareStatus = ShareStatus.AVAILABLE
+    var shareStatus: ShareStatus = shareStatus
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
-    var originId : Long? = originId
+    var originId: Long? = originId
         protected set
 
     @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
@@ -37,17 +37,17 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
         AVAILABLE, NON_AVAILABLE;
 
         companion object {
-            fun of(input : String) : ShareStatus {
+            fun of(input: String): ShareStatus {
                 try {
                     return valueOf(input)
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     throw IllegalArgumentException("존재하지 않는 공유 상태입니다")
                 }
             }
         }
     }
 
-    fun updateQuestionAnswer(answer : String) {
+    fun updateQuestionAnswer(answer: String) {
         this.answer = answer
     }
 
@@ -65,5 +65,14 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
 
     fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
         this.questionTags = questionTags
+    }
+
+    fun copy(): Question {
+        increaseShareCount()
+        return Question(
+            content = this.content,
+            shareStatus = ShareStatus.AVAILABLE,
+            originId = this.id,
+        )
     }
 }

@@ -27,4 +27,6 @@ dependencies {
     implementation("com.querydsl:querydsl-core:5.0.0")
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
     kapt("com.querydsl:querydsl-kotlin-codegen:5.0.0")
+
+    runtimeOnly("com.h2database:h2")
 }
