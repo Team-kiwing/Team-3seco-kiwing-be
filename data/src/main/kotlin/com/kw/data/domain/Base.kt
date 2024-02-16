@@ -14,7 +14,8 @@ abstract class Base {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    val createdAt: LocalDateTime? = LocalDateTime.now()
+    var createdAt: LocalDateTime? = LocalDateTime.now()
+        private set
 
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate

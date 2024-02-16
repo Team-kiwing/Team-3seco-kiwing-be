@@ -8,17 +8,19 @@ data class QuestionResponse(
         val answer : String?,
         val shareCount : Long,
         val shareStatus : Question.ShareStatus,
-        val originId : Long?
+        val originId : Long?,
+        val tagIds : List<Long?>?
 ) {
     companion object {
-        fun from(question: Question): QuestionResponse {
+        fun from(question: Question, tagIds: List<Long?>?): QuestionResponse {
             return QuestionResponse(
                     id = question.id,
                     content = question.content,
                     answer = question.answer,
                     shareCount = question.shareCount,
                     shareStatus = question.shareStatus,
-                    originId = question.originId
+                    originId = question.originId,
+                    tagIds = tagIds
             )
         }
     }

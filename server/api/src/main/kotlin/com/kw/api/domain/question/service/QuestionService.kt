@@ -14,8 +14,8 @@ import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.repository.TagRepository
 import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
 import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import kotlin.RuntimeException
 
 @Service
@@ -29,25 +29,29 @@ class QuestionService(val questionRepository : QuestionRepository,
         val questionTags = getQuestionTags(questionCreateRequest.tagIds, question)
 
         question.updateQuestionQuestionTags(questionTags)
-        return QuestionResponse.from(question)
+        val tagIds = getQuestionTagIds(question)
+        return QuestionResponse.from(question, tagIds)
     }
 
     fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest) : QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionAnswer(answerRequest.answer)
-        return QuestionResponse.from(question)
+        val tagIds = getQuestionTagIds(question)
+        return QuestionResponse.from(question, tagIds)
     }
 
     fun updateQuestionContent(id: Long, request: QuestionUpdateRequest) : QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionContent(request.content)
-        return QuestionResponse.from(question)
+        val tagIds = getQuestionTagIds(question)
+        return QuestionResponse.from(question, tagIds)
     }
 
     fun updateQuestionStatus(id: Long, status: String): QuestionResponse {
         val question = getQuestion(id)
         question.updateQuestionStatus(Question.ShareStatus.valueOf(status));
-        return QuestionResponse.from(question);
+        val tagIds = getQuestionTagIds(question)
+        return QuestionResponse.from(question, tagIds);
     }
 
     fun createQuestionCopy(id: Long) : QuestionResponse {
@@ -57,7 +61,8 @@ class QuestionService(val questionRepository : QuestionRepository,
         val copyQuestion = Question(content = question.content,
                 originId = question.id,
                 shareStatus = Question.ShareStatus.NON_AVAILABLE)
-        return QuestionResponse.from(questionRepository.save(copyQuestion))
+        val tagIds = getQuestionTagIds(question)
+        return QuestionResponse.from(questionRepository.save(copyQuestion), tagIds)
     }
 
     fun reportQuestion(reason: String, id: Long) : QuestionReportResponse {
@@ -68,13 +73,15 @@ class QuestionService(val questionRepository : QuestionRepository,
         return QuestionReportResponse.from(questionReportRepository.save(report))
     }
 
+    @Transactional(readOnly = true)
     fun searchQuestion(questionSearchRequest: QuestionSearchRequest): List<QuestionResponse> {
         val questionSearchDto = QuestionSearchDto(keyword = questionSearchRequest.keyword,
             page = questionSearchRequest.page)
         val questions = questionCustomRepository.searchQuestion(questionSearchDto)
         return questions.map {
             question ->
-            QuestionResponse.from(question)
+            val tagIds = getQuestionTagIds(question)
+            QuestionResponse.from(question, tagIds)
         }
     }
 
@@ -85,12 +92,18 @@ class QuestionService(val questionRepository : QuestionRepository,
         question.updateQuestionQuestionTags(questionTags)
     }
 
+    private fun getQuestionTagIds(question: Question) : List<Long?>? {
+        return question.questionTags?.map { questionTag ->
+            questionTag.tag.id
+        }
+    }
+
     private fun getQuestionTags(
-        tagIds: List<Long>?,
+        tagIds: List<Long?>?,
         question: Question
     ): List<QuestionTag>? {
         val tags = tagIds?.map { tagId ->
-            tagRepository.findById(tagId)
+            tagRepository.findById(tagId!!)
                 .orElseThrow { throw RuntimeException("tag가 존재하지 않습니다.") }
         }
 
