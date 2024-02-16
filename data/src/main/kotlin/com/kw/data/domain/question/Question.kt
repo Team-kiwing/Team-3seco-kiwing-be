@@ -2,8 +2,6 @@ package com.kw.data.domain.question
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
-import javax.swing.text.html.HTML.Tag
-import kotlin.Exception
 
 @Entity
 class Question(content : String, originId : Long?, shareStatus: ShareStatus) : Base() {
@@ -33,7 +31,7 @@ class Question(content : String, originId : Long?, shareStatus: ShareStatus) : B
         protected set
 
     @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
-    var questionTags : List<QuestionTag>? = arrayListOf();
+    var questionTags : List<QuestionTag>? = mutableListOf();
 
     enum class ShareStatus {
         AVAILABLE, NON_AVAILABLE;
