@@ -25,12 +25,10 @@ class BundleCustomRepositoryImpl(
             .where(condition.searchTerm?.let { bundle.name.contains(it) })
             .orderBy(
                 condition.sortingType?.let {
-                    when (val sortingType = condition.sortingType) {
-                        else -> when (BundleSearchCondition.SortingType.from(sortingType)) {
-                            BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
-                            BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
-                            BundleSearchCondition.SortingType.POPULAR -> TODO() //TODO
-                        }
+                    when (BundleSearchCondition.SortingType.from(condition.sortingType)) {
+                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
+                        BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
+                        BundleSearchCondition.SortingType.POPULAR -> TODO() //TODO
                     }
                 }
             )
@@ -45,12 +43,10 @@ class BundleCustomRepositoryImpl(
             .where(bundle.member.id.eq(memberId))
             .orderBy(
                 condition.sortingType?.let {
-                    when (val sortingType = condition.sortingType) {
-                        else -> when (BundleGetCondition.SortingType.from(sortingType)) {
-                            BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
-                            BundleGetCondition.SortingType.CREATED -> bundle.createdAt.asc()
-                            BundleGetCondition.SortingType.UPDATED -> bundle.updatedAt.desc()
-                        }
+                    when (BundleGetCondition.SortingType.from(condition.sortingType)) {
+                        BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
+                        BundleGetCondition.SortingType.CREATED -> bundle.createdAt.asc()
+                        BundleGetCondition.SortingType.UPDATED -> bundle.updatedAt.desc()
                     }
                 }
             )
