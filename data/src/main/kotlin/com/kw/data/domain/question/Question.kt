@@ -30,6 +30,9 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
     var originId: Long? = originId
         protected set
 
+    @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
+    var questionTags : List<QuestionTag>? = mutableListOf();
+
     enum class ShareStatus {
         AVAILABLE, NON_AVAILABLE;
 
@@ -58,6 +61,10 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
 
     fun increaseShareCount() {
         this.shareCount++;
+    }
+
+    fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
+        this.questionTags = questionTags
     }
 
     fun copy(): Question {
