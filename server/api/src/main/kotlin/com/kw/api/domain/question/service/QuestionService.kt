@@ -1,9 +1,11 @@
 package com.kw.api.domain.question.service
 
+import com.kw.api.common.dto.PageResponse
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
+import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.data.domain.question.Question
@@ -16,7 +18,6 @@ import com.kw.infraquerydsl.domain.question.QuestionCustomRepository
 import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.RuntimeException
 
 @Service
 @Transactional
@@ -74,15 +75,17 @@ class QuestionService(val questionRepository : QuestionRepository,
     }
 
     @Transactional(readOnly = true)
-    fun searchQuestion(questionSearchRequest: QuestionSearchRequest): List<QuestionResponse> {
+    fun searchQuestion(questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
         val questionSearchDto = QuestionSearchDto(keyword = questionSearchRequest.keyword,
             page = questionSearchRequest.page)
         val questions = questionCustomRepository.searchQuestion(questionSearchDto)
-        return questions.map {
-            question ->
+        val questionResponses = questions.map { question ->
             val tagIds = getQuestionTagIds(question)
             QuestionResponse.from(question, tagIds)
         }
+        val lastPageNum = questionCustomRepository.getPageNum(questionSearchDto)
+
+        return QuestionListResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))
     }
 
     fun updateQuestionQuestionTags(tagIds: List<Long>?, questionId: Long) {

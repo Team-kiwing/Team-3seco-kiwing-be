@@ -28,7 +28,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory ) : Ques
         return question.content.contains(keyword)
     }
 
-    fun getPageNum(questionSearchDto: QuestionSearchDto): Long? {
+    override fun getPageNum(questionSearchDto: QuestionSearchDto): Long {
         val keyword = questionSearchDto.keyword
         val page = questionSearchDto.page
 
