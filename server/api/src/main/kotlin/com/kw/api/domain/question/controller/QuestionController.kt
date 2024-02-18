@@ -3,7 +3,9 @@ package com.kw.api.domain.question.controller
 import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
+import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.api.domain.question.service.QuestionService
@@ -62,8 +64,14 @@ class QuestionController(val questionService: QuestionService) {
     }
 
     @GetMapping("/question/search")
-    fun searchQuestion(@RequestParam keyword: String): ApiResponse<List<QuestionResponse>> {
-        val responses = questionService.searchQuestion(keyword)
+    fun searchQuestion(@ModelAttribute questionSearchRequest: QuestionSearchRequest) : ApiResponse<QuestionListResponse> {
+        val responses = questionService.searchQuestion(questionSearchRequest)
         return ApiResponse.ok(responses)
+    }
+
+    @PatchMapping("/question/{id}/tags")
+    fun updateQuestionTags(@RequestParam tagIds : List<Long>?,
+                           @PathVariable id : Long) {
+        questionService.updateQuestionQuestionTags(tagIds, id)
     }
 }

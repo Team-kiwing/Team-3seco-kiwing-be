@@ -31,6 +31,9 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
     var originId: Long? = originId
         protected set
 
+    @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
+    var questionTags : List<QuestionTag>? = mutableListOf();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
     val member: Member? = null //TODO: Member? -> Member 타입 수정
@@ -63,6 +66,10 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
 
     fun increaseShareCount() {
         this.shareCount++;
+    }
+
+    fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
+        this.questionTags = questionTags
     }
 
     fun copy(): Question {

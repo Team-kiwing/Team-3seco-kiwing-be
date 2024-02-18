@@ -15,7 +15,6 @@ abstract class Base {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.now()
-
     @Column(name = "updated_at", nullable = false)
     @LastModifiedDate
     var updatedAt: LocalDateTime = LocalDateTime.now()
