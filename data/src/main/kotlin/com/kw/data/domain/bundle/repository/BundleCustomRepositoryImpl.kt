@@ -30,7 +30,7 @@ class BundleCustomRepositoryImpl(
             .orderBy(
                 condition.sortingType?.let {
                     when (BundleSearchCondition.SortingType.from(condition.sortingType)) {
-                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
+//                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
                         BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
                         BundleSearchCondition.SortingType.POPULAR -> TODO() //TODO
                     }
