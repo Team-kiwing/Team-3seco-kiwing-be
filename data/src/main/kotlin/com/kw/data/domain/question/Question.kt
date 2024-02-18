@@ -66,11 +66,11 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
     }
 
     fun copy(): Question {
-        increaseShareCount()
+        increaseShareCount() //TODO: 동시성 고려
         return Question(
             content = this.content,
             shareStatus = ShareStatus.AVAILABLE,
-            originId = this.id,
+            originId = this.originId ?: this.id,
         )
     }
 }
