@@ -9,6 +9,7 @@ import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
+import com.kw.data.domain.bundle.repository.BundleTagRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
@@ -25,12 +26,13 @@ class BundleService(
     private val bundleRepository: BundleRepository,
     private val tagRepository: TagRepository,
     private val questionRepository: QuestionRepository,
+    private val bundleTagRepository: BundleTagRepository
 ) {
 
     fun createBundle(request: BundleCreateRequest): BundleGetResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = bundleRepository.save(request.toEntity())
-        bundle.addBundleTags(tags.map { BundleTag(bundle, it) })
+        bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
         return getBundle(bundle.id!!)
     }
 
@@ -57,17 +59,23 @@ class BundleService(
 
     @Transactional(readOnly = true)
     fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleGetResponse {
-        val bundle = bundleRepository.findDetailById(id, showOnlyMyQuestion, 1L) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-            ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
+        val bundle =
+            bundleRepository.findDetailById(id, showOnlyMyQuestion, memberId) //TODO: 임시 memberId, 인증 기능 추가 후 수정
+                ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
         return BundleGetResponse.from(bundle)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest) {
-        val bundle = getExistBundle(id)
-        bundle.updateNameAndShareType(request.name, Bundle.ShareType.from(request.shareType))
+        val bundle = bundleRepository.findWithTagsById(id)
+            ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
 
-        val foundTags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
-        bundle.addBundleTags(foundTags.map { BundleTag(bundle, it) })
+        request.name?.let { bundle.updateName(request.name) }
+        request.shareType?.let { bundle.updateShareType(Bundle.ShareType.from(request.shareType)) }
+        request.tagIds?.let {
+            val tags = getExistTags(it)
+            bundleTagRepository.deleteAllByBundleId(id)
+            bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
+        }
     }
 
     fun deleteBundle(id: Long) {

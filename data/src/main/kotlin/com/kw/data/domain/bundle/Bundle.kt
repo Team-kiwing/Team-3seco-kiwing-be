@@ -32,7 +32,7 @@ class Bundle(
     @JoinColumn(name = "member_id")
     val member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
-    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL])
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -53,13 +53,16 @@ class Bundle(
         }
     }
 
-    fun updateNameAndShareType(name: String, shareType: ShareType) {
+    fun updateName(name: String) {
         this.name = name
+    }
+
+    fun updateShareType(shareType: ShareType) {
         this.shareType = shareType
     }
 
-    fun addBundleTags(bundleTags: List<BundleTag>) {
-        this.bundleTags.addAll(bundleTags)
+    fun updateBundleTags(bundleTags: List<BundleTag>) {
+        this.bundleTags = bundleTags.toMutableList()
     }
 
     fun addQuestions(questions: List<Question>) {
@@ -77,7 +80,7 @@ class Bundle(
     fun copy(): Bundle {
         increaseScrapeCount() //TODO: 동시성 고려
         val bundle = Bundle(this.name, this.shareType)
-        bundle.addBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
+        bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
         bundle.addQuestions(
             this.questions
                 .filter { it.shareStatus === Question.ShareStatus.AVAILABLE }

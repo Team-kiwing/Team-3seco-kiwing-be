@@ -28,11 +28,13 @@ class BundleCustomRepositoryImpl(
             .selectFrom(bundle)
             .where(condition.searchTerm?.let { bundle.name.contains(it) })
             .orderBy(
-                condition.sortingType?.let {
+                if (condition.sortingType == null) {
+                    bundle.scrapeCount.desc()
+                } else {
                     when (BundleSearchCondition.SortingType.from(condition.sortingType)) {
 //                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
                         BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
-                        BundleSearchCondition.SortingType.POPULAR -> TODO() //TODO
+                        BundleSearchCondition.SortingType.POPULAR -> bundle.scrapeCount.desc()
                     }
                 }
             )
@@ -46,7 +48,9 @@ class BundleCustomRepositoryImpl(
             .selectFrom(bundle)
             .where(bundle.member.id.eq(memberId))
             .orderBy(
-                condition.sortingType?.let {
+                if (condition.sortingType == null) {
+                    bundle.createdAt.desc()
+                } else {
                     when (BundleGetCondition.SortingType.from(condition.sortingType)) {
                         BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
                         BundleGetCondition.SortingType.CREATED -> bundle.createdAt.asc()
@@ -59,20 +63,22 @@ class BundleCustomRepositoryImpl(
 
     override fun findDetailById(id: Long, showOnlyMyQuestions: Boolean?, memberId: Long?): Bundle? {
         val originQuestion = QQuestion("originQuestion")
-        return queryFactory
+
+        val query = queryFactory
             .selectFrom(bundle)
-            .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
-            .leftJoin(bundleTag.tag, tag).fetchJoin()
-            .leftJoin(bundle.questions, question).fetchJoin()
-            .leftJoin(question).on(question.id.eq(originQuestion.id)).fetchJoin()
-            .leftJoin(originQuestion.member).fetchJoin()
-            .where(
-                bundle.id.eq(id),
-                (showOnlyMyQuestions == true && memberId != null).let {
-                    originQuestion.member.id.eq(memberId)
-                }
-            )
-            .fetchOne()
+            .leftJoin(bundle.bundleTags, bundleTag)
+            .leftJoin(bundleTag.tag, tag)
+            .leftJoin(bundle.questions, question)
+            .where(bundle.id.eq(id))
+
+        if (showOnlyMyQuestions == true && memberId != null) {
+            query
+                .leftJoin(originQuestion).on(originQuestion.id.eq(question.originId))
+                .leftJoin(originQuestion.member)
+                .where(originQuestion.member.id.eq(memberId))
+        }
+
+        return query.fetchOne()
     }
 
 }
