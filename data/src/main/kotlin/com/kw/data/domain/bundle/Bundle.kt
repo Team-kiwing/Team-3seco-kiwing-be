@@ -3,7 +3,6 @@ package com.kw.data.domain.bundle
 import com.kw.data.domain.Base
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
-import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
 @Entity
@@ -26,12 +25,12 @@ class Bundle(
         protected set
 
     @Column(name = "share_count", nullable = false)
-    var shareCount: Long? = 0
+    var shareCount: Long = 0
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    val member: Member? = null //TODO: Member? -> Member 타입 수정
+    @JoinColumn(name = "member_id")
+    val member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
@@ -54,6 +53,15 @@ class Bundle(
         }
     }
 
+    fun updateNameAndShareType(name: String, shareType: ShareType) {
+        this.name = name
+        this.shareType = shareType
+    }
+
+    fun addBundleTags(bundleTags: List<BundleTag>) {
+        this.bundleTags.addAll(bundleTags)
+    }
+
     fun addQuestions(questions: List<Question>) {
         this.questions.addAll(questions)
     }
@@ -62,13 +70,20 @@ class Bundle(
         this.questions.removeAll(questions)
     }
 
-    fun updateNameAndShareType(name: String, shareType: ShareType) {
-        this.name = name
-        this.shareType = shareType
+    fun increaseShareCount() {
+        this.shareCount++
     }
 
-    fun updateBundleTags(tags: List<Tag>) {
-        this.bundleTags = tags.map { BundleTag(this, it) }.toMutableList()
+    fun copy(): Bundle {
+        increaseShareCount() //TODO: 동시성 고려
+        val bundle = Bundle(this.name, this.shareType)
+        bundle.addBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
+        bundle.addQuestions(
+            this.questions
+                .filter { it.shareStatus === Question.ShareStatus.AVAILABLE }
+                .map(Question::copy)
+        )
+        return bundle
     }
 
 }

@@ -61,6 +61,11 @@ class BundleController(
         return bundleService.deleteBundle(id)
     }
 
+    @PostMapping("/bundles/{id}/share")
+    fun shareBundle(@PathVariable id: Long) {
+        return bundleService.shareBundle(id)
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles/{id}/questions")
     fun addQuestion(

@@ -5,6 +5,7 @@ import com.kw.api.common.dto.response.PageResponse
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleGetResponse
 import com.kw.data.domain.bundle.Bundle
+import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
@@ -13,7 +14,6 @@ import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,9 +28,9 @@ class BundleService(
 ) {
 
     fun createBundle(request: BundleCreateRequest): BundleGetResponse {
-        val tags: List<Tag> = request.tagIds?.let { getExistTags(it) } ?: emptyList()
+        val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = bundleRepository.save(request.toEntity())
-        bundle.updateBundleTags(tags)
+        bundle.addBundleTags(tags.map { BundleTag(bundle, it) })
         return getBundle(bundle.id!!)
     }
 
@@ -39,8 +39,8 @@ class BundleService(
         searchCondition: BundleSearchCondition,
         pageCondition: PageCondition
     ): PageResponse<BundlesGetResponse> {
-        val pageable: Pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
-        val bundles: List<BundlesGetResponse> = bundleRepository.findAll(searchCondition, pageable)
+        val pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
+        val bundles = bundleRepository.findAll(searchCondition, pageable)
             .map { BundlesGetResponse.from(it) }
         return PageResponse.from(
             PageableExecutionUtils.getPage(
@@ -68,7 +68,7 @@ class BundleService(
         bundle.updateNameAndShareType(request.name, Bundle.ShareType.from(request.shareType))
 
         val foundTags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
-        bundle.updateBundleTags(foundTags)
+        bundle.addBundleTags(foundTags.map { BundleTag(bundle, it) })
     }
 
     fun deleteBundle(id: Long) {
@@ -77,11 +77,22 @@ class BundleService(
         bundleRepository.delete(bundle)
     }
 
+    fun shareBundle(id: Long) {
+        val bundle = bundleRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        if (bundle.shareType == Bundle.ShareType.PRIVATE) {
+            throw IllegalArgumentException("비공개 꾸러미입니다.")
+        }
+        bundleRepository.save(bundle.copy())
+    }
+
     fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
         val bundle = bundleRepository.findById(id)
             .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
         val questions = getExistQuestions(request.questionIds)
-        val copiedQuestions = questions.map(Question::copy)
+        val copiedQuestions = questions
+            .filter { it.shareStatus == Question.ShareStatus.AVAILABLE }
+            .map(Question::copy)
         bundle.addQuestions(copiedQuestions)
         //TODO: update questionOrderList
     }

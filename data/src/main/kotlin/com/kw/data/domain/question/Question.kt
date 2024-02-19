@@ -5,7 +5,11 @@ import com.kw.data.domain.member.Member
 import jakarta.persistence.*
 
 @Entity
-class Question(content: String, originId: Long?, shareStatus: ShareStatus = ShareStatus.AVAILABLE) : Base() {
+class Question(
+    content: String,
+    shareStatus: ShareStatus = ShareStatus.AVAILABLE,
+    originId: Long? = null,
+) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
@@ -31,12 +35,12 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
     var originId: Long? = originId
         protected set
 
-    @OneToMany(mappedBy = "question", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
-    var questionTags : List<QuestionTag>? = mutableListOf();
+    @OneToMany(mappedBy = "question", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var questionTags: MutableList<QuestionTag> = mutableListOf()
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, updatable = false)
-    val member: Member? = null //TODO: Member? -> Member 타입 수정
+    @JoinColumn(name = "member_id", updatable = false)
+    val member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
     enum class ShareStatus {
         AVAILABLE, NON_AVAILABLE;
@@ -52,7 +56,7 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
         }
     }
 
-    fun updateQuestionAnswer(answer: String) {
+    fun updateQuestionAnswer(answer: String?) {
         this.answer = answer
     }
 
@@ -64,20 +68,27 @@ class Question(content: String, originId: Long?, shareStatus: ShareStatus = Shar
         this.shareStatus = shareStatus
     }
 
+    fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
+        this.questionTags = questionTags?.toMutableList() ?: mutableListOf()
+    }
+
+    fun addQuestionTags(questionTags: List<QuestionTag>) {
+        this.questionTags.addAll(questionTags)
+    }
+
     fun increaseShareCount() {
         this.shareCount++;
     }
 
-    fun updateQuestionQuestionTags(questionTags: List<QuestionTag>?) {
-        this.questionTags = questionTags
-    }
-
     fun copy(): Question {
         increaseShareCount() //TODO: 동시성 고려
-        return Question(
+        val question = Question(
             content = this.content,
             shareStatus = ShareStatus.AVAILABLE,
             originId = this.originId ?: this.id,
         )
+        question.updateQuestionAnswer(this.answer)
+        question.addQuestionTags(this.questionTags.map { QuestionTag(question, it.tag) })
+        return question
     }
 }
