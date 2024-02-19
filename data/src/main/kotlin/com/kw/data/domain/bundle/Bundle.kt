@@ -24,8 +24,8 @@ class Bundle(
     var shareType: ShareType = shareType
         protected set
 
-    @Column(name = "share_count", nullable = false)
-    var shareCount: Long = 0
+    @Column(name = "scrape_count", nullable = false)
+    var scrapeCount: Long = 0
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,12 +70,12 @@ class Bundle(
         this.questions.removeAll(questions)
     }
 
-    fun increaseShareCount() {
-        this.shareCount++
+    fun increaseScrapeCount() {
+        this.scrapeCount++
     }
 
     fun copy(): Bundle {
-        increaseShareCount() //TODO: 동시성 고려
+        increaseScrapeCount() //TODO: 동시성 고려
         val bundle = Bundle(this.name, this.shareType)
         bundle.addBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
         bundle.addQuestions(

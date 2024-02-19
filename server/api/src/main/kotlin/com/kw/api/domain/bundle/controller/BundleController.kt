@@ -61,9 +61,9 @@ class BundleController(
         return bundleService.deleteBundle(id)
     }
 
-    @PostMapping("/bundles/{id}/share")
-    fun shareBundle(@PathVariable id: Long) {
-        return bundleService.shareBundle(id)
+    @PostMapping("/bundles/{id}/scrape")
+    fun scrapeBundle(@PathVariable id: Long) {
+        return bundleService.scrapeBundle(id)
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -77,7 +77,7 @@ class BundleService(
         bundleRepository.delete(bundle)
     }
 
-    fun shareBundle(id: Long) {
+    fun scrapeBundle(id: Long) {
         val bundle = bundleRepository.findById(id)
             .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
