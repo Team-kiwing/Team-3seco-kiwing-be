@@ -63,8 +63,7 @@ class BundleService(
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest) {
-        val bundle = bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        val bundle = getExistBundle(id)
         bundle.updateNameAndShareType(request.name, Bundle.ShareType.from(request.shareType))
 
         val foundTags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
@@ -72,14 +71,12 @@ class BundleService(
     }
 
     fun deleteBundle(id: Long) {
-        val bundle = bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        val bundle = getExistBundle(id)
         bundleRepository.delete(bundle)
     }
 
     fun scrapeBundle(id: Long) {
-        val bundle = bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        val bundle = getExistBundle(id)
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
             throw IllegalArgumentException("비공개 꾸러미입니다.")
         }
@@ -87,8 +84,7 @@ class BundleService(
     }
 
     fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
-        val bundle = bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        val bundle = getExistBundle(id)
         val questions = getExistQuestions(request.questionIds)
         val copiedQuestions = questions
             .filter { it.shareStatus == Question.ShareStatus.AVAILABLE }
@@ -98,14 +94,18 @@ class BundleService(
     }
 
     fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {
-        val bundle = bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+        val bundle = getExistBundle(id)
         val questions = getExistQuestions(request.questionIds)
         bundle.removeQuestions(questions)
         //TODO: update questionOrderList
     }
 
 //    fun updateQuestionOrderList(id: Long, request: BundleQuestionOrderListUpdateRequest) {}
+
+    private fun getExistBundle(id: Long): Bundle {
+        return bundleRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+    }
 
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
         val tags = tagRepository.findAllById(tagIds)
