@@ -2,8 +2,12 @@ package com.kw.api.domain.bundle.service
 
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
-import com.kw.api.domain.bundle.dto.request.*
-import com.kw.api.domain.bundle.dto.response.BundleGetResponse
+import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
+import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
+import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
@@ -29,7 +33,7 @@ class BundleService(
     private val bundleTagRepository: BundleTagRepository
 ) {
 
-    fun createBundle(request: BundleCreateRequest): BundleGetResponse {
+    fun createBundle(request: BundleCreateRequest): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = bundleRepository.save(request.toEntity())
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
@@ -40,10 +44,10 @@ class BundleService(
     fun searchBundles(
         searchCondition: BundleSearchCondition,
         pageCondition: PageCondition
-    ): PageResponse<BundlesGetResponse> {
+    ): PageResponse<BundleResponse> {
         val pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
         val bundles = bundleRepository.findAll(searchCondition, pageable)
-            .map { BundlesGetResponse.from(it) }
+            .map { BundleResponse.from(it) }
         return PageResponse.from(
             PageableExecutionUtils.getPage(
                 bundles, pageable, LongSupplier { bundleRepository.count(searchCondition) }
@@ -52,30 +56,32 @@ class BundleService(
     }
 
     @Transactional(readOnly = true)
-    fun getMyBundles(getCondition: BundleGetCondition): List<BundlesGetResponse> {
+    fun getMyBundles(getCondition: BundleGetCondition): List<BundleResponse> {
         val bundles = bundleRepository.findAllByMemberId(1L, getCondition) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-        return bundles.map { BundlesGetResponse.from(it) }
+        return bundles.map { BundleResponse.from(it) }
     }
 
     @Transactional(readOnly = true)
-    fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleGetResponse {
+    fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleDetailResponse {
         val bundle =
             bundleRepository.findDetailById(id, showOnlyMyQuestion, memberId) //TODO: 임시 memberId, 인증 기능 추가 후 수정
                 ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
-        return BundleGetResponse.from(bundle)
+        return BundleDetailResponse.from(bundle)
     }
 
-    fun updateBundle(id: Long, request: BundleUpdateRequest) {
+    fun updateBundle(id: Long, request: BundleUpdateRequest): BundleResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
 
         request.name?.let { bundle.updateName(request.name) }
         request.shareType?.let { bundle.updateShareType(Bundle.ShareType.from(request.shareType)) }
-        request.tagIds?.let {
+        request.tagIds?.let { it ->
             val tags = getExistTags(it)
             bundleTagRepository.deleteAllByBundleId(id)
             bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
         }
+
+        return BundleResponse.from(bundle)
     }
 
     fun deleteBundle(id: Long) {
@@ -95,20 +101,16 @@ class BundleService(
         val bundle = getExistBundle(id)
         val questions = getExistQuestions(request.questionIds)
         val copiedQuestions = questions
-            .filter { it.shareStatus == Question.ShareStatus.AVAILABLE }
+            .filter { it.answerShareType == Question.AnswerShareType.PUBLIC }
             .map(Question::copy)
         bundle.addQuestions(copiedQuestions)
-        //TODO: update questionOrderList
     }
 
     fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {
         val bundle = getExistBundle(id)
         val questions = getExistQuestions(request.questionIds)
         bundle.removeQuestions(questions)
-        //TODO: update questionOrderList
     }
-
-//    fun updateQuestionOrderList(id: Long, request: BundleQuestionOrderListUpdateRequest) {}
 
     private fun getExistBundle(id: Long): Bundle {
         return bundleRepository.findById(id)

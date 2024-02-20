@@ -81,11 +81,7 @@ class Bundle(
         increaseScrapeCount() //TODO: 동시성 고려
         val bundle = Bundle(this.name, this.shareType)
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
-        bundle.addQuestions(
-            this.questions
-                .filter { it.shareStatus === Question.ShareStatus.AVAILABLE }
-                .map(Question::copy)
-        )
+        bundle.addQuestions(this.questions.map(Question::copy))
         return bundle
     }
 

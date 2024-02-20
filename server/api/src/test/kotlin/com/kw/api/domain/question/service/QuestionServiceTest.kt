@@ -5,7 +5,6 @@ import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
-import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @SpringBootTest
-class QuestionServiceTest @Autowired constructor(val questionService: QuestionService,
-                                                 val questionRepository: QuestionRepository,
-                                                 val tagRepository: TagRepository) {
+class QuestionServiceTest @Autowired constructor(
+    val questionService: QuestionService,
+    val questionRepository: QuestionRepository,
+    val tagRepository: TagRepository
+) {
     @Test
     fun 질문_생성_성공() {
         // given
@@ -25,7 +26,7 @@ class QuestionServiceTest @Autowired constructor(val questionService: QuestionSe
 
         val questionCreateRequest = QuestionCreateRequest(
             content = "test",
-            shareStatus = Question.ShareStatus.AVAILABLE,
+            shareStatus = Question.ShareStatus.PUBLIC,
             originId = null,
             tagIds = listOf(tag1.id, tag2.id)
         )
@@ -34,7 +35,7 @@ class QuestionServiceTest @Autowired constructor(val questionService: QuestionSe
         val questionResponse = questionService.createQuestion(questionCreateRequest = questionCreateRequest)
 
         // then
-        val question = questionRepository.findById(questionResponse.id!!).orElseThrow {RuntimeException()}
+        val question = questionRepository.findById(questionResponse.id!!).orElseThrow { RuntimeException() }
         Assertions.assertEquals(question.id, questionResponse.id)
         Assertions.assertEquals(question.content, questionResponse.content)
         val tagIds = question.questionTags!!.map { questionTag ->

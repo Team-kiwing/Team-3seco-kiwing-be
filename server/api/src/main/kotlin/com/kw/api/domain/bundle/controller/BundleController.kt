@@ -3,8 +3,12 @@ package com.kw.api.domain.bundle.controller
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.common.dto.response.PageResponse
-import com.kw.api.domain.bundle.dto.request.*
-import com.kw.api.domain.bundle.dto.response.BundleGetResponse
+import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
+import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
+import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
@@ -20,7 +24,7 @@ class BundleController(
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles")
-    fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleGetResponse> {
+    fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleDetailResponse> {
         return ApiResponse.created(bundleService.createBundle(request))
     }
 
@@ -29,14 +33,14 @@ class BundleController(
     fun searchBundles(
         @ModelAttribute searchCondition: BundleSearchCondition,
         @ModelAttribute pageCondition: PageCondition
-    ): ApiResponse<PageResponse<BundlesGetResponse>> {
+    ): ApiResponse<PageResponse<BundleResponse>> {
         return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
     }
 
     @GetMapping("/bundles/my")
     fun getMyBundles(
         @ModelAttribute getCondition: BundleGetCondition
-    ): ApiResponse<List<BundlesGetResponse>> {
+    ): ApiResponse<List<BundleResponse>> {
         return ApiResponse.ok(bundleService.getMyBundles(getCondition))
     }
 
@@ -44,23 +48,26 @@ class BundleController(
     fun getBundle(
         @PathVariable id: Long,
         @RequestParam("showOnlyMyQuestions", required = false, defaultValue = "false") showOnlyMyQuestions: Boolean,
-    ): ApiResponse<BundleGetResponse> {
+    ): ApiResponse<BundleDetailResponse> {
         return ApiResponse.ok(bundleService.getBundle(id, showOnlyMyQuestions))
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/bundles/{id}")
     fun updateBundle(
         @PathVariable id: Long,
         @RequestBody request: BundleUpdateRequest
-    ) {
-        return bundleService.updateBundle(id, request)
+    ): ApiResponse<BundleResponse> {
+        return ApiResponse.ok(bundleService.updateBundle(id, request))
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/bundles/{id}")
     fun deleteBundle(@PathVariable id: Long) {
         return bundleService.deleteBundle(id)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles/{id}/scrape")
     fun scrapeBundle(@PathVariable id: Long) {
         return bundleService.scrapeBundle(id)
@@ -75,6 +82,7 @@ class BundleController(
         bundleService.addQuestion(id, request)
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/bundles/{id}/questions")
     fun removeQuestion(
         @PathVariable id: Long,

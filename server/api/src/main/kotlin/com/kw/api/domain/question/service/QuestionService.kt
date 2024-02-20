@@ -1,73 +1,70 @@
 package com.kw.api.domain.question.service
 
 import com.kw.api.common.dto.PageResponse
-import com.kw.api.domain.question.dto.request.QuestionAnswerRequest
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
+import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.QuestionTag
-import com.kw.data.domain.question.repository.QuestionRepository
-import com.kw.data.domain.tag.repository.TagRepository
-import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionCustomRepository
+import com.kw.data.domain.question.repository.QuestionReportRepository
+import com.kw.data.domain.question.repository.QuestionRepository
+import com.kw.data.domain.question.repository.QuestionTagRepository
+import com.kw.data.domain.tag.Tag
+import com.kw.data.domain.tag.repository.TagRepository
 import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class QuestionService(val questionRepository : QuestionRepository,
-        val questionReportRepository : QuestionReportRepository,
-    val questionCustomRepository: QuestionCustomRepository,
-    val tagRepository: TagRepository) {
-    fun createQuestion(questionCreateRequest: QuestionCreateRequest) : QuestionResponse {
-        val question = questionRepository.save(questionCreateRequest.toEntity())
-        val questionTags = getQuestionTags(questionCreateRequest.tagIds, question)
+class QuestionService(
+    private val questionRepository: QuestionRepository,
+    private val questionReportRepository: QuestionReportRepository,
+    private val questionCustomRepository: QuestionCustomRepository,
+    private val tagRepository: TagRepository,
+    private val bundleRepository: BundleRepository,
+    private val questionTagRepository: QuestionTagRepository
 
-        question.updateQuestionQuestionTags(questionTags)
-        val tagIds = getQuestionTagIds(question)
-        return QuestionResponse.from(question, tagIds)
+) {
+    fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
+        val bundle = bundleRepository.findById(request.bundleId)
+            .orElseThrow { IllegalArgumentException("bundle이 존재하지 않습니다.") }
+
+        val question = request.toEntity(bundle)
+        val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
+        question.updateQuestionTags(tags.map { QuestionTag(question, it) })
+
+        return QuestionResponse.from(question)
     }
 
-    fun createAnswer(id: Long, answerRequest: QuestionAnswerRequest): QuestionResponse {
-        val question = getQuestion(id)
-        question.updateQuestionAnswer(answerRequest.answer)
-        val tagIds = getQuestionTagIds(question)
-        return QuestionResponse.from(question, tagIds)
+    fun updateQuestion(id: Long, request: QuestionUpdateRequest): QuestionResponse {
+        val question = getExistQuestion(id)
+
+        request.content?.let { question.updateContent(it) }
+        request.answer?.let { question.updateAnswer(it) }
+        request.answerShareStatus?.let { question.updateAnswerShareStatus(Question.AnswerShareType.from(it)) }
+        request.tagIds?.let { it ->
+            val tags = getExistTags(it)
+            questionTagRepository.deleteByQuestionId(id)
+            question.updateQuestionTags(tags.map { QuestionTag(question, it) })
+        }
+
+        return QuestionResponse.from(question)
     }
 
-    fun updateQuestionContent(id: Long, request: QuestionUpdateRequest): QuestionResponse {
-        val question = getQuestion(id)
-        question.updateQuestionContent(request.content)
-        val tagIds = getQuestionTagIds(question)
-        return QuestionResponse.from(question, tagIds)
-    }
-
-    fun updateQuestionStatus(id: Long, status: String): QuestionResponse {
-        val question = getQuestion(id)
-        question.updateQuestionStatus(Question.ShareStatus.valueOf(status));
-        val tagIds = getQuestionTagIds(question)
-        return QuestionResponse.from(question, tagIds);
-    }
-
-    fun createQuestionCopy(id: Long): QuestionResponse {
-        val question = getQuestion(id)
-        question.increaseShareCount()
-
-        val copyQuestion = Question(content = question.content,
-                originId = question.id,
-                shareStatus = Question.ShareStatus.NON_AVAILABLE)
-        val tagIds = getQuestionTagIds(question)
-        return QuestionResponse.from(questionRepository.save(copyQuestion), tagIds)
+    fun deleteQuestion(id: Long) {
+        val question = getExistQuestion(id)
+        questionRepository.delete(question)
     }
 
     fun reportQuestion(reason: String, id: Long): QuestionReportResponse {
-        val question = getQuestion(id)
+        val question = getExistQuestion(id)
 
         val report = QuestionReport(
             reason = reason,
@@ -78,49 +75,28 @@ class QuestionService(val questionRepository : QuestionRepository,
 
     @Transactional(readOnly = true)
     fun searchQuestion(questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
-        val questionSearchDto = QuestionSearchDto(keyword = questionSearchRequest.keyword,
+        val questionSearchDto = QuestionSearchDto(
+            keyword = questionSearchRequest.keyword,
             page = questionSearchRequest.page,
-            size = questionSearchRequest.size)
+            size = questionSearchRequest.size
+        )
         val questions = questionCustomRepository.searchQuestion(questionSearchDto)
-        val questionResponses = questions.map { question ->
-            val tagIds = getQuestionTagIds(question)
-            QuestionResponse.from(question, tagIds)
-        }
+        val questionResponses = questions.map { QuestionResponse.from(it) }
         val lastPageNum = questionCustomRepository.getPageNum(questionSearchDto)
 
         return QuestionListResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))
     }
 
-    fun updateQuestionQuestionTags(tagIds: List<Long>?, questionId: Long) {
-        val question = getQuestion(questionId)
-        val questionTags = getQuestionTags(tagIds, question)
-
-        question.updateQuestionQuestionTags(questionTags)
+    private fun getExistTags(tagIds: List<Long>): List<Tag> {
+        val tags = tagRepository.findAllById(tagIds)
+        if (tags.size != tagIds.size) {
+            throw IllegalArgumentException("존재하지 않는 태그가 포함되어 있습니다.")
+        }
+        return tags
     }
 
-    private fun getQuestionTagIds(question: Question) : List<Long?>? {
-        return question.questionTags?.map { questionTag ->
-            questionTag.tag.id
-        }
-    }
-
-    private fun getQuestionTags(
-        tagIds: List<Long?>?,
-        question: Question
-    ): List<QuestionTag>? {
-        val tags = tagIds?.map { tagId ->
-            tagRepository.findById(tagId!!)
-                .orElseThrow { throw RuntimeException("tag가 존재하지 않습니다.") }
-        }
-
-        val questionTags = tags?.map { tag ->
-            QuestionTag(question, tag)
-        }
-        return questionTags
-    }
-
-    private fun getQuestion(id: Long): Question {
+    private fun getExistQuestion(id: Long): Question {
         return questionRepository.findById(id)
-            .orElseThrow { throw RuntimeException("question이 존재하지 않습니다.") }
+            .orElseThrow { IllegalArgumentException("존재하지 않는 질문입니다.") }
     }
 }
