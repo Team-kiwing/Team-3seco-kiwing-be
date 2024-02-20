@@ -34,7 +34,7 @@ class QuestionService(
 ) {
     fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
-            .orElseThrow { IllegalArgumentException("bundle이 존재하지 않습니다.") }
+            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미 입니다.") }
 
         val question = request.toEntity(bundle)
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()

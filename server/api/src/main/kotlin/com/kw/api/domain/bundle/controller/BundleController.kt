@@ -12,6 +12,7 @@ import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -24,22 +25,22 @@ class BundleController(
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles")
-    fun createBundle(@RequestBody request: BundleCreateRequest): ApiResponse<BundleDetailResponse> {
+    fun createBundle(@RequestBody @Valid request: BundleCreateRequest): ApiResponse<BundleDetailResponse> {
         return ApiResponse.created(bundleService.createBundle(request))
     }
 
     //TODO: ES
     @GetMapping("/bundles/search")
     fun searchBundles(
-        @ModelAttribute searchCondition: BundleSearchCondition,
-        @ModelAttribute pageCondition: PageCondition
+        @ModelAttribute @Valid searchCondition: BundleSearchCondition,
+        @ModelAttribute @Valid pageCondition: PageCondition
     ): ApiResponse<PageResponse<BundleResponse>> {
         return ApiResponse.ok(bundleService.searchBundles(searchCondition, pageCondition))
     }
 
     @GetMapping("/bundles/my")
     fun getMyBundles(
-        @ModelAttribute getCondition: BundleGetCondition
+        @ModelAttribute @Valid getCondition: BundleGetCondition
     ): ApiResponse<List<BundleResponse>> {
         return ApiResponse.ok(bundleService.getMyBundles(getCondition))
     }
@@ -56,7 +57,7 @@ class BundleController(
     @PatchMapping("/bundles/{id}")
     fun updateBundle(
         @PathVariable id: Long,
-        @RequestBody request: BundleUpdateRequest
+        @RequestBody @Valid request: BundleUpdateRequest
     ): ApiResponse<BundleResponse> {
         return ApiResponse.ok(bundleService.updateBundle(id, request))
     }
@@ -77,7 +78,7 @@ class BundleController(
     @PostMapping("/bundles/{id}/questions")
     fun addQuestion(
         @PathVariable id: Long,
-        @RequestBody request: BundleQuestionAddRequest
+        @RequestBody @Valid request: BundleQuestionAddRequest
     ) {
         bundleService.addQuestion(id, request)
     }
@@ -86,7 +87,7 @@ class BundleController(
     @DeleteMapping("/bundles/{id}/questions")
     fun removeQuestion(
         @PathVariable id: Long,
-        @RequestBody request: BundleQuestionRemoveRequest
+        @RequestBody @Valid request: BundleQuestionRemoveRequest
     ) {
         return bundleService.removeQuestion(id, request)
     }

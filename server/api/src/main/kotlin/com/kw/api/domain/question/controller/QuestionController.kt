@@ -8,6 +8,7 @@ import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.api.domain.question.service.QuestionService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -25,7 +26,7 @@ class QuestionController(val questionService: QuestionService) {
     @PatchMapping("/questions/{id}")
     fun updateQuestion(
         @PathVariable id: Long,
-        @RequestBody request: QuestionUpdateRequest
+        @RequestBody @Valid request: QuestionUpdateRequest
     ): ApiResponse<QuestionResponse> {
         val response = questionService.updateQuestion(id, request)
         return ApiResponse.ok(response)
