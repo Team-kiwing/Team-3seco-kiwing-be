@@ -5,17 +5,13 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-class Member(username: String, nickname: String, email: String) : Base() {
+class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     val id: Long? = null
 
-    @Column(name = "username", nullable = false)
-    val username: String = username
-
     @Column(name = "nickname", nullable = false)
-    var nickname: String = nickname
-        protected set
+    var nickname: String? = null
 
     @Column(name = "email", nullable = false, updatable = false)
     val email: String = email
@@ -31,6 +27,13 @@ class Member(username: String, nickname: String, email: String) : Base() {
     @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null
         protected set
+
+    var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
+
+    enum class MemberRoleType {
+        ROLE_USER,
+        ROLE_ADMIN
+    }
 
     enum class Provider {
         GOOGLE,
