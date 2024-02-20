@@ -76,22 +76,26 @@ class Question(
     }
 
     fun updateQuestionTags(questionTags: List<QuestionTag>) {
-        this.questionTags = questionTags.toMutableList()
+        if (questionTags.size >= 3) {
+            throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
+        }
+        this.questionTags.clear()
+        this.questionTags.addAll(questionTags)
     }
 
     fun increaseShareCount() {
         this.shareCount++;
     }
 
-    fun copy(): Question {
+    fun copy(bundle: Bundle): Question {
         increaseShareCount() //TODO: 동시성 고려
         val question = Question(
             content = this.content,
+            answer = if (this.answerShareType === AnswerShareType.PUBLIC) this.answer else null,
             answerShareType = AnswerShareType.PUBLIC,
             originId = this.originId ?: this.id,
-            bundle = this.bundle
+            bundle = bundle
         )
-        question.updateAnswer(this.answer)
         question.updateQuestionTags(this.questionTags.map { QuestionTag(question, it.tag) })
         return question
     }

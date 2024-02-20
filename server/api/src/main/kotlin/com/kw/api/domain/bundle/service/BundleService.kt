@@ -13,7 +13,6 @@ import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
-import com.kw.data.domain.bundle.repository.BundleTagRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
@@ -30,7 +29,6 @@ class BundleService(
     private val bundleRepository: BundleRepository,
     private val tagRepository: TagRepository,
     private val questionRepository: QuestionRepository,
-    private val bundleTagRepository: BundleTagRepository
 ) {
 
     fun createBundle(request: BundleCreateRequest): BundleDetailResponse {
@@ -77,7 +75,6 @@ class BundleService(
         request.shareType?.let { bundle.updateShareType(Bundle.ShareType.from(request.shareType)) }
         request.tagIds?.let { it ->
             val tags = getExistTags(it)
-            bundleTagRepository.deleteAllByBundleId(id)
             bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
         }
 
@@ -90,11 +87,15 @@ class BundleService(
     }
 
     fun scrapeBundle(id: Long) {
-        val bundle = getExistBundle(id)
+        val bundle = bundleRepository.findWithTagsById(id)
+            ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
             throw IllegalArgumentException("비공개 꾸러미입니다.")
         }
-        bundleRepository.save(bundle.copy())
+
+        val questions = questionRepository.findAllWithTagsByBundleId(id)
+
+        bundleRepository.save(bundle.copy(questions))
     }
 
     fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
@@ -102,7 +103,7 @@ class BundleService(
         val questions = getExistQuestions(request.questionIds)
         val copiedQuestions = questions
             .filter { it.answerShareType == Question.AnswerShareType.PUBLIC }
-            .map(Question::copy)
+            .map { it.copy(bundle) }
         bundle.addQuestions(copiedQuestions)
     }
 

@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface QuestionTagRepository : JpaRepository<QuestionTag, Long> {
 
-    fun deleteByQuestionId(questionId: Long)
+    fun deleteAllByQuestionId(questionId: Long)
 
 }

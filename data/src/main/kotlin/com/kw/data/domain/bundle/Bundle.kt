@@ -32,7 +32,7 @@ class Bundle(
     @JoinColumn(name = "member_id")
     var member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
-    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -62,7 +62,11 @@ class Bundle(
     }
 
     fun updateBundleTags(bundleTags: List<BundleTag>) {
-        this.bundleTags = bundleTags.toMutableList()
+        if (bundleTags.size >= 3) {
+            throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
+        }
+        this.bundleTags.clear()
+        this.bundleTags.addAll(bundleTags)
     }
 
     fun addQuestions(questions: List<Question>) {
@@ -77,11 +81,11 @@ class Bundle(
         this.scrapeCount++
     }
 
-    fun copy(): Bundle {
+    fun copy(questions: List<Question>): Bundle {
         increaseScrapeCount() //TODO: 동시성 고려
         val bundle = Bundle(this.name, this.shareType)
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
-        bundle.addQuestions(this.questions.map(Question::copy))
+        bundle.addQuestions(questions.map { it.copy(bundle) })
         return bundle
     }
 

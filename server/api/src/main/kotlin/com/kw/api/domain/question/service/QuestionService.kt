@@ -14,7 +14,6 @@ import com.kw.data.domain.question.QuestionTag
 import com.kw.data.domain.question.repository.QuestionCustomRepository
 import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
-import com.kw.data.domain.question.repository.QuestionTagRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
 import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
@@ -29,8 +28,6 @@ class QuestionService(
     private val questionCustomRepository: QuestionCustomRepository,
     private val tagRepository: TagRepository,
     private val bundleRepository: BundleRepository,
-    private val questionTagRepository: QuestionTagRepository
-
 ) {
     fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
@@ -51,7 +48,6 @@ class QuestionService(
         request.answerShareStatus?.let { question.updateAnswerShareStatus(Question.AnswerShareType.from(it)) }
         request.tagIds?.let { it ->
             val tags = getExistTags(it)
-            questionTagRepository.deleteByQuestionId(id)
             question.updateQuestionTags(tags.map { QuestionTag(question, it) })
         }
 
