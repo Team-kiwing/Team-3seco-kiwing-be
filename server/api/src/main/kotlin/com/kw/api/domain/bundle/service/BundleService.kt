@@ -35,9 +35,9 @@ class BundleService(
 
     fun createBundle(request: BundleCreateRequest): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
-        val bundle = bundleRepository.save(request.toEntity())
+        val bundle = request.toEntity()
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
-        return getBundle(bundle.id!!)
+        return getBundle(bundleRepository.save(bundle).id!!)
     }
 
     @Transactional(readOnly = true)

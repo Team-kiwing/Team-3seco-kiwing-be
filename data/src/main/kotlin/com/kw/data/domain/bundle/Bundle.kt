@@ -30,12 +30,12 @@ class Bundle(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    val member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
+    var member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL])
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var questions: MutableList<Question> = mutableListOf()
 
     enum class ShareType {

@@ -40,7 +40,7 @@ class QuestionService(
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         question.updateQuestionTags(tags.map { QuestionTag(question, it) })
 
-        return QuestionResponse.from(question)
+        return QuestionResponse.from(questionRepository.save(question))
     }
 
     fun updateQuestion(id: Long, request: QuestionUpdateRequest): QuestionResponse {
