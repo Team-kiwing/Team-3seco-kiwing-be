@@ -2,6 +2,8 @@ package com.kw.api.domain.bundle.service
 
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
+import com.kw.api.common.exception.CustomErrorCode
+import com.kw.api.common.exception.CustomException
 import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
 import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
 import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
@@ -63,13 +65,13 @@ class BundleService(
     fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleDetailResponse {
         val bundle =
             bundleRepository.findDetailById(id, showOnlyMyQuestion, memberId) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-                ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
+                ?: throw CustomException(CustomErrorCode.NOT_FOUND_BUNDLE)
         return BundleDetailResponse.from(bundle)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest): BundleResponse {
         val bundle = bundleRepository.findWithTagsById(id)
-            ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
+            ?: throw CustomException(CustomErrorCode.NOT_FOUND_BUNDLE)
 
         request.name?.let { bundle.updateName(request.name) }
         request.shareType?.let { bundle.updateShareType(Bundle.ShareType.from(request.shareType)) }
@@ -88,9 +90,9 @@ class BundleService(
 
     fun scrapeBundle(id: Long) {
         val bundle = bundleRepository.findWithTagsById(id)
-            ?: throw IllegalArgumentException("존재하지 않는 꾸러미입니다.")
+            ?: throw CustomException(CustomErrorCode.NOT_FOUND_BUNDLE)
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
-            throw IllegalArgumentException("비공개 꾸러미입니다.")
+            throw CustomException(CustomErrorCode.FORBIDDEN_BUNDLE)
         }
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
@@ -115,13 +117,13 @@ class BundleService(
 
     private fun getExistBundle(id: Long): Bundle {
         return bundleRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미입니다.") }
+            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_BUNDLE) }
     }
 
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
         val tags = tagRepository.findAllById(tagIds)
         if (tags.size != tagIds.size) {
-            throw IllegalArgumentException("존재하지 않는 태그가 포함되어 있습니다.")
+            throw CustomException(CustomErrorCode.INCLUDE_NOT_FOUND_TAG)
         }
         return tags
     }
@@ -129,7 +131,7 @@ class BundleService(
     private fun getExistQuestions(questionIds: List<Long>): List<Question> {
         val questions = questionRepository.findAllById(questionIds)
         if (questions.size != questionIds.size) {
-            throw IllegalArgumentException("존재하지 않는 질문이 포함되어 있습니다.")
+            throw CustomException(CustomErrorCode.INCLUDE_NOT_FOUND_QUESTION)
         }
         return questions
     }

@@ -1,6 +1,8 @@
 package com.kw.api.domain.question.service
 
 import com.kw.api.common.dto.PageResponse
+import com.kw.api.common.exception.CustomErrorCode
+import com.kw.api.common.exception.CustomException
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
@@ -31,7 +33,7 @@ class QuestionService(
 ) {
     fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 꾸러미 입니다.") }
+            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_BUNDLE) }
 
         val question = request.toEntity(bundle)
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
@@ -86,13 +88,13 @@ class QuestionService(
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
         val tags = tagRepository.findAllById(tagIds)
         if (tags.size != tagIds.size) {
-            throw IllegalArgumentException("존재하지 않는 태그가 포함되어 있습니다.")
+            throw CustomException(CustomErrorCode.INCLUDE_NOT_FOUND_TAG)
         }
         return tags
     }
 
     private fun getExistQuestion(id: Long): Question {
         return questionRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("존재하지 않는 질문입니다.") }
+            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_QUESTION) }
     }
 }
