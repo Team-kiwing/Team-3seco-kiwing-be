@@ -21,7 +21,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any>? {
         val errorCode = ApiErrorCode.BAD_REQUEST
-        val errorResponse = ErrorResponse(errorCode.code, errorCode.message)
+        val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
     }
 
@@ -38,6 +38,13 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
             errorResponse.addValidation(it.field, it.defaultMessage!!)
         }
 
+        return ResponseEntity.status(errorCode.status).body(errorResponse)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    protected fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
+        val errorCode = ApiErrorCode.BAD_REQUEST
+        val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
     }
 
