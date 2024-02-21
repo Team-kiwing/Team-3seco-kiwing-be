@@ -6,7 +6,7 @@ data class BundleSearchCondition(
     val searchTerm: String?
 ) {
     enum class SortingType {
-        RECOMMENDED,
+        //        RECOMMENDED,
         LATEST,
         POPULAR;
 

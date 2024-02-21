@@ -1,17 +1,28 @@
 package com.kw.api.domain.question.dto.request
 
+import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.question.Question
+import jakarta.validation.constraints.NotBlank
 
 data class QuestionCreateRequest(
+    @field:NotBlank(message = "내용은 필수입니다.")
     val content: String,
-    val shareStatus: Question.ShareStatus,
-    val originId: Long?,
-    val tagIds: List<Long?>
+
+    val answer: String?,
+
+    @field:NotBlank(message = "답변 공개 범위 설정은 필수입니다.")
+    val answerShareStatus: String,
+
+    val tagIds: List<Long>?,
+
+    val bundleId: Long
 ) {
-    fun toEntity() : Question {
-        return Question(content = content,
-                shareStatus = shareStatus,
-                originId = originId
-                )
+    fun toEntity(bundle: Bundle): Question {
+        return Question(
+            content = content,
+            answer = answer,
+            answerShareType = Question.AnswerShareType.from(answerShareStatus),
+            bundle = bundle
+        )
     }
 }

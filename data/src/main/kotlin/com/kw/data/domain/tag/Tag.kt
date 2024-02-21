@@ -11,4 +11,5 @@ class Tag(content: String) {
 
     @Column(name = "name", nullable = false, updatable = true)
     var name: String = content
+        protected set
 }

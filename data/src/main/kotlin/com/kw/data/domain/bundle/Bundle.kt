@@ -3,7 +3,6 @@ package com.kw.data.domain.bundle
 import com.kw.data.domain.Base
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
-import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
 @Entity
@@ -25,18 +24,18 @@ class Bundle(
     var shareType: ShareType = shareType
         protected set
 
-    @Column(name = "share_count", nullable = false)
-    var shareCount: Long? = 0
+    @Column(name = "scrape_count", nullable = false)
+    var scrapeCount: Long = 0
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    val member: Member? = null //TODO: Member? -> Member 타입 수정
+    @JoinColumn(name = "member_id")
+    var member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
 
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var questions: MutableList<Question> = mutableListOf()
 
     enum class ShareType {
@@ -54,6 +53,22 @@ class Bundle(
         }
     }
 
+    fun updateName(name: String) {
+        this.name = name
+    }
+
+    fun updateShareType(shareType: ShareType) {
+        this.shareType = shareType
+    }
+
+    fun updateBundleTags(bundleTags: List<BundleTag>) {
+        if (bundleTags.size >= 3) {
+            throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
+        }
+        this.bundleTags.clear()
+        this.bundleTags.addAll(bundleTags)
+    }
+
     fun addQuestions(questions: List<Question>) {
         this.questions.addAll(questions)
     }
@@ -62,13 +77,16 @@ class Bundle(
         this.questions.removeAll(questions)
     }
 
-    fun updateNameAndShareType(name: String, shareType: ShareType) {
-        this.name = name
-        this.shareType = shareType
+    fun increaseScrapeCount() {
+        this.scrapeCount++
     }
 
-    fun updateBundleTags(tags: List<Tag>) {
-        this.bundleTags = tags.map { BundleTag(this, it) }.toMutableList()
+    fun copy(questions: List<Question>): Bundle {
+        increaseScrapeCount() //TODO: 동시성 고려
+        val bundle = Bundle(this.name, this.shareType)
+        bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
+        bundle.addQuestions(questions.map { it.copy(bundle) })
+        return bundle
     }
 
 }

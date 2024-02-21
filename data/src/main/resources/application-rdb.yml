@@ -9,10 +9,13 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 30
+        format_sql: true
   sql:
     init:
       mode: always
