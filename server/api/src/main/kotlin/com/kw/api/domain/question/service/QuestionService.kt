@@ -1,8 +1,8 @@
 package com.kw.api.domain.question.service
 
 import com.kw.api.common.dto.PageResponse
-import com.kw.api.common.exception.CustomErrorCode
-import com.kw.api.common.exception.CustomException
+import com.kw.api.common.exception.ApiErrorCode
+import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
@@ -33,7 +33,7 @@ class QuestionService(
 ) {
     fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_BUNDLE) }
+            .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_BUNDLE) }
 
         val question = request.toEntity(bundle)
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
@@ -88,13 +88,13 @@ class QuestionService(
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
         val tags = tagRepository.findAllById(tagIds)
         if (tags.size != tagIds.size) {
-            throw CustomException(CustomErrorCode.INCLUDE_NOT_FOUND_TAG)
+            throw ApiException(ApiErrorCode.INCLUDE_NOT_FOUND_TAG)
         }
         return tags
     }
 
     private fun getExistQuestion(id: Long): Question {
         return questionRepository.findById(id)
-            .orElseThrow { CustomException(CustomErrorCode.NOT_FOUND_QUESTION) }
+            .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_QUESTION) }
     }
 }

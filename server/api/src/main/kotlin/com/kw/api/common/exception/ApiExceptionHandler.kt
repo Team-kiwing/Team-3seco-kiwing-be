@@ -12,7 +12,7 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 @RestControllerAdvice
-class CustomExceptionHandler : ResponseEntityExceptionHandler() {
+class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
@@ -20,7 +20,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        val errorCode = CustomErrorCode.BAD_REQUEST
+        val errorCode = ApiErrorCode.BAD_REQUEST
         val errorResponse = ErrorResponse(errorCode.code, errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
     }
@@ -31,7 +31,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        val errorCode = CustomErrorCode.BAD_REQUEST
+        val errorCode = ApiErrorCode.BAD_REQUEST
         val errorResponse = ErrorResponse(errorCode.code, errorCode.message)
 
         ex.bindingResult.fieldErrors.forEach {
@@ -41,8 +41,8 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(errorCode.status).body(errorResponse)
     }
 
-    @ExceptionHandler(CustomException::class)
-    protected fun handleCustomException(ex: CustomException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(ApiException::class)
+    protected fun handleApiException(ex: ApiException): ResponseEntity<ErrorResponse> {
         return ResponseEntity.status(ex.getStatus()).body(ex.getErrorResponse())
     }
 

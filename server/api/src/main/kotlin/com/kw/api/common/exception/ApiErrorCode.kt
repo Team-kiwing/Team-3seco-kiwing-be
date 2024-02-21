@@ -2,7 +2,7 @@ package com.kw.api.common.exception
 
 import org.springframework.http.HttpStatus
 
-enum class CustomErrorCode(
+enum class ApiErrorCode(
     val status: HttpStatus,
     val code: String,
     val message: String
