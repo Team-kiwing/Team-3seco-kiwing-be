@@ -18,7 +18,7 @@ class QuestionController(val questionService: QuestionService) {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/questions")
-    fun createQuestion(@RequestBody request: QuestionCreateRequest): ApiResponse<QuestionResponse> {
+    fun createQuestion(@RequestBody @Valid request: QuestionCreateRequest): ApiResponse<QuestionResponse> {
         val response = questionService.createQuestion(request)
         return ApiResponse.created(response);
     }
