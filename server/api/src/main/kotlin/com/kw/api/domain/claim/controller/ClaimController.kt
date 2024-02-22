@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1")
 class ClaimController(val claimService: ClaimService) {
+
     @PostMapping("/claims")
     fun createClaim(@RequestBody createClaimRequest: CreateClaimRequest): ApiResponse<ClaimResponse> {
         val response = claimService.createClaim(createClaimRequest)
