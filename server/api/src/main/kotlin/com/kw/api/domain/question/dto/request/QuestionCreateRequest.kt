@@ -10,8 +10,7 @@ data class QuestionCreateRequest(
 
     val answer: String?,
 
-    @field:NotBlank(message = "답변 공개 범위 설정은 필수입니다.")
-    val answerShareStatus: String,
+    val answerShareType: Question.AnswerShareType,
 
     val tagIds: List<Long>?,
 
@@ -21,7 +20,7 @@ data class QuestionCreateRequest(
         return Question(
             content = content,
             answer = answer,
-            answerShareType = Question.AnswerShareType.from(answerShareStatus),
+            answerShareType = answerShareType,
             bundle = bundle
         )
     }

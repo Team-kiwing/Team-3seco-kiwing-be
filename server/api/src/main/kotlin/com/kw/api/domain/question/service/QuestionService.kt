@@ -45,7 +45,7 @@ class QuestionService(
 
         request.content?.let { question.updateContent(it) }
         request.answer?.let { question.updateAnswer(it) }
-        request.answerShareStatus?.let { question.updateAnswerShareStatus(Question.AnswerShareType.from(it)) }
+        request.answerShareType?.let { question.updateAnswerShareStatus(it) }
         request.tagIds?.let { it ->
             val tags = getExistTags(it)
             question.updateQuestionTags(tags.map { QuestionTag(question, it) })
