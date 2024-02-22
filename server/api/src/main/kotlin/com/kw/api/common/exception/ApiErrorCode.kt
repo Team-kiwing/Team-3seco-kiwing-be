@@ -19,6 +19,12 @@ enum class ApiErrorCode(
     // tag
     INCLUDE_NOT_FOUND_TAG(HttpStatus.NOT_FOUND, "INCLUDE_NOT_FOUND_TAG", "존재하지 않는 태그가 포함되어 있습니다."),
 
+    // member
+    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "존재하지 않는 회원입니다."),
+
+    // auth
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "REFRESH_TOKEN_EXPIRED", "리프레시 토큰이 만료되었습니다. 다시 로그인 해주세요."),
+
     // common
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "잘못된 요청입니다."),
 

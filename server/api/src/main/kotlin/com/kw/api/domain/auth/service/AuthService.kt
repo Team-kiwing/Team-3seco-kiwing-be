@@ -1,5 +1,7 @@
 package com.kw.api.domain.auth.service
 
+import com.kw.api.common.exception.ApiErrorCode
+import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.auth.dto.request.RefreshTokenRequest
 import com.kw.api.domain.auth.dto.response.TokenResponse
 import com.kw.data.domain.member.Member
@@ -21,8 +23,8 @@ class AuthService(val redisRefreshTokenRepository: RedisRefreshTokenRepository,
     }
 
     fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest) : TokenResponse {
-        val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken) ?: throw RuntimeException("만료된 리프레시 토큰")
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw RuntimeException("존재하지 않는 회원")
+        val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken) ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED)
+        val member = memberRepository.findByIdOrNull(memberId) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
 
         val oauth2UserDetails = createOauth2UserDetails(member)
         val accessToken = jwtTokenProvider.generateAccessToken(oauth2UserDetails)

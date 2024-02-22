@@ -1,5 +1,7 @@
 package com.kw.api.domain.member.service
 
+import com.kw.api.common.exception.ApiErrorCode
+import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.data.domain.member.repository.MemberRepository
 import com.kw.infrasecurity.oauth.OAuth2UserDetails
@@ -10,7 +12,7 @@ class MemberService(val memberRepository: MemberRepository) {
 
     fun getUserInfo(userDetails: OAuth2UserDetails) : MemberInfoResponse{
         val email = userDetails.email
-        val member = memberRepository.findMemberByEmail(email) ?: throw RuntimeException("존재하지 않는 회원입니다")
+        val member = memberRepository.findMemberByEmail(email) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
         return MemberInfoResponse.from(member)
     }
 }
