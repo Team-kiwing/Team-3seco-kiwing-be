@@ -13,7 +13,6 @@ import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.QuestionTag
-import com.kw.data.domain.question.repository.QuestionCustomRepository
 import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional
 class QuestionService(
     private val questionRepository: QuestionRepository,
     private val questionReportRepository: QuestionReportRepository,
-    private val questionCustomRepository: QuestionCustomRepository,
     private val tagRepository: TagRepository,
     private val bundleRepository: BundleRepository,
 ) {
@@ -78,9 +76,9 @@ class QuestionService(
             page = questionSearchRequest.page,
             size = questionSearchRequest.size
         )
-        val questions = questionCustomRepository.searchQuestion(questionSearchDto)
+        val questions = questionRepository.searchQuestion(questionSearchDto)
         val questionResponses = questions.map { QuestionResponse.from(it) }
-        val lastPageNum = questionCustomRepository.getPageNum(questionSearchDto)
+        val lastPageNum = questionRepository.getPageNum(questionSearchDto)
 
         return QuestionListResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))
     }

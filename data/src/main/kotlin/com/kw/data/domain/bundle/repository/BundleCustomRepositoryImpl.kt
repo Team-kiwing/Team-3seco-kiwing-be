@@ -2,18 +2,12 @@ package com.kw.data.domain.bundle.repository
 
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.QBundle.Companion.bundle
-import com.kw.data.domain.bundle.QBundleTag.Companion.bundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
-import com.kw.data.domain.question.QQuestion
-import com.kw.data.domain.question.QQuestion.Companion.question
-import com.kw.data.domain.tag.QTag.Companion.tag
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 
-class BundleCustomRepositoryImpl(
-    private val queryFactory: JPAQueryFactory
-) : BundleCustomRepository {
+class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : BundleCustomRepository {
 
     override fun count(condition: BundleSearchCondition): Long {
         return queryFactory
@@ -59,26 +53,6 @@ class BundleCustomRepositoryImpl(
                 }
             )
             .fetch()
-    }
-
-    override fun findDetailById(id: Long, showOnlyMyQuestions: Boolean?, memberId: Long?): Bundle? {
-        val originQuestion = QQuestion("originQuestion")
-
-        val query = queryFactory
-            .selectFrom(bundle)
-            .leftJoin(bundle.bundleTags, bundleTag)
-            .leftJoin(bundleTag.tag, tag)
-            .leftJoin(bundle.questions, question)
-            .where(bundle.id.eq(id))
-
-        if (showOnlyMyQuestions == true && memberId != null) {
-            query
-                .leftJoin(originQuestion).on(originQuestion.id.eq(question.originId))
-                .leftJoin(originQuestion.member)
-                .where(originQuestion.member.id.eq(memberId))
-        }
-
-        return query.fetchOne()
     }
 
 }
