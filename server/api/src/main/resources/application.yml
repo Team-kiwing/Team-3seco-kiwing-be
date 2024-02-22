@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: rdb, security
+    include: rdb, security, redis
     active: dev
 
 server:
