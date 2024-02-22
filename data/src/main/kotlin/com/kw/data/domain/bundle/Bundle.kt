@@ -28,6 +28,10 @@ class Bundle(
     var scrapeCount: Long = 0
         protected set
 
+    @Column(name = "question_order", nullable = false)
+    var questionOrder: String = ""
+        protected set
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     var member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
@@ -61,6 +65,10 @@ class Bundle(
         this.shareType = shareType
     }
 
+    fun updateQuestionOrder(questionOrder: String) {
+        this.questionOrder = questionOrder
+    }
+
     fun updateBundleTags(bundleTags: List<BundleTag>) {
         if (bundleTags.size >= 3) {
             throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
@@ -71,10 +79,14 @@ class Bundle(
 
     fun addQuestions(questions: List<Question>) {
         this.questions.addAll(questions)
+        updateQuestionOrder((this.questionOrder + " " + questions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun removeQuestions(questions: List<Question>) {
         this.questions.removeAll(questions)
+        val questionOrderList = this.questionOrder.split(" ").toMutableList()
+        questions.forEach { questionOrderList.remove(it.id.toString()) }
+        updateQuestionOrder(questionOrderList.joinToString(" "))
     }
 
     fun increaseScrapeCount() {

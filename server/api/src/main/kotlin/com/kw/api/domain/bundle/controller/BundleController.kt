@@ -3,10 +3,7 @@ package com.kw.api.domain.bundle.controller
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.common.dto.response.PageResponse
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
@@ -74,6 +71,14 @@ class BundleController(
         return bundleService.scrapeBundle(id)
     }
 
+    @PatchMapping("/bundles/{id}/question-order")
+    fun updateQuestionOrder(
+        @PathVariable id: Long,
+        @RequestBody @Valid request: BundleQuestionOrderUpdateRequest
+    ) {
+        return bundleService.updateQuestionOrder(id, request)
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles/{id}/questions")
     fun addQuestion(
@@ -91,14 +96,5 @@ class BundleController(
     ) {
         return bundleService.removeQuestion(id, request)
     }
-
-    //TODO
-//    @PatchMapping("/bundles/{id}/question-order-list")
-//    fun updateQuestionOrderList(
-//        @PathVariable id: Long,
-//        @RequestBody request: BundleQuestionOrderListUpdateRequest
-//    ) {
-//        return bundleService.updateQuestionOrderList(id, request)
-//    }
 
 }

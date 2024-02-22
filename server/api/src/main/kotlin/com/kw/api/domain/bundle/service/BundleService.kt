@@ -4,10 +4,7 @@ import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.data.domain.bundle.Bundle
@@ -62,11 +59,22 @@ class BundleService(
     }
 
     @Transactional(readOnly = true)
-    fun getBundle(id: Long, showOnlyMyQuestion: Boolean? = null, memberId: Long? = null): BundleDetailResponse {
-        val bundle =
-            bundleRepository.findDetailById(id, showOnlyMyQuestion, memberId) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-                ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
-        return BundleDetailResponse.from(bundle)
+    fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false): BundleDetailResponse {
+        val bundle = bundleRepository.findWithTagsById(id)
+            ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
+        val questions = questionRepository.findAllWithTagsByBundleId(
+            id,
+            showOnlyMyQuestions,
+            null
+        ) //TODO: 임시 memberId, 인증 기능 추가 후 수정
+
+        val questionOrder = if (bundle.questionOrder.isNotBlank()) {
+            bundle.questionOrder.split(" ").map { it.toLong() }
+        } else {
+            emptyList()
+        }
+        val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
+        return BundleDetailResponse.from(bundle, sortedQuestions)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest): BundleResponse {
@@ -100,13 +108,18 @@ class BundleService(
         bundleRepository.save(bundle.copy(questions))
     }
 
+    fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest) {
+        val bundle = getExistBundle(id)
+        bundle.updateQuestionOrder(request.questionOrder.joinToString(" "))
+    }
+
     fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
         val bundle = getExistBundle(id)
         val questions = getExistQuestions(request.questionIds)
-        val copiedQuestions = questions
+        val copiedAndSavedQuestions = questions
             .filter { it.answerShareType == Question.AnswerShareType.PUBLIC }
-            .map { it.copy(bundle) }
-        bundle.addQuestions(copiedQuestions)
+            .map { questionRepository.save(it.copy(bundle)) }
+        bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {

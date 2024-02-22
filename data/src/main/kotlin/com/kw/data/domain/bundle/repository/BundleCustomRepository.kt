@@ -13,6 +13,4 @@ interface BundleCustomRepository {
 
     fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle>
 
-    fun findDetailById(id: Long, showOnlyMyQuestions: Boolean?, memberId: Long?): Bundle?
-
 }
