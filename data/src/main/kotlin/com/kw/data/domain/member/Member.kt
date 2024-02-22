@@ -8,9 +8,10 @@ import java.time.LocalDateTime
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     val id: Long? = null
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     var nickname: String? = null
 
     @Column(name = "email", nullable = false, updatable = false)
