@@ -33,10 +33,11 @@ class AuthService(val redisRefreshTokenRepository: RedisRefreshTokenRepository,
     }
 
     private fun createOauth2UserDetails(member: Member): OAuth2UserDetails{
-        val authorities: List<SimpleGrantedAuthority> = member.memberRoles
+        val authorities: MutableList<SimpleGrantedAuthority> = member.memberRoles
             .stream()
             .map { memberRole -> SimpleGrantedAuthority(memberRole.toString()) }
             .toList()
+            .toMutableList()
 
         return OAuth2UserDetails(id = member.id!!,
             email = member.email,

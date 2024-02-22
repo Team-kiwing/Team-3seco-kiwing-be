@@ -1,17 +1,18 @@
 package com.kw.infrasecurity.oauth
 
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class OAuth2UserDetails(id : Long,
                         email : String,
-                        authorities: List<SimpleGrantedAuthority>) : UserDetails {
+                        authorities: MutableList<SimpleGrantedAuthority>) : UserDetails {
 
     val id : Long = id
     val email : String = email
-    val authorities: List<SimpleGrantedAuthority> = authorities
+    val authorities: MutableList<SimpleGrantedAuthority> = authorities
 
-    override fun getAuthorities(): List<SimpleGrantedAuthority> {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return authorities
     }
 
