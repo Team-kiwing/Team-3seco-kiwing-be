@@ -7,14 +7,7 @@ import org.springframework.data.repository.query.Param
 
 interface BundleRepository : JpaRepository<Bundle, Long>, BundleCustomRepository {
 
-    @Query(
-        "SELECT b " +
-                "FROM Bundle b " +
-                "JOIN FETCH b.bundleTags bt " +
-                "JOIN FETCH bt.tag " +
-                "JOIN FETCH b.questions q " +
-                "WHERE b.id = :id"
-    )
-    fun findDetailById(@Param("id") id: Long): Bundle?
+    @Query("SELECT b FROM Bundle b LEFT JOIN FETCH b.bundleTags bt LEFT JOIN FETCH bt.tag WHERE b.id = :id")
+    fun findWithTagsById(@Param("id") id: Long): Bundle?
 
 }
