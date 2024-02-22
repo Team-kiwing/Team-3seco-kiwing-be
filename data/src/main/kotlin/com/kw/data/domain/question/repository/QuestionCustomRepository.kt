@@ -6,4 +6,7 @@ import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 interface QuestionCustomRepository {
     fun searchQuestion(questionSearchDto: QuestionSearchDto): List<Question>
     fun getPageNum(questionSearchDto: QuestionSearchDto): Long
+
+    fun findAllWithTagsByBundleId(bundleId: Long, showOnlyMyQuestions: Boolean?, memberId: Long?): List<Question>
+
 }
