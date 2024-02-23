@@ -39,3 +39,5 @@ out/
 ### Kotlin ###
 .kotlin
 /infra/infra-security/src/main/resources/application-security.yml
+/data/src/main/resources/application-rdb.yml
+/infra/infra-redis/src/main/resources/application-redis.yml
