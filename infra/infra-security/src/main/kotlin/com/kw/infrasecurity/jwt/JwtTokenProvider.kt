@@ -18,16 +18,13 @@ import java.util.stream.Collectors
 import javax.crypto.SecretKey
 
 @Component
-class JwtTokenProvider {
-    @Value("\${jwt.secret-key}")
-    lateinit var secretKey : String
-
-    @Value("\${jwt.expiry-seconds}")
-    var expirySeconds : Int? = null
-
-    @Value("\${jwt.refresh-expiry-seconds}")
-    var refreshExpirySeconds : Int? = null
-
+class JwtTokenProvider(@Value("\${jwt.expiry-seconds}")
+                       val expirySeconds : Int,
+                       @Value("\${jwt.refresh-expiry-seconds}")
+                       val refreshExpirySeconds : Int,
+                       @Value("\${jwt.secret-key}")
+                       val secretKey : String
+    ) {
     fun generateAccessToken(userDetails : OAuth2UserDetails) : String {
         val expirationTime = Instant.now().plusSeconds(expirySeconds!!.toLong())
 

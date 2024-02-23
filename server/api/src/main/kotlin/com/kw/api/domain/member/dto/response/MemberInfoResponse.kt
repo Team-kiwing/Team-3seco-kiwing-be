@@ -8,7 +8,8 @@ data class MemberInfoResponse(val id: Long?,
                               val provider: Member.Provider) {
     companion object {
         fun from(member: Member) : MemberInfoResponse {
-            return MemberInfoResponse(id = member.id,
+            return MemberInfoResponse(
+                id = member.id,
                 nickname = member.nickname,
                 email = member.email,
                 provider = member.provider)

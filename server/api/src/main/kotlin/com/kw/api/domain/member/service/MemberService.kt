@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class MemberService(val memberRepository: MemberRepository) {
 
-    fun getUserInfo(userDetails: OAuth2UserDetails) : MemberInfoResponse{
+    fun getMemberInfo(userDetails: OAuth2UserDetails) : MemberInfoResponse{
         val email = userDetails.email
         val member = memberRepository.findMemberByEmail(email) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
         return MemberInfoResponse.from(member)
