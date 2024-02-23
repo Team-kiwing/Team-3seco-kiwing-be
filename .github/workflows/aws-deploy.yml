@@ -29,14 +29,12 @@ jobs:
         mkdir -p infra/infra-redis/src/main/resources
         mkdir -p infra/infra-security/src/main/resources
         mkdir -p data/src/main/resources
-        mkdir -p .aws
         
     - name: Create application-properties.yml
       run: |
         echo "${{ secrets.APPLICATION_REDIS }}" > infra/infra-redis/src/main/resources/application-redis.yml
         echo "${{ secrets.APPLICATION_SECURITY }}" > infra/infra-security/src/main/resources/application-security.yml
         echo "${{ secrets.APPLICATION_RDB }}" > data/src/main/resources/application-rdb.yml
-        echo "${{ secrets.KIWING_TASK_DEF_DEV }}" > .aws/kiwing-task-def-dev.json
     
     - name: Set up JDK 17
       uses: actions/setup-java@v3
