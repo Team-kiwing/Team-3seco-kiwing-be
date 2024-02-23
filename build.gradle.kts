@@ -53,4 +53,6 @@ subprojects {
             useJUnitPlatform()
         }
     }
+
+    tasks.register("prepareKotlinBuildScriptModel"){}
 }

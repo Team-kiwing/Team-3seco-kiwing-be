@@ -4,18 +4,17 @@ val jar: Jar by tasks
 val bootJar: BootJar by tasks
 
 // 실행가능한 jar로 생성하는 옵션, main이 없는 라이브러리에서는 false로 비활성화함
-bootJar.enabled = true
+bootJar.enabled = false
 // 외부에서 의존하기 위한 jar로 생성하는 옵션, main이 없는 라이브러리에서는 true로 비활성화함
-jar.enabled = false
+jar.enabled = true
 
 dependencies {
     implementation(project(":data"))
-    implementation(project(":infra:infra-security"))
     implementation(project(":infra:infra-redis"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // security
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -24,7 +23,6 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
-    // swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 }
-
