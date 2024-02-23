@@ -82,7 +82,7 @@ class BundleService(
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
 
         request.name?.let { bundle.updateName(request.name) }
-        request.shareType?.let { bundle.updateShareType(Bundle.ShareType.from(request.shareType)) }
+        request.shareType?.let { bundle.updateShareType(request.shareType) }
         request.tagIds?.let { it ->
             val tags = getExistTags(it)
             bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
