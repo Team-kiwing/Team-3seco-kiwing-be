@@ -63,6 +63,10 @@ class Question(
         }
     }
 
+    fun isHot(): Boolean {
+        return shareCount >= 30
+    }
+
     fun updateAnswer(answer: String?) {
         this.answer = answer
     }
