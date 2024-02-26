@@ -63,8 +63,10 @@ class JwtTokenProvider(@Value("\${jwt.expiry-seconds}")
                     }
                     .toList()
 
+        val id = claims["id"] as Int
+        val convertedId = id.toLong()
         val principal = OAuth2UserDetails(
-            claims["id"] as Long,
+            convertedId,
             claims.subject,
             authorities
         )
