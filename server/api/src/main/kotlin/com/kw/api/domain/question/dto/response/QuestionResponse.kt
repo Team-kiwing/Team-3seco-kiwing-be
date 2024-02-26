@@ -11,6 +11,7 @@ data class QuestionResponse(
     val answerShareType: Question.AnswerShareType,
     val originId: Long?,
     val tags: List<TagResponse>,
+    val isHot: Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -23,6 +24,7 @@ data class QuestionResponse(
                 answerShareType = question.answerShareType,
                 originId = question.originId,
                 tags = question.questionTags.map { it.tag }.map { TagResponse.from(it) },
+                isHot = question.isHot(),
                 createdAt = question.createdAt,
                 updatedAt = question.updatedAt
             )
