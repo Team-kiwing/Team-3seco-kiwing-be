@@ -57,6 +57,10 @@ class Bundle(
         }
     }
 
+    fun isHot(): Boolean {
+        return scrapeCount >= 30
+    }
+
     fun updateName(name: String) {
         this.name = name
     }
@@ -100,7 +104,6 @@ class Bundle(
         bundle.addQuestions(questions.map { it.copy(bundle) })
         return bundle
     }
-
 }
 
 

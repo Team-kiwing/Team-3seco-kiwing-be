@@ -7,6 +7,7 @@ data class BundleResponse(
     val id: Long,
     val name: String,
     val shareType: String,
+    val isHot: Boolean,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -16,6 +17,7 @@ data class BundleResponse(
                 id = bundle.id!!,
                 name = bundle.name,
                 shareType = bundle.shareType.name,
+                isHot = bundle.isHot(),
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )
