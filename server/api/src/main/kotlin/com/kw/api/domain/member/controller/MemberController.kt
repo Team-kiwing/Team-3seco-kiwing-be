@@ -18,7 +18,7 @@ class MemberController(private val memberService: MemberService) {
 
     @Operation(summary = "로그인된 사용자의 정보를 가져옵니다.")
     @GetMapping("/me")
-    fun getUserInfo(@AuthenticationPrincipal userDetails : OAuth2UserDetails) : ApiResponse<MemberInfoResponse> {
+    fun getUserInfo(@AuthenticationPrincipal userDetails : OAuth2UserDetails?) : ApiResponse<MemberInfoResponse> {
         val response = memberService.getMemberInfo(userDetails)
         return ApiResponse.ok(response)
     }
