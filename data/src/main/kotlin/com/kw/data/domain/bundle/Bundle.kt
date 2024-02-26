@@ -8,7 +8,8 @@ import jakarta.persistence.*
 @Entity
 class Bundle(
     name: String,
-    shareType: ShareType
+    shareType: ShareType,
+    originId: Long? = null
 ) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,15 +33,21 @@ class Bundle(
     var questionOrder: String = ""
         protected set
 
+    @Column(name = "origin_id", nullable = true, updatable = true)
+    val originId: Long? = originId
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     var member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
+        protected set
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bundleTags: MutableList<BundleTag> = mutableListOf()
+        protected set
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)
     var questions: MutableList<Question> = mutableListOf()
+        protected set
 
     enum class ShareType {
         PUBLIC,
@@ -99,7 +106,11 @@ class Bundle(
 
     fun copy(questions: List<Question>): Bundle {
         increaseScrapeCount() //TODO: 동시성 고려
-        val bundle = Bundle(this.name, ShareType.PRIVATE)
+        val bundle = Bundle(
+            name = this.name,
+            shareType = ShareType.PRIVATE,
+            originId = this.originId ?: this.id
+        )
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
         bundle.addQuestions(questions.map { it.copy(bundle) })
         return bundle

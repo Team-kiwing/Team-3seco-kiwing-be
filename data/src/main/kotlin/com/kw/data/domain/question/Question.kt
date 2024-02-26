@@ -35,11 +35,11 @@ class Question(
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
-    var originId: Long? = originId
-        protected set
+    val originId: Long? = originId
 
     @OneToMany(mappedBy = "question", cascade = [CascadeType.ALL], orphanRemoval = true)
     var questionTags: MutableList<QuestionTag> = mutableListOf()
+        protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", updatable = false)
@@ -48,6 +48,7 @@ class Question(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id", nullable = false, updatable = false)
     var bundle: Bundle = bundle
+        protected set
 
     enum class AnswerShareType {
         PUBLIC, PRIVATE;
