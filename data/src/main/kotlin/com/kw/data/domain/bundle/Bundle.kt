@@ -99,7 +99,7 @@ class Bundle(
 
     fun copy(questions: List<Question>): Bundle {
         increaseScrapeCount() //TODO: 동시성 고려
-        val bundle = Bundle(this.name, this.shareType)
+        val bundle = Bundle(this.name, ShareType.PRIVATE)
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
         bundle.addQuestions(questions.map { it.copy(bundle) })
         return bundle
