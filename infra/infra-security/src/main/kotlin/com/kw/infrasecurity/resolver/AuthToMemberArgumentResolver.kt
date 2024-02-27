@@ -18,7 +18,7 @@ import org.springframework.web.method.support.ModelAndViewContainer
 class AuthToMemberArgumentResolver(val memberRepository: MemberRepository): HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         val hasParameterAnnotation = parameter.hasParameterAnnotation(AuthToMember::class.java)
-        val hasLongParameterType = parameter.parameterType.isAssignableFrom(Long::class.java)
+        val hasLongParameterType = parameter.parameterType.isAssignableFrom(Member::class.java)
         return hasParameterAnnotation && hasLongParameterType
     }
 
