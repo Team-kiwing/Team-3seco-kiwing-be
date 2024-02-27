@@ -2,6 +2,7 @@ package com.kw.data.domain.bundle.repository
 
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.QBundle.Companion.bundle
+import com.kw.data.domain.bundle.QBundleTag.Companion.bundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -10,15 +11,22 @@ import org.springframework.data.domain.Pageable
 class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : BundleCustomRepository {
 
     override fun count(condition: BundleSearchCondition): Long {
-        return queryFactory
+        val query = queryFactory
             .select(bundle.count())
             .from(bundle)
             .where(condition.searchTerm?.let { bundle.name.contains(it) })
-            .fetchOne()!!
+
+        if (condition.tagIds != null) {
+            query
+                .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+                .where(bundleTag.tag.id.`in`(condition.tagIds))
+        }
+
+        return query.fetchOne()!!
     }
 
     override fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
-        return queryFactory
+        val query = queryFactory
             .selectFrom(bundle)
             .where(condition.searchTerm?.let { bundle.name.contains(it) })
             .orderBy(
@@ -34,7 +42,14 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             )
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
-            .fetch()
+
+        if (condition.tagIds != null) {
+            query
+                .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+                .where(bundleTag.tag.id.`in`(condition.tagIds))
+        }
+
+        return query.fetch()
     }
 
     override fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle> {
