@@ -28,9 +28,9 @@ class AuthToMemberArgumentResolver(val memberRepository: MemberRepository): Hand
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Any? {
-        val authentication = SecurityContextHolder.getContext().authentication ?: throw RuntimeException("forbidden")
+        val authentication = SecurityContextHolder.getContext().authentication ?: throw IllegalArgumentException("접근이 거부되었습니다.")
         val userDetails = authentication.principal as OAuth2UserDetails
-        val member = memberRepository.findByIdOrNull(userDetails.id) ?: throw RuntimeException("존재하지 않는 회원")
+        val member = memberRepository.findByIdOrNull(userDetails.id) ?: throw IllegalArgumentException("존재하지 않는 회원입니다.")
 
         isMemberWithdraw(member)
 
@@ -39,7 +39,7 @@ class AuthToMemberArgumentResolver(val memberRepository: MemberRepository): Hand
 
     private fun isMemberWithdraw(member: Member) {
         if (member.deletedAt != null) {
-            throw RuntimeException("이미 탈퇴한 회원")
+            throw IllegalArgumentException("탈퇴한 회원입니다.")
         }
     }
 }

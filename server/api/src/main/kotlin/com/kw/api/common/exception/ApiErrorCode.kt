@@ -22,6 +22,7 @@ enum class ApiErrorCode(
     // member
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "존재하지 않는 회원입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "NICKNAME_ALREADY_EXISTS", "이미 존재하는 닉네임입니다."),
+    MEMBER_WITHDRAWN(HttpStatus.BAD_REQUEST, "MEMBER_WITHDRAWN", "탈퇴한 회원입니다."),
 
     // auth
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "REFRESH_TOKEN_EXPIRED", "리프레시 토큰이 만료되었습니다. 다시 로그인 해주세요."),
