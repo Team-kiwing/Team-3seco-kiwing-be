@@ -17,6 +17,10 @@ class Member(email: String) : Base() {
     var nickname: String? = null
         protected set
 
+    @Column(name = "profile_image")
+    var profileImage: String? = null
+        protected set
+
     @Column(name = "email", nullable = false, updatable = false)
     val email: String = email
 
@@ -36,6 +40,10 @@ class Member(email: String) : Base() {
 
     fun updateMemberNickname(nickname: String) {
         this.nickname = nickname
+    }
+
+    fun updateMemberProfileImage(url: String) {
+        this.profileImage = url
     }
 
     fun withdrawMember() {

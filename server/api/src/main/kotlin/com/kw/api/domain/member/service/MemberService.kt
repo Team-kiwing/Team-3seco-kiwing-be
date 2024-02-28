@@ -5,11 +5,17 @@ import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
+import com.kw.infras3.service.S3Service
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
-class MemberService(val memberRepository: MemberRepository) {
+@Transactional
+class MemberService(private val memberRepository: MemberRepository,
+    private val s3Service: S3Service) {
 
+    @Transactional(readOnly = true)
     fun getMemberInfo(member: Member): MemberInfoResponse{
         return MemberInfoResponse.from(member)
     }
@@ -20,14 +26,15 @@ class MemberService(val memberRepository: MemberRepository) {
         return MemberInfoResponse.from(member)
     }
 
-    fun withdrawMember(member: Member) {
-        member.withdrawMember()
+    fun updateMemberProfileImage(member: Member, file: MultipartFile): MemberInfoResponse {
+        val profileImageUrl = s3Service.uploadImage(file)
+        member.updateMemberProfileImage(profileImageUrl)
+        return MemberInfoResponse.from(member)
     }
 
     private fun isNicknameUnique(nickname: String) {
-        if(!memberRepository.existsByNickname(nickname)){
+        if(memberRepository.existsByNickname(nickname)){
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)
         }
-
     }
 }

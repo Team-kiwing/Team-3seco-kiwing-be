@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: rdb, security, redis
+    include: rdb, security, redis, s3
     active: local
 
 server:

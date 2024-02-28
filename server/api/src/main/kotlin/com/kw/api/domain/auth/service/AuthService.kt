@@ -34,6 +34,10 @@ class AuthService(val redisRefreshTokenRepository: RedisRefreshTokenRepository,
         return TokenResponse(accessToken, refreshToken)
     }
 
+    fun withdrawMember(member: Member) {
+        member.withdrawMember()
+    }
+
     private fun createOauth2UserDetails(member: Member): OAuth2UserDetails{
         val authorities: MutableList<SimpleGrantedAuthority> = member.memberRoles
             .stream()
