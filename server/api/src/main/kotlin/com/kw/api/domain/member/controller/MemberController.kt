@@ -7,6 +7,7 @@ import com.kw.data.domain.member.Member
 import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "회원", description = "회원 관련 API 입니다.")
@@ -27,5 +28,13 @@ class MemberController(private val memberService: MemberService) {
                              @RequestParam nickname: String): ApiResponse<MemberInfoResponse> {
         val response = memberService.updateMemberNickname(member, nickname)
         return ApiResponse.ok(response)
+    }
+
+    @Operation(summary = "회원탈퇴합니다.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/me")
+    fun withdrawMember(@AuthToMember member: Member): ApiResponse<Nothing> {
+        val response = memberService.withdrawMember(member)
+        return ApiResponse.noContent()
     }
 }

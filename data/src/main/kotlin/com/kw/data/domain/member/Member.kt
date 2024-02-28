@@ -36,6 +36,10 @@ class Member(email: String) : Base() {
         this.nickname = nickname
     }
 
+    fun withdrawMember() {
+        this.deletedAt = LocalDateTime.now()
+    }
+
     enum class MemberRoleType {
         ROLE_USER,
         ROLE_ADMIN

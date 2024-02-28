@@ -20,9 +20,14 @@ class MemberService(val memberRepository: MemberRepository) {
         return MemberInfoResponse.from(member)
     }
 
+    fun withdrawMember(member: Member) {
+        member.withdrawMember()
+    }
+
     private fun isNicknameUnique(nickname: String) {
         if(!memberRepository.existsByNickname(nickname)){
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)
         }
+
     }
 }
