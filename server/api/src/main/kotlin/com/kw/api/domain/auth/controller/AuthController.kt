@@ -4,12 +4,12 @@ import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.auth.dto.request.RefreshTokenRequest
 import com.kw.api.domain.auth.dto.response.TokenResponse
 import com.kw.api.domain.auth.service.AuthService
+import com.kw.data.domain.member.Member
+import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 
 @Tag(name = "인증", description = "인증 관련 API 입니다.")
 @RestController
@@ -27,5 +27,13 @@ class AuthController(val authService: AuthService) {
     fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest) : ApiResponse<TokenResponse> {
         val response = authService.refreshAccessToken(refreshTokenRequest)
         return ApiResponse.ok(response)
+    }
+
+    @Operation(summary = "회원탈퇴합니다.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/withdraw")
+    fun withdrawMember(@AuthToMember member: Member): ApiResponse<Nothing> {
+        authService.withdrawMember(member)
+        return ApiResponse.noContent()
     }
 }
