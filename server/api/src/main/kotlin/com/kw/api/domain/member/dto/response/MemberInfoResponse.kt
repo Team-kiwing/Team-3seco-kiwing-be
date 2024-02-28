@@ -5,14 +5,18 @@ import com.kw.data.domain.member.Member
 data class MemberInfoResponse(val id: Long?,
                               val nickname: String?,
                               val email: String,
-                              val provider: Member.Provider) {
+                              val provider: Member.Provider,
+                              val profileImage: String?
+    ) {
     companion object {
         fun from(member: Member) : MemberInfoResponse {
             return MemberInfoResponse(
                 id = member.id,
                 nickname = member.nickname,
                 email = member.email,
-                provider = member.provider)
+                provider = member.provider,
+                profileImage = member.profileImage
+                )
         }
     }
 }

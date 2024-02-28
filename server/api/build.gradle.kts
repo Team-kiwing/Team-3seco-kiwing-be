@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":infra:infra-security"))
     implementation(project(":infra:infra-redis"))
+    implementation(project(":infra:infra-s3"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
