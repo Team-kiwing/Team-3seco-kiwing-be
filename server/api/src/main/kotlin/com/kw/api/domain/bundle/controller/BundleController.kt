@@ -17,7 +17,6 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
-//TODO: shareType 연동
 @Tag(name = "꾸러미")
 @RestController
 @RequestMapping("/api/v1")

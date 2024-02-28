@@ -14,7 +14,10 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         val query = queryFactory
             .select(bundle.count())
             .from(bundle)
-            .where(condition.searchTerm?.let { bundle.name.contains(it) })
+            .where(
+                bundle.shareType.eq(Bundle.ShareType.PUBLIC),
+                condition.searchTerm?.let { bundle.name.contains(it) }
+            )
 
         if (condition.tagIds != null) {
             query
@@ -28,7 +31,10 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
     override fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
         val query = queryFactory
             .selectFrom(bundle)
-            .where(condition.searchTerm?.let { bundle.name.contains(it) })
+            .where(
+                bundle.shareType.eq(Bundle.ShareType.PUBLIC),
+                condition.searchTerm?.let { bundle.name.contains(it) }
+            )
             .orderBy(
                 if (condition.sortingType == null) {
                     bundle.scrapeCount.desc()

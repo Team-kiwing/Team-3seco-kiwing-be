@@ -63,6 +63,10 @@ class BundleService(
     fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
+        if (bundle.shareType == Bundle.ShareType.PRIVATE && bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)
+        }
+
         val questions = questionRepository.findAllWithTagsByBundleId(
             id,
             showOnlyMyQuestions,
