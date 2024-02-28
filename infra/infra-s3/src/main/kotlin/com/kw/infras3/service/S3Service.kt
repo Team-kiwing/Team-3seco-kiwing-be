@@ -17,7 +17,7 @@ class S3Service (
     private val s3Template: S3Template) {
 
     @Throws(IOException::class)
-    fun uploadThumbnail(image: MultipartFile): String {
+    fun uploadImage(image: MultipartFile): String {
         val originalFilename: String? = image.getOriginalFilename() // 클라이언트가 전송한 파일 이름
         val extension: String? = StringUtils.getFilenameExtension(originalFilename) // 파일 확장자
         val uuidImageName = UUID.randomUUID().toString() + "." + extension // 파일 이름 중복 방지

@@ -8,6 +8,7 @@ import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "회원", description = "회원 관련 API 입니다.")
 @RestController
@@ -29,5 +30,11 @@ class MemberController(private val memberService: MemberService) {
         return ApiResponse.ok(response)
     }
 
-
+    @Operation(summary = "회원 프로필 사진을 저장합니다.")
+    @PutMapping("/me/profile-image")
+    fun updateMemberProfileImage(@AuthToMember member: Member,
+                                @RequestParam(value = "file") file: MultipartFile): ApiResponse<MemberInfoResponse> {
+        val response = memberService.updateMemberProfileImage(member, file)
+        return ApiResponse.ok(response)
+    }
 }
