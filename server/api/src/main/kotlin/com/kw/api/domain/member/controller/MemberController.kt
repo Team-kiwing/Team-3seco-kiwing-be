@@ -7,6 +7,7 @@ import com.kw.data.domain.member.Member
 import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -23,7 +24,7 @@ class MemberController(private val memberService: MemberService) {
     }
 
     @Operation(summary = "사용자의 닉네임을 변경합니다.")
-    @PutMapping("/me/nickname")
+    @PatchMapping("/me/nickname")
     fun updateMemberNickname(@AuthToMember member: Member,
                              @RequestParam nickname: String): ApiResponse<MemberInfoResponse> {
         val response = memberService.updateMemberNickname(member, nickname)
@@ -31,9 +32,9 @@ class MemberController(private val memberService: MemberService) {
     }
 
     @Operation(summary = "회원 프로필 사진을 저장합니다.")
-    @PutMapping("/me/profile-image")
+    @PatchMapping(value = ["/me/profile-image"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun updateMemberProfileImage(@AuthToMember member: Member,
-                                @RequestParam(value = "file") file: MultipartFile): ApiResponse<MemberInfoResponse> {
+                                @RequestPart(value = "file", required = true) file: MultipartFile): ApiResponse<MemberInfoResponse> {
         val response = memberService.updateMemberProfileImage(member, file)
         return ApiResponse.ok(response)
     }

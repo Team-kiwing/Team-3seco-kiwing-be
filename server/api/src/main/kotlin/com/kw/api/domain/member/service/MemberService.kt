@@ -33,7 +33,7 @@ class MemberService(private val memberRepository: MemberRepository,
     }
 
     private fun isNicknameUnique(nickname: String) {
-        if(!memberRepository.existsByNickname(nickname)){
+        if(memberRepository.existsByNickname(nickname)){
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)
         }
     }
