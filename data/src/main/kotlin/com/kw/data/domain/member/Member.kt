@@ -2,9 +2,11 @@ package com.kw.data.domain.member
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 
 @Entity
+@SQLRestriction("deleted_at is not null")
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
