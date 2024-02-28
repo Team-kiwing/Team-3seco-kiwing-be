@@ -9,5 +9,12 @@ bootJar.enabled = false
 jar.enabled = true
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    // spring-cloud-aws 관련 라이브러리 버전 관리
+    implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.0"))
+
+    // aws - autoconfigure & s3
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
+
+    // web
+    implementation("org.springframework.boot:spring-boot-starter-web")
 }
