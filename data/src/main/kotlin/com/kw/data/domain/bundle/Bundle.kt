@@ -113,7 +113,7 @@ class Bundle(
             member = member
         )
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
-        bundle.addQuestions(questions.map { it.copy(bundle) })
+        bundle.addQuestions(questions.map { it.copy(bundle, member) })
         return bundle
     }
 }

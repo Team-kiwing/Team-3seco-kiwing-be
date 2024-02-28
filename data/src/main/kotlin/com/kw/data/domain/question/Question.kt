@@ -12,6 +12,7 @@ class Question(
     answerShareType: AnswerShareType,
     originId: Long? = null,
     bundle: Bundle,
+    member: Member
 ) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +43,8 @@ class Question(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", updatable = false)
-    val member: Member? = null //TODO: Member? -> Member 타입 수정, nullable = false 추가
+    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    val member: Member = member
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id", nullable = false, updatable = false)
@@ -92,14 +93,15 @@ class Question(
         this.shareCount++;
     }
 
-    fun copy(bundle: Bundle): Question {
+    fun copy(bundle: Bundle, member: Member): Question {
         increaseShareCount() //TODO: 동시성 고려
         val question = Question(
             content = this.content,
             answer = if (this.answerShareType === AnswerShareType.PUBLIC) this.answer else null,
             answerShareType = AnswerShareType.PUBLIC,
             originId = this.originId ?: this.id,
-            bundle = bundle
+            bundle = bundle,
+            member = member
         )
         question.updateQuestionTags(this.questionTags.map { QuestionTag(question, it.tag) })
         return question
