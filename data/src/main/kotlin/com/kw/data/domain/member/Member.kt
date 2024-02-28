@@ -2,9 +2,11 @@ package com.kw.data.domain.member
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 
 @Entity
+@SQLRestriction("deleted_at is null")
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
@@ -13,6 +15,7 @@ class Member(email: String) : Base() {
 
     @Column(name = "nickname")
     var nickname: String? = null
+        protected set
 
     @Column(name = "email", nullable = false, updatable = false)
     val email: String = email
@@ -30,6 +33,14 @@ class Member(email: String) : Base() {
         protected set
 
     var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
+
+    fun updateMemberNickname(nickname: String) {
+        this.nickname = nickname
+    }
+
+    fun withdrawMember() {
+        this.deletedAt = LocalDateTime.now()
+    }
 
     enum class MemberRoleType {
         ROLE_USER,

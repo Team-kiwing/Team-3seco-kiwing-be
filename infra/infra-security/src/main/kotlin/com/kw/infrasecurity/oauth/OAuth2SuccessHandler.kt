@@ -2,6 +2,7 @@ package com.kw.infrasecurity.oauth
 
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
+import com.kw.infraredis.repository.RedisRefreshTokenRepository
 import com.kw.infrasecurity.jwt.JwtTokenProvider
 import com.kw.infrasecurity.util.HttpResponseUtil
 import jakarta.servlet.http.HttpServletRequest
@@ -16,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 @Transactional
 class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
-    private val memberRepository: MemberRepository) : AuthenticationSuccessHandler {
+    private val memberRepository: MemberRepository,
+    private val redisRefreshTokenRepository: RedisRefreshTokenRepository) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest?,
@@ -46,7 +48,7 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
         val accessToken = jwtTokenProvider.generateAccessToken(oAuth2UserDetails)
         val refreshToken = jwtTokenProvider.generateRefreshToken()
 
-        // TODO 리프레시 토큰 레디스 저장
+        redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
 
         HttpResponseUtil.writeResponse(response!!, accessToken, refreshToken)
     }
