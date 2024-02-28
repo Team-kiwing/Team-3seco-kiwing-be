@@ -29,7 +29,7 @@ class QuestionController(val questionService: QuestionService) {
         @AuthToMember member: Member
     ): ApiResponse<QuestionResponse> {
         val response = questionService.createQuestion(request, member)
-        return ApiResponse.created(response);
+        return ApiResponse.created(response)
     }
 
     @Operation(summary = "질문 수정")
@@ -49,11 +49,13 @@ class QuestionController(val questionService: QuestionService) {
     fun deleteQuestion(
         @PathVariable id: Long,
         @AuthToMember member: Member
-    ) {
+    ): ApiResponse<Unit> {
         questionService.deleteQuestion(id, member)
+        return ApiResponse.noContent()
     }
 
     @Operation(summary = "질문 신고")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/questions/{id}/report")
     fun reportQuestion(
         @RequestParam reason: String,
