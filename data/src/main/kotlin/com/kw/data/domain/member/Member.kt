@@ -6,7 +6,7 @@ import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 
 @Entity
-@SQLRestriction("deleted_at is not null")
+@SQLRestriction("deleted_at is null")
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
