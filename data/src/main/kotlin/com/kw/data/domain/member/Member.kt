@@ -13,6 +13,7 @@ class Member(email: String) : Base() {
 
     @Column(name = "nickname")
     var nickname: String? = null
+        protected set
 
     @Column(name = "email", nullable = false, updatable = false)
     val email: String = email
@@ -30,6 +31,10 @@ class Member(email: String) : Base() {
         protected set
 
     var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
+
+    fun updateMemberNickname(nickname: String) {
+        this.nickname = nickname
+    }
 
     enum class MemberRoleType {
         ROLE_USER,

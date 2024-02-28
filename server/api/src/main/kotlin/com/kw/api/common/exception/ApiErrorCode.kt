@@ -21,13 +21,13 @@ enum class ApiErrorCode(
 
     // member
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "존재하지 않는 회원입니다."),
+    NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "NICKNAME_ALREADY_EXISTS", "이미 존재하는 닉네임입니다."),
 
     // auth
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "REFRESH_TOKEN_EXPIRED", "리프레시 토큰이 만료되었습니다. 다시 로그인 해주세요."),
     ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,"401/0002", "어세스 토큰이 만료되었으니 재발급 해주세요"),
     ACCESS_TOKEN_MALFORMED(HttpStatus.UNAUTHORIZED, "401/0003", "올바르지 않은 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "403/0001", "접근이 거부되었습니다."),
-
 
     // common
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "잘못된 요청입니다."),
