@@ -72,13 +72,13 @@ class BundleService(
             showOnlyMyQuestions,
             member.id
         )
-
         val questionOrder = if (bundle.questionOrder.isNotBlank()) {
             bundle.questionOrder.split(" ").map { it.toLong() }
         } else {
             emptyList()
         }
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
+
         return BundleDetailResponse.from(bundle, sortedQuestions)
     }
 
