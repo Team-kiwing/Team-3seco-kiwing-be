@@ -137,7 +137,6 @@ class BundleService(
 
         val questions = getExistQuestions(request.questionIds)
         val copiedAndSavedQuestions = questions
-            .filter { it.answerShareType == Question.AnswerShareType.PUBLIC }
             .map { questionRepository.save(it.copy(bundle, member)) }
         bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
