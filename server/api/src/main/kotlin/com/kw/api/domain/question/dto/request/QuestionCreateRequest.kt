@@ -1,6 +1,7 @@
 package com.kw.api.domain.question.dto.request
 
 import com.kw.data.domain.bundle.Bundle
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import jakarta.validation.constraints.NotBlank
 
@@ -16,12 +17,13 @@ data class QuestionCreateRequest(
 
     val bundleId: Long
 ) {
-    fun toEntity(bundle: Bundle): Question {
+    fun toEntity(bundle: Bundle, member: Member): Question {
         return Question(
             content = content,
             answer = answer,
             answerShareType = answerShareType,
-            bundle = bundle
+            bundle = bundle,
+            member = member
         )
     }
 }

@@ -35,6 +35,10 @@ class WebSecurityConfig(val jwtAuthenticationFilter: JwtAuthenticationFilter,
             logout { disable() }
             sessionManagement { SessionCreationPolicy.STATELESS }
 
+            cors {
+                configurationSource = corsConfigurationSource()
+            }
+
             addFilterAfter<LogoutFilter>(jwtAuthenticationFilter)
             exceptionHandling {
                 authenticationEntryPoint = jwtAuthenticationEntryPoint
@@ -59,7 +63,7 @@ class WebSecurityConfig(val jwtAuthenticationFilter: JwtAuthenticationFilter,
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("*")
+        configuration.allowedOriginPatterns = listOf("*")
         configuration.allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
