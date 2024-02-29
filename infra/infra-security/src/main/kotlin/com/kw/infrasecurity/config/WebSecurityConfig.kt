@@ -35,6 +35,10 @@ class WebSecurityConfig(val jwtAuthenticationFilter: JwtAuthenticationFilter,
             logout { disable() }
             sessionManagement { SessionCreationPolicy.STATELESS }
 
+            cors {
+                configurationSource = corsConfigurationSource()
+            }
+
             addFilterAfter<LogoutFilter>(jwtAuthenticationFilter)
             exceptionHandling {
                 authenticationEntryPoint = jwtAuthenticationEntryPoint
