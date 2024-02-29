@@ -64,7 +64,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .where(bundle.member.id.eq(memberId))
             .orderBy(
                 if (condition.sortingType == null) {
-                    bundle.createdAt.desc()
+                    bundle.updatedAt.desc()
                 } else {
                     when (BundleGetCondition.SortingType.from(condition.sortingType)) {
                         BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
