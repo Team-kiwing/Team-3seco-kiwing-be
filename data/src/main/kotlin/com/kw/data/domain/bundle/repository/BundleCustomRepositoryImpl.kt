@@ -16,7 +16,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .from(bundle)
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
-                condition.searchTerm?.let { bundle.name.contains(it) }
+                condition.keyword?.let { bundle.name.contains(it) }
             )
 
         if (condition.tagIds != null) {
@@ -34,7 +34,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
-                condition.searchTerm?.let { bundle.name.contains(it) }
+                condition.keyword?.let { bundle.name.contains(it) }
             )
             .orderBy(
                 if (condition.sortingType == null) {
