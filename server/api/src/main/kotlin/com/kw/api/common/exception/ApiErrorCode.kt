@@ -26,11 +26,12 @@ enum class ApiErrorCode(
 
     // auth
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "REFRESH_TOKEN_EXPIRED", "리프레시 토큰이 만료되었습니다. 다시 로그인 해주세요."),
-    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,"401/0002", "어세스 토큰이 만료되었으니 재발급 해주세요"),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "401/0002", "어세스 토큰이 만료되었으니 재발급 해주세요"),
     ACCESS_TOKEN_MALFORMED(HttpStatus.UNAUTHORIZED, "401/0003", "올바르지 않은 토큰입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "403/0001", "접근이 거부되었습니다."),
 
     // common
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "잘못된 요청입니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN", "권한이 없습니다."),
 
 }
