@@ -3,7 +3,7 @@ package com.kw.data.domain.bundle.dto.request
 data class BundleSearchCondition(
     val sortingType: String?,
     val tagIds: List<Long>?,
-    val searchTerm: String?
+    val keyword: String?
 ) {
     enum class SortingType {
         //        RECOMMENDED,

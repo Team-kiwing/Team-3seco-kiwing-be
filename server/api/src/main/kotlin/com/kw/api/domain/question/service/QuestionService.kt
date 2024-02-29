@@ -10,6 +10,7 @@ import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
 import com.kw.data.domain.bundle.repository.BundleRepository
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.QuestionTag
@@ -29,19 +30,22 @@ class QuestionService(
     private val tagRepository: TagRepository,
     private val bundleRepository: BundleRepository,
 ) {
-    fun createQuestion(request: QuestionCreateRequest): QuestionResponse {
+    fun createQuestion(request: QuestionCreateRequest, member: Member): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
             .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_BUNDLE) }
 
-        val question = request.toEntity(bundle)
+        val question = request.toEntity(bundle, member)
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         question.updateQuestionTags(tags.map { QuestionTag(question, it) })
 
         return QuestionResponse.from(questionRepository.save(question))
     }
 
-    fun updateQuestion(id: Long, request: QuestionUpdateRequest): QuestionResponse {
+    fun updateQuestion(id: Long, request: QuestionUpdateRequest, member: Member): QuestionResponse {
         val question = getExistQuestion(id)
+        if (question.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
 
         request.content?.let { question.updateContent(it) }
         request.answer?.let { question.updateAnswer(it) }
@@ -54,8 +58,12 @@ class QuestionService(
         return QuestionResponse.from(question)
     }
 
-    fun deleteQuestion(id: Long) {
+    fun deleteQuestion(id: Long, member: Member) {
         val question = getExistQuestion(id)
+        if (question.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
         questionRepository.delete(question)
     }
 
