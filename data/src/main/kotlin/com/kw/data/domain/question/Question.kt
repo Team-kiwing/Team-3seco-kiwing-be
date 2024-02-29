@@ -99,7 +99,7 @@ class Question(
             content = this.content,
             answer = if (this.answerShareType === AnswerShareType.PUBLIC) this.answer else null,
             answerShareType = AnswerShareType.PUBLIC,
-            originId = this.originId ?: this.id,
+            originId = this.id,
             bundle = bundle,
             member = member
         )

@@ -109,7 +109,7 @@ class Bundle(
         val bundle = Bundle(
             name = this.name,
             shareType = ShareType.PRIVATE,
-            originId = this.originId ?: this.id,
+            originId = this.id,
             member = member
         )
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
