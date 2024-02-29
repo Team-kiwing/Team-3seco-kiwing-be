@@ -31,6 +31,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
     override fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
         val query = queryFactory
             .selectFrom(bundle)
+            .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
                 condition.searchTerm?.let { bundle.name.contains(it) }
@@ -50,9 +51,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .limit(pageable.pageSize.toLong())
 
         if (condition.tagIds != null) {
-            query
-                .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
-                .where(bundleTag.tag.id.`in`(condition.tagIds))
+            query.where(bundleTag.tag.id.`in`(condition.tagIds))
         }
 
         return query.fetch()
@@ -61,6 +60,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
     override fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle> {
         return queryFactory
             .selectFrom(bundle)
+            .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
             .where(bundle.member.id.eq(memberId))
             .orderBy(
                 if (condition.sortingType == null) {
