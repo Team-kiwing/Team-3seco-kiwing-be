@@ -1,7 +1,7 @@
 package com.kw.data.domain.bundle.dto.request
 
 data class BundleSearchCondition(
-    val sortingType: String?,
+    val sortingType: SortingType?,
     val tagIds: List<Long>?,
     val keyword: String?
 ) {

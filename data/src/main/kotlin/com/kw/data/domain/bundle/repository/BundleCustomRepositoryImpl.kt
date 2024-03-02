@@ -40,7 +40,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
                 if (condition.sortingType == null) {
                     bundle.scrapeCount.desc()
                 } else {
-                    when (BundleSearchCondition.SortingType.from(condition.sortingType)) {
+                    when (condition.sortingType) {
 //                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
                         BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
                         BundleSearchCondition.SortingType.POPULAR -> bundle.scrapeCount.desc()
@@ -66,7 +66,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
                 if (condition.sortingType == null) {
                     bundle.updatedAt.desc()
                 } else {
-                    when (BundleGetCondition.SortingType.from(condition.sortingType)) {
+                    when (condition.sortingType) {
                         BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
                         BundleGetCondition.SortingType.CREATED -> bundle.createdAt.asc()
                         BundleGetCondition.SortingType.UPDATED -> bundle.updatedAt.desc()

@@ -1,7 +1,7 @@
 package com.kw.data.domain.bundle.dto.request
 
 data class BundleGetCondition(
-    val sortingType: String?,
+    val sortingType: SortingType?,
 ) {
     enum class SortingType {
         LATEST,
