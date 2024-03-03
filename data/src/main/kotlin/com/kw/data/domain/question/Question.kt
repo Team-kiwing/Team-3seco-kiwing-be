@@ -89,12 +89,7 @@ class Question(
         this.questionTags.addAll(questionTags)
     }
 
-    fun increaseShareCount() {
-        this.shareCount++;
-    }
-
     fun copy(bundle: Bundle, member: Member): Question {
-        increaseShareCount() //TODO: 동시성 고려
         val question = Question(
             content = this.content,
             answer = if (this.answerShareType === AnswerShareType.PUBLIC) this.answer else null,
