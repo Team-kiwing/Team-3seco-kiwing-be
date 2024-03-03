@@ -18,23 +18,22 @@ class JwtAuthenticationFilter(private val tokenProvider: JwtTokenProvider) : Onc
     ) {
         if (SecurityContextHolder.getContext().authentication == null) {
             val accessToken = resolveToken(request)
-            if(accessToken != null) {
+            if (accessToken != null) {
                 try {
                     tokenProvider.validateAccessToken(accessToken)
                     val authentication = tokenProvider.getAuthentication(accessToken)
                     SecurityContextHolder.getContext().authentication = authentication
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     request.setAttribute("exception", e)
                 }
             }
-        }
-        else {
+        } else {
             request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
         }
         filterChain.doFilter(request, response)
     }
 
-    private fun resolveToken(request: HttpServletRequest) : String? {
+    private fun resolveToken(request: HttpServletRequest): String? {
         val authorizationHeader = request.getHeader("Authorization")
         return if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer")) {
             authorizationHeader.substring(7)

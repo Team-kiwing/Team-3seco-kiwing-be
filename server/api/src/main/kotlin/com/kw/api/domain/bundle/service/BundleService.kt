@@ -121,7 +121,7 @@ class BundleService(
         bundleRepository.increaseScrapeCount(id)
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
-        questionRepository.increaseShareCountByIdIn(questions.mapNotNull { it.originId })
+        questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
 
         bundleRepository.save(bundle.copy(questions, member))
     }
@@ -142,7 +142,7 @@ class BundleService(
         }
 
         val questions = getExistQuestions(request.questionIds)
-        questionRepository.increaseShareCountByIdIn(questions.mapNotNull { it.originId })
+        questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
 
         val copiedAndSavedQuestions = questions
             .map { questionRepository.save(it.copy(bundle, member)) }
