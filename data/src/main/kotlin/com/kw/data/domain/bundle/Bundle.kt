@@ -100,12 +100,7 @@ class Bundle(
         updateQuestionOrder(questionOrderList.joinToString(" "))
     }
 
-    fun increaseScrapeCount() {
-        this.scrapeCount++
-    }
-
     fun copy(questions: List<Question>, member: Member): Bundle {
-        increaseScrapeCount() //TODO: 동시성 고려
         val bundle = Bundle(
             name = this.name,
             shareType = ShareType.PRIVATE,

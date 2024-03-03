@@ -104,6 +104,10 @@ class BundleService(
         if (bundle.member.id != member.id) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
+        bundle.originId?.let { bundleRepository.decreaseScrapeCount(it) }
+
+        val questions = questionRepository.findAllByBundleId(id)
+        questionRepository.decreaseShareCountByIdIn(questions.mapNotNull { it.originId })
 
         bundleRepository.delete(bundle)
     }
@@ -171,5 +175,4 @@ class BundleService(
         }
         return questions
     }
-
 }
