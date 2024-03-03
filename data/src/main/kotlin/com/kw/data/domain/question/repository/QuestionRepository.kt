@@ -10,9 +10,12 @@ interface QuestionRepository : JpaRepository<Question, Long>, QuestionCustomRepo
 
     fun findAllByBundleId(bundleId: Long): List<Question>
 
-
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.questionTags qt LEFT JOIN FETCH qt.tag WHERE q.bundle.id = :bundleId")
     fun findAllWithTagsByBundleId(@Param("bundleId") bundleId: Long): List<Question>
+
+    @Modifying
+    @Query("UPDATE Question q SET q.shareCount = q.shareCount + 1 WHERE q.id IN :ids")
+    fun increaseShareCountByIdIn(@Param("ids") ids: List<Long>)
 
     @Modifying
     @Query("UPDATE Question q SET q.shareCount = q.shareCount - 1 WHERE q.id IN :ids")

@@ -118,8 +118,10 @@ class BundleService(
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
             throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)
         }
+        bundleRepository.increaseScrapeCount(id)
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
+        questionRepository.increaseShareCountByIdIn(questions.mapNotNull { it.originId })
 
         bundleRepository.save(bundle.copy(questions, member))
     }
@@ -140,6 +142,8 @@ class BundleService(
         }
 
         val questions = getExistQuestions(request.questionIds)
+        questionRepository.increaseShareCountByIdIn(questions.mapNotNull { it.originId })
+
         val copiedAndSavedQuestions = questions
             .map { questionRepository.save(it.copy(bundle, member)) }
         bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
@@ -152,6 +156,8 @@ class BundleService(
         }
 
         val questions = getExistQuestions(request.questionIds)
+        questionRepository.decreaseShareCountByIdIn(questions.mapNotNull { it.originId })
+
         bundle.removeQuestions(questions)
     }
 

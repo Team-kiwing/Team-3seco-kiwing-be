@@ -12,7 +12,10 @@ interface BundleRepository : JpaRepository<Bundle, Long>, BundleCustomRepository
     fun findWithTagsById(@Param("id") id: Long): Bundle?
 
     @Modifying
+    @Query("UPDATE Bundle b SET b.scrapeCount = b.scrapeCount + 1 WHERE b.id = :id")
+    fun increaseScrapeCount(@Param("id") id: Long)
+
+    @Modifying
     @Query("UPDATE Bundle b SET b.scrapeCount = b.scrapeCount - 1 WHERE b.id = :id")
     fun decreaseScrapeCount(@Param("id") id: Long)
-
 }
