@@ -8,12 +8,13 @@ import java.time.LocalDateTime
 
 data class BundleDetailResponse(
     val id: Long,
-    val name: String,
+    val name: String? = null,
     val shareType: String,
-    val tags: List<TagResponse>,
-    val questions: List<QuestionResponse>,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val tags: List<TagResponse>? = null,
+    val questions: List<QuestionResponse>? = null,
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
+    val originId: Long? = null
 ) {
     companion object {
         fun from(bundle: Bundle, questions: List<Question>): BundleDetailResponse {
@@ -23,6 +24,7 @@ data class BundleDetailResponse(
                 shareType = bundle.shareType.name,
                 tags = bundle.bundleTags.map { it.tag }.map { TagResponse.from(it) },
                 questions = questions.map { QuestionResponse.from(it) },
+                originId = bundle.originId,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )

@@ -1,6 +1,5 @@
 package com.kw.api.domain.auth.controller
 
-import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.auth.dto.request.RefreshTokenRequest
 import com.kw.api.domain.auth.dto.response.TokenResponse
 import com.kw.api.domain.auth.service.AuthService
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 class AuthController(val authService: AuthService) {
 
     @Operation(summary = "로그아웃을 합니다.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/logout")
     fun logout(@RequestBody refreshTokenRequest: RefreshTokenRequest) {
         authService.logout(refreshTokenRequest)
@@ -24,16 +24,14 @@ class AuthController(val authService: AuthService) {
 
     @Operation(summary = "리프레시 토큰으로 어세스 토큰을 재발급합니다.")
     @GetMapping("/refresh-access-token")
-    fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest) : ApiResponse<TokenResponse> {
-        val response = authService.refreshAccessToken(refreshTokenRequest)
-        return ApiResponse.ok(response)
+    fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): TokenResponse {
+        return authService.refreshAccessToken(refreshTokenRequest)
     }
 
     @Operation(summary = "회원탈퇴합니다.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/withdraw")
-    fun withdrawMember(@AuthToMember member: Member): ApiResponse<Nothing> {
+    fun withdrawMember(@AuthToMember member: Member) {
         authService.withdrawMember(member)
-        return ApiResponse.noContent()
     }
 }
