@@ -81,7 +81,7 @@ class Bundle(
     }
 
     fun updateBundleTags(bundleTags: List<BundleTag>) {
-        if (bundleTags.size >= 3) {
+        if (bundleTags.size > 3) {
             throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
         }
         this.bundleTags.clear()
