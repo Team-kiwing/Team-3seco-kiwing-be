@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
 data class BundleCreateRequest(
+
     @field:NotBlank(message = "이름은 필수입니다.")
+    @field:Size(max = 100, message = "이름은 최대 5자까지 입력해 주세요.")
     val name: String,
 
     val shareType: Bundle.ShareType,
