@@ -35,9 +35,19 @@ class MemberController(private val memberService: MemberService) {
     @Operation(summary = "사용자의 소셜 링크를 변경합니다.")
     @PatchMapping("/me/sns")
     fun updateMemberSns(@AuthToMember member: Member,
-                        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest) {
-        memberService.updateMemberSns(member, memberSnsUpdateRequest)
+                        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest): ApiResponse<MemberInfoResponse> {
+        val response = memberService.updateMemberSns(member, memberSnsUpdateRequest)
+        return ApiResponse.ok(response)
     }
+
+    @Operation(summary = "사용자의 관심 태그를 변경합니다.")
+    @PatchMapping("/me/tags")
+    fun updateMemberTags(@AuthToMember member: Member,
+                        @RequestParam tagIds: List<Long>): ApiResponse<MemberInfoResponse> {
+        val response = memberService.updateMemberTags(member, tagIds)
+        return ApiResponse.ok(response)
+    }
+
 
     @Operation(summary = "회원 프로필 사진을 저장합니다.")
     @PatchMapping(value = ["/me/profile-image"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
