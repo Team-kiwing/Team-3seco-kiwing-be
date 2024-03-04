@@ -67,6 +67,7 @@ class BundleService(
             return BundleDetailResponse(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
+                originId = bundle.originId
             )
         }
 

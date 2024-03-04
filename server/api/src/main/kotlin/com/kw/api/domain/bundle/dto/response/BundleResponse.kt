@@ -11,6 +11,7 @@ data class BundleResponse(
     val scrapeCount: Long,
     val tags: List<TagResponse>,
     val isHot: Boolean,
+    val originId: Long? = null,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -23,6 +24,7 @@ data class BundleResponse(
                 scrapeCount = bundle.scrapeCount,
                 tags = bundle.bundleTags.map { TagResponse.from(it.tag) },
                 isHot = bundle.isHot(),
+                originId = bundle.originId,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )
