@@ -13,8 +13,8 @@ import java.util.*
 
 
 @OpenAPIDefinition(
-    info = Info(title = "키윙 쇼핑 백엔드 API 명세서", description = "키윙 쇼핑 백엔드 API 명세서 입니다", version = "0.1"),
-    servers = [Server(url = "/", description = "키윙 서버 url")]
+    info = Info(title = "키윙 API 명세서", version = "1.0"),
+    servers = [Server(url = "https://api-dev.kiwing.kr", description = "키윙 스테이징 서버 URL")]
 )
 @Configuration
 class SwaggerConfig {
