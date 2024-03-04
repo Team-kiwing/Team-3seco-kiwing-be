@@ -38,6 +38,10 @@ class Member(email: String) : Base() {
 
     var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
 
+    @Embedded
+    var socialLinks: SocialLinks? = null
+        protected set
+
     fun updateMemberNickname(nickname: String) {
         this.nickname = nickname
     }
@@ -50,6 +54,10 @@ class Member(email: String) : Base() {
         this.deletedAt = LocalDateTime.now()
     }
 
+    fun updateMemberSocialLinks(socialLinks: SocialLinks) {
+        this.socialLinks = socialLinks
+    }
+
     enum class MemberRoleType {
         ROLE_USER,
         ROLE_ADMIN
@@ -57,5 +65,11 @@ class Member(email: String) : Base() {
 
     enum class Provider {
         GOOGLE,
+    }
+
+    @Embeddable
+    class SocialLinks(link1: String,
+                      link2: String,
+                      link3: String) {
     }
 }
