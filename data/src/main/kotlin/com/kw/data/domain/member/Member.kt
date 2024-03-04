@@ -40,6 +40,11 @@ class Member(email: String) : Base() {
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var snsList: MutableList<Sns> = mutableListOf()
+        protected set
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var memberTags: MutableList<MemberTag> = mutableListOf()
+        protected set
 
     fun updateMemberNickname(nickname: String) {
         this.nickname = nickname
@@ -54,11 +59,19 @@ class Member(email: String) : Base() {
     }
 
     fun updateMemberSns(snsList: List<Sns>) {
-        if (snsList.size >= 3) {
+        if (snsList.size > 3) {
             throw IllegalArgumentException("Sns는 최대 3개까지 지정 가능합니다.")
         }
         this.snsList.clear()
         this.snsList.addAll(snsList)
+    }
+
+    fun updateMemberTags(memberTags: List<MemberTag>) {
+        if (memberTags.size > 3) {
+            throw IllegalArgumentException("관심 태그는 최대 3개까지 지정 가능합니다.")
+        }
+        this.memberTags.clear()
+        this.memberTags.addAll(memberTags)
     }
 
     enum class MemberRoleType {
