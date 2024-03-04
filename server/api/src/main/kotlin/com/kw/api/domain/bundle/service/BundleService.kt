@@ -12,6 +12,7 @@ import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.bundle.repository.BundleRepository
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
@@ -30,11 +31,11 @@ class BundleService(
     private val questionRepository: QuestionRepository,
 ) {
 
-    fun createBundle(request: BundleCreateRequest): BundleDetailResponse {
+    fun createBundle(request: BundleCreateRequest, member: Member): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
-        val bundle = request.toEntity()
+        val bundle = request.toEntity(member)
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
-        return getBundle(bundleRepository.save(bundle).id!!)
+        return getBundle(bundleRepository.save(bundle).id!!, false, member)
     }
 
     @Transactional(readOnly = true)
@@ -53,33 +54,44 @@ class BundleService(
     }
 
     @Transactional(readOnly = true)
-    fun getMyBundles(getCondition: BundleGetCondition): List<BundleResponse> {
-        val bundles = bundleRepository.findAllByMemberId(1L, getCondition) //TODO: 임시 memberId, 인증 기능 추가 후 수정
+    fun getMyBundles(getCondition: BundleGetCondition, member: Member): List<BundleResponse> {
+        val bundles = bundleRepository.findAllByMemberId(member.id!!, getCondition)
         return bundles.map { BundleResponse.from(it) }
     }
 
     @Transactional(readOnly = true)
-    fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false): BundleDetailResponse {
+    fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
+        if (bundle.shareType == Bundle.ShareType.PRIVATE && bundle.member.id != member.id) {
+            return BundleDetailResponse(
+                id = bundle.id!!,
+                shareType = bundle.shareType.name,
+                originId = bundle.originId
+            )
+        }
+
         val questions = questionRepository.findAllWithTagsByBundleId(
             id,
             showOnlyMyQuestions,
-            null
-        ) //TODO: 임시 memberId, 인증 기능 추가 후 수정
-
+            member.id
+        )
         val questionOrder = if (bundle.questionOrder.isNotBlank()) {
             bundle.questionOrder.split(" ").map { it.toLong() }
         } else {
             emptyList()
         }
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
+
         return BundleDetailResponse.from(bundle, sortedQuestions)
     }
 
-    fun updateBundle(id: Long, request: BundleUpdateRequest): BundleResponse {
+    fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
 
         request.name?.let { bundle.updateName(request.name) }
         request.shareType?.let { bundle.updateShareType(request.shareType) }
@@ -91,40 +103,65 @@ class BundleService(
         return BundleResponse.from(bundle)
     }
 
-    fun deleteBundle(id: Long) {
+    fun deleteBundle(id: Long, member: Member) {
         val bundle = getExistBundle(id)
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+        bundle.originId?.let { bundleRepository.decreaseScrapeCount(it) }
+
+        val questions = questionRepository.findAllByBundleId(id)
+        questionRepository.decreaseShareCountByIdIn(questions.mapNotNull { it.originId })
+
         bundleRepository.delete(bundle)
     }
 
-    fun scrapeBundle(id: Long) {
+    fun scrapeBundle(id: Long, member: Member) {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
             throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)
         }
+        bundleRepository.increaseScrapeCount(id)
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
+        questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
 
-        bundleRepository.save(bundle.copy(questions))
+        bundleRepository.save(bundle.copy(questions, member))
     }
 
-    fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest) {
+    fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest, member: Member) {
         val bundle = getExistBundle(id)
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
         bundle.updateQuestionOrder(request.questionOrder.joinToString(" "))
     }
 
-    fun addQuestion(id: Long, request: BundleQuestionAddRequest) {
+    fun addQuestion(id: Long, request: BundleQuestionAddRequest, member: Member) {
         val bundle = getExistBundle(id)
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
         val questions = getExistQuestions(request.questionIds)
+        questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
+
         val copiedAndSavedQuestions = questions
-            .filter { it.answerShareType == Question.AnswerShareType.PUBLIC }
-            .map { questionRepository.save(it.copy(bundle)) }
+            .map { questionRepository.save(it.copy(bundle, member)) }
         bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
-    fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest) {
+    fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest, member: Member) {
         val bundle = getExistBundle(id)
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
         val questions = getExistQuestions(request.questionIds)
+        questionRepository.decreaseShareCountByIdIn(questions.mapNotNull { it.originId })
+
         bundle.removeQuestions(questions)
     }
 
@@ -148,5 +185,4 @@ class BundleService(
         }
         return questions
     }
-
 }

@@ -19,15 +19,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(val jwtAuthenticationFilter: JwtAuthenticationFilter,
+class WebSecurityConfig(
+    val jwtAuthenticationFilter: JwtAuthenticationFilter,
     val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
     val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     val oAuth2SuccessHandler: OAuth2SuccessHandler,
-    val oAuth2UserService: OAuth2UserService) {
+    val oAuth2UserService: OAuth2UserService
+) {
 
     @Bean
-    fun filterChain(http : HttpSecurity) : SecurityFilterChain {
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.invoke {
+            headers { frameOptions { disable() } }
             csrf { disable() }
             anonymous { disable() }
             formLogin { disable() }
