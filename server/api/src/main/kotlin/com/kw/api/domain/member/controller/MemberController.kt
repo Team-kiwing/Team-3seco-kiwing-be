@@ -1,5 +1,6 @@
 package com.kw.api.domain.member.controller
 
+import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.api.domain.member.service.MemberService
 import com.kw.data.domain.member.Member
@@ -23,12 +24,28 @@ class MemberController(private val memberService: MemberService) {
 
     @Operation(summary = "사용자의 닉네임을 변경합니다.")
     @PatchMapping("/me/nickname")
-    fun updateMemberNickname(
-        @AuthToMember member: Member,
-        @RequestParam nickname: String
-    ): MemberInfoResponse {
-        return memberService.updateMemberNickname(member, nickname)
+    fun updateMemberNickname(@AuthToMember member: Member,
+                             @RequestParam nickname: String): MemberInfoResponse {
+        val response = memberService.updateMemberNickname(member, nickname)
+        return response
     }
+
+    @Operation(summary = "사용자의 소셜 링크를 변경합니다.")
+    @PatchMapping("/me/sns")
+    fun updateMemberSns(@AuthToMember member: Member,
+                        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest): MemberInfoResponse {
+        val response = memberService.updateMemberSns(member, memberSnsUpdateRequest)
+        return response
+    }
+
+    @Operation(summary = "사용자의 관심 태그를 변경합니다.")
+    @PatchMapping("/me/tags")
+    fun updateMemberTags(@AuthToMember member: Member,
+                        @RequestParam tagIds: List<Long>): MemberInfoResponse {
+        val response = memberService.updateMemberTags(member, tagIds)
+        return response
+    }
+
 
     @Operation(summary = "회원 프로필 사진을 저장합니다.")
     @PatchMapping(value = ["/me/profile-image"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -37,5 +54,12 @@ class MemberController(private val memberService: MemberService) {
         @RequestPart(value = "file", required = true) file: MultipartFile
     ): MemberInfoResponse {
         return memberService.updateMemberProfileImage(member, file)
+    }
+
+    @Operation(summary = "회원 아이디로 회원 정보를 가져옵니다.")
+    @GetMapping("/{id}")
+    fun updateMemberProfileImage(@PathVariable id: Long): MemberInfoResponse {
+        val response = memberService.getMemberInfoById(id)
+        return response
     }
 }

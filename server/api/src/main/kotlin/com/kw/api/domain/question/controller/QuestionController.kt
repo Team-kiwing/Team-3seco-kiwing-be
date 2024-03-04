@@ -1,6 +1,7 @@
 package com.kw.api.domain.question.controller
 
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionListResponse
@@ -54,7 +55,7 @@ class QuestionController(val questionService: QuestionService) {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/questions/{id}/report")
     fun reportQuestion(
-        @RequestParam reason: String,
+        @RequestBody reason: QuestionReportRequest,
         @PathVariable id: Long
     ): QuestionReportResponse {
         return questionService.reportQuestion(reason, id)

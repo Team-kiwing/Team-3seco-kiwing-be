@@ -4,6 +4,7 @@ import com.kw.api.common.dto.PageResponse
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionListResponse
@@ -67,11 +68,11 @@ class QuestionService(
         questionRepository.delete(question)
     }
 
-    fun reportQuestion(reason: String, id: Long): QuestionReportResponse {
+    fun reportQuestion(request: QuestionReportRequest, id: Long): QuestionReportResponse {
         val question = getExistQuestion(id)
 
         val report = QuestionReport(
-            reason = reason,
+            reason = request.reason,
             question = question
         )
         return QuestionReportResponse.from(questionReportRepository.save(report))
