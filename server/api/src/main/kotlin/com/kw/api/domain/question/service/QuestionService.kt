@@ -33,6 +33,14 @@ class QuestionService(
     fun createQuestion(request: QuestionCreateRequest, member: Member): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
             .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_BUNDLE) }
+        if (bundle.member.id != member.id) {
+            throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
+        val questionCount = questionRepository.countAllByBundleId(request.bundleId)
+        if (questionCount >= 100) {
+            throw ApiException(ApiErrorCode.OVER_QUESTION_LIMIT)
+        }
 
         val question = request.toEntity(bundle, member)
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
