@@ -29,7 +29,7 @@ class AuthToMemberArgumentResolver(val memberRepository: MemberRepository): Hand
     ): Any? {
         val authentication = SecurityContextHolder.getContext().authentication ?: throw IllegalArgumentException("접근이 거부되었습니다.")
         val userDetails = authentication.principal as OAuth2UserDetails
-        val member = memberRepository.findMemberByEmail(userDetails.email as String) ?: throw IllegalArgumentException("존재하지 않는 회원입니다.")
+        val member = memberRepository.findMemberByEmail(userDetails.email) ?: throw IllegalArgumentException("존재하지 않는 회원입니다.")
 
         isMemberWithdraw(member)
 
