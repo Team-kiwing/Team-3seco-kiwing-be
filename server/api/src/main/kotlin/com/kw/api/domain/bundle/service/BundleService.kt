@@ -145,7 +145,12 @@ class BundleService(
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
-        val questions = getExistQuestions(request.questionIds)
+        val questionCount = questionRepository.countAllByBundleId(id)
+        if (questionCount + request.questionIds.size >= 100) {
+            throw ApiException(ApiErrorCode.OVER_QUESTION_LIMIT)
+        }
+
+        val questions = questionRepository.findAllWithTagsByIdIn(request.questionIds)
         questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
 
         val copiedAndSavedQuestions = questions

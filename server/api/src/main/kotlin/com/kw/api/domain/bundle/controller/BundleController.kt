@@ -13,6 +13,7 @@ import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -37,8 +38,8 @@ class BundleController(
     @Operation(summary = "꾸러미 검색")
     @GetMapping("/bundles/search")
     fun searchBundles(
-        @ModelAttribute @Valid searchCondition: BundleSearchCondition,
-        @ModelAttribute @Valid pageCondition: PageCondition
+        @ParameterObject @ModelAttribute @Valid searchCondition: BundleSearchCondition,
+        @ParameterObject @ModelAttribute pageCondition: PageCondition
     ): PageResponse<BundleResponse> {
         return bundleService.searchBundles(searchCondition, pageCondition)
     }
@@ -46,7 +47,7 @@ class BundleController(
     @Operation(summary = "내 꾸러미 목록 조회")
     @GetMapping("/bundles/my")
     fun getMyBundles(
-        @ModelAttribute @Valid getCondition: BundleGetCondition,
+        @ParameterObject @ModelAttribute @Valid getCondition: BundleGetCondition,
         @AuthToMember member: Member
     ): List<BundleResponse> {
         return bundleService.getMyBundles(getCondition, member)

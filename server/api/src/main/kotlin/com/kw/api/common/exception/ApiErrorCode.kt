@@ -15,11 +15,10 @@ enum class ApiErrorCode(
     // question
     NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, "NOT_FOUND_QUESTION", "존재하지 않는 질문입니다."),
     INCLUDE_NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, "INCLUDE_NOT_FOUND_QUESTION", "존재하지 않는 질문이 포함되어 있습니다."),
+    OVER_QUESTION_LIMIT(HttpStatus.BAD_REQUEST, "OVER_QUESTION_LIMIT", "질문은 최대 100개까지 등록할 수 있습니다."),
 
     // tag
-
     INCLUDE_NOT_FOUND_TAG(HttpStatus.NOT_FOUND, "INCLUDE_NOT_FOUND_TAG", "존재하지 않는 태그가 포함되어 있습니다."),
-    OVER_TAG_COUNT(HttpStatus.BAD_REQUEST, "OVER_TAG_COUNT", "태그는 최대 3개까지 지정 가능합니다."),
 
     // member
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "NOT_FOUND_MEMBER", "존재하지 않는 회원입니다."),
