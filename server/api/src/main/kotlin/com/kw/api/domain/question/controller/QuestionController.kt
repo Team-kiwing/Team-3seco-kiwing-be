@@ -12,6 +12,7 @@ import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -62,7 +63,7 @@ class QuestionController(val questionService: QuestionService) {
 
     @Operation(summary = "질문 검색")
     @GetMapping("/questions/search")
-    fun searchQuestion(@ModelAttribute questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
+    fun searchQuestion(@ParameterObject @ModelAttribute questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
         return questionService.searchQuestion(questionSearchRequest)
     }
 }
