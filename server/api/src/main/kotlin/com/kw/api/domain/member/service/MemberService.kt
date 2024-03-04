@@ -61,6 +61,11 @@ class MemberService(private val memberRepository: MemberRepository,
         return MemberInfoResponse.from(member)
     }
 
+    fun getMemberInfoById(id: Long): MemberInfoResponse {
+        val member = memberRepository.findByIdOrNull(id) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
+        return MemberInfoResponse.from(member)
+    }
+
     private fun isNicknameUnique(nickname: String) {
         if(memberRepository.existsByNickname(nickname)){
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)

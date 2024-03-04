@@ -56,4 +56,11 @@ class MemberController(private val memberService: MemberService) {
         val response = memberService.updateMemberProfileImage(member, file)
         return ApiResponse.ok(response)
     }
+
+    @Operation(summary = "회원 아이디로 회원 정보를 가져옵니다.")
+    @GetMapping("/{id}")
+    fun updateMemberProfileImage(@PathVariable id: Long): ApiResponse<MemberInfoResponse> {
+        val response = memberService.getMemberInfoById(id)
+        return ApiResponse.ok(response)
+    }
 }
