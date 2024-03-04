@@ -167,9 +167,6 @@ class BundleService(
     }
 
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
-        if (tagIds.size > 3) {
-            throw ApiException(ApiErrorCode.OVER_TAG_COUNT)
-        }
         val tags = tagRepository.findAllById(tagIds)
         if (tags.size != tagIds.size) {
             throw ApiException(ApiErrorCode.INCLUDE_NOT_FOUND_TAG)
