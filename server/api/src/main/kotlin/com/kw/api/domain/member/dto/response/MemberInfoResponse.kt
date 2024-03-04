@@ -23,7 +23,7 @@ data class MemberInfoResponse(val id: Long?,
             val tagResponses = member.memberTags.map { memberTag ->
                 TagResponse(
                     id = memberTag.tag.id,
-                    content = memberTag.tag.name
+                    name = memberTag.tag.name
                 )
             }.toList()
 
