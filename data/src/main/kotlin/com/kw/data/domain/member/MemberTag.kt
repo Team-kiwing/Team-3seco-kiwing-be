@@ -1,24 +1,21 @@
 package com.kw.data.domain.member
 
 import com.kw.data.domain.Base
+import com.kw.data.domain.tag.Tag
 import jakarta.persistence.*
 
 @Entity
-class Sns(name: String, url: String, member: Member) : Base() {
+class MemberTag(member: Member, tag: Tag): Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     val id: Long? = null
 
-    @Column(name = "name", nullable = false)
-    var name: String = name
-        protected set
-
-    @Column(name = "url", nullable = false)
-    var url: String = url
-        protected set
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    val member: Member = member
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    val member: Member = member
+    @JoinColumn(name = "tag_id", nullable = false)
+    val tag: Tag = tag
 }

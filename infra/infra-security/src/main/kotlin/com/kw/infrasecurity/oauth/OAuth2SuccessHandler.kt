@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
     private val memberRepository: MemberRepository,
-    private val redisRefreshTokenRepository: RedisRefreshTokenRepository) : AuthenticationSuccessHandler {
+    private val redisRefreshTokenRepository: RedisRefreshTokenRepository,
+    private val httpResponseUtil: HttpResponseUtil) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest?,
@@ -29,11 +30,13 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
         val email = principal.getAttribute<String>("email")
 
         var member = Member(email = email!!)
+        var isSignUp = false
         if(isMember(email)){
             member = getMember(email)
         }
         else {
             member = createMember(member)
+            isSignUp = true
         }
         val authorities = member.memberRoles.map { memberRole ->
             SimpleGrantedAuthority(memberRole.toString())
@@ -50,7 +53,7 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
 
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
 
-        HttpResponseUtil.writeResponse(response!!, accessToken, refreshToken)
+        httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
     }
 
     private fun getMember(email : String) : Member {
