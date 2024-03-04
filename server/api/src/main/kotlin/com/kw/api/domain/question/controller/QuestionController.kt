@@ -2,6 +2,7 @@ package com.kw.api.domain.question.controller
 
 import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
+import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
 import com.kw.api.domain.question.dto.response.QuestionListResponse
@@ -47,7 +48,7 @@ class QuestionController(val questionService: QuestionService) {
     @Operation(summary = "질문 신고")
     @PostMapping("/questions/{id}/report")
     fun reportQuestion(
-        @RequestParam reason: String,
+        @RequestBody reason: QuestionReportRequest,
         @PathVariable id: Long
     ): ApiResponse<QuestionReportResponse> {
         val response = questionService.reportQuestion(reason, id)
