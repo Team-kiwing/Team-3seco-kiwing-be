@@ -4,13 +4,13 @@ import com.kw.data.domain.tag.Tag
 
 data class TagResponse(
     val id: Long?,
-    val content: String
+    val name: String
 ) {
     companion object {
         fun from(tag: Tag): TagResponse {
             return TagResponse(
                 id = tag.id,
-                content = tag.name
+                name = tag.name
             )
         }
     }
