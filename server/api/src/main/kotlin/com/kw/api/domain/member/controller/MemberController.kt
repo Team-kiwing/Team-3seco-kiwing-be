@@ -1,6 +1,7 @@
 package com.kw.api.domain.member.controller
 
 import com.kw.api.common.dto.response.ApiResponse
+import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.api.domain.member.service.MemberService
 import com.kw.data.domain.member.Member
@@ -29,6 +30,13 @@ class MemberController(private val memberService: MemberService) {
                              @RequestParam nickname: String): ApiResponse<MemberInfoResponse> {
         val response = memberService.updateMemberNickname(member, nickname)
         return ApiResponse.ok(response)
+    }
+
+    @Operation(summary = "사용자의 소셜 링크를 변경합니다.")
+    @PatchMapping("/me/sns")
+    fun updateMemberSns(@AuthToMember member: Member,
+                        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest) {
+        memberService.updateMemberSns(member, memberSnsUpdateRequest)
     }
 
     @Operation(summary = "회원 프로필 사진을 저장합니다.")
