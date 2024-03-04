@@ -1,9 +1,5 @@
 package com.kw.api.domain.member.controller
 
-<<<<<<< HEAD
-=======
-import com.kw.api.common.dto.response.ApiResponse
->>>>>>> a2c8357a6bf6f233ac965b6f0236024abe0e222b
 import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.api.domain.member.service.MemberService
