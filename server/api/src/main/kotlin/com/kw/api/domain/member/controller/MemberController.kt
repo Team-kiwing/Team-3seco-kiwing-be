@@ -9,6 +9,7 @@ import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.MediaType
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
@@ -27,6 +28,7 @@ class MemberController(private val memberService: MemberService) {
     @Operation(summary = "사용자의 닉네임을 변경합니다.")
     @PatchMapping("/me/nickname")
     fun updateMemberNickname(@AuthToMember member: Member,
+                             @AuthenticationPrincipal
                              @RequestParam nickname: String): ApiResponse<MemberInfoResponse> {
         val response = memberService.updateMemberNickname(member, nickname)
         return ApiResponse.ok(response)
