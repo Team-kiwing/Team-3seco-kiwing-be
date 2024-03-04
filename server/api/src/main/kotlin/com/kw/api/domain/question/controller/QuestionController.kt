@@ -1,6 +1,5 @@
 package com.kw.api.domain.question.controller
 
-import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
@@ -27,9 +26,8 @@ class QuestionController(val questionService: QuestionService) {
     fun createQuestion(
         @RequestBody @Valid request: QuestionCreateRequest,
         @AuthToMember member: Member
-    ): ApiResponse<QuestionResponse> {
-        val response = questionService.createQuestion(request, member)
-        return ApiResponse.created(response)
+    ): QuestionResponse {
+        return questionService.createQuestion(request, member)
     }
 
     @Operation(summary = "질문 수정")
@@ -38,9 +36,8 @@ class QuestionController(val questionService: QuestionService) {
         @PathVariable id: Long,
         @RequestBody @Valid request: QuestionUpdateRequest,
         @AuthToMember member: Member
-    ): ApiResponse<QuestionResponse> {
-        val response = questionService.updateQuestion(id, request, member)
-        return ApiResponse.ok(response)
+    ): QuestionResponse {
+        return questionService.updateQuestion(id, request, member)
     }
 
     @Operation(summary = "질문 삭제")
@@ -49,9 +46,8 @@ class QuestionController(val questionService: QuestionService) {
     fun deleteQuestion(
         @PathVariable id: Long,
         @AuthToMember member: Member
-    ): ApiResponse<Unit> {
+    ) {
         questionService.deleteQuestion(id, member)
-        return ApiResponse.noContent()
     }
 
     @Operation(summary = "질문 신고")
@@ -60,15 +56,13 @@ class QuestionController(val questionService: QuestionService) {
     fun reportQuestion(
         @RequestParam reason: String,
         @PathVariable id: Long
-    ): ApiResponse<QuestionReportResponse> {
-        val response = questionService.reportQuestion(reason, id)
-        return ApiResponse.created(response)
+    ): QuestionReportResponse {
+        return questionService.reportQuestion(reason, id)
     }
 
     @Operation(summary = "질문 검색")
     @GetMapping("/questions/search")
-    fun searchQuestion(@ModelAttribute questionSearchRequest: QuestionSearchRequest): ApiResponse<QuestionListResponse> {
-        val responses = questionService.searchQuestion(questionSearchRequest)
-        return ApiResponse.ok(responses)
+    fun searchQuestion(@ModelAttribute questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
+        return questionService.searchQuestion(questionSearchRequest)
     }
 }

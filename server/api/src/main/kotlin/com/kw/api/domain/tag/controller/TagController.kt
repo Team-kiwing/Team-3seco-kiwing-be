@@ -1,6 +1,5 @@
 package com.kw.api.domain.tag.controller
 
-import com.kw.api.common.dto.response.ApiResponse
 import com.kw.api.domain.tag.dto.response.TagResponse
 import com.kw.api.domain.tag.service.TagService
 import io.swagger.v3.oas.annotations.Operation
@@ -16,8 +15,7 @@ class TagController(val tagService: TagService) {
 
     @Operation(summary = "태그 목록 조회")
     @GetMapping("/tags")
-    fun getTags(): ApiResponse<List<TagResponse>> {
-        val responses = tagService.getTags()
-        return ApiResponse.ok(responses)
+    fun getTags(): List<TagResponse> {
+        return tagService.getTags()
     }
 }
