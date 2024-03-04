@@ -1,21 +1,21 @@
 package com.kw.infrasecurity.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
-class HttpResponseUtil {
-    data class tokenRespone(val accessToken: String, val refreshToken: String)
+@Component
+class HttpResponseUtil(@Value("\${client-redirect-url}") val REDIRECT_URL: String) {
 
-    companion object {
-        fun writeResponse(response : HttpServletResponse, accessToken : String, refreshToken : String) {
-            val objectMapper = ObjectMapper()
-            val responseBody: String = objectMapper.writeValueAsString(tokenRespone(accessToken, refreshToken))
-            response.contentType = MediaType.APPLICATION_JSON_VALUE
-            response.status = HttpStatus.OK.value()
-            response.characterEncoding = "UTF-8"
-            response.writer.write(responseBody)
+    fun writeResponse(response : HttpServletResponse, accessToken : String, refreshToken : String, isSignUp : Boolean) {
+        var redirectUrl = REDIRECT_URL
+        if(isSignUp) {
+            redirectUrl += "/welcome"
         }
+        val sb = StringBuffer(redirectUrl)
+        sb.append("?").append("access-token=").append(accessToken)
+        sb.append("&").append("refresh-token=").append(refreshToken)
+
+        response.sendRedirect(sb.toString())
     }
 }
