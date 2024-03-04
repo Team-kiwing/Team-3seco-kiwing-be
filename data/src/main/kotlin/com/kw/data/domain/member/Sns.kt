@@ -4,7 +4,7 @@ import com.kw.data.domain.Base
 import jakarta.persistence.*
 
 @Entity
-class Sns(name: String, url: String) : Base() {
+class Sns(name: String, url: String, member: Member) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
@@ -17,4 +17,8 @@ class Sns(name: String, url: String) : Base() {
     @Column(name = "url", nullable = false)
     var url: String = url
         protected set
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    val member: Member = member
 }

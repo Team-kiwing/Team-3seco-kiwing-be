@@ -38,9 +38,8 @@ class Member(email: String) : Base() {
 
     var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
 
-    @Embedded
-    var socialLinks: SocialLinks? = null
-        protected set
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var snsList: MutableList<Sns> = mutableListOf()
 
     fun updateMemberNickname(nickname: String) {
         this.nickname = nickname
@@ -54,8 +53,12 @@ class Member(email: String) : Base() {
         this.deletedAt = LocalDateTime.now()
     }
 
-    fun updateMemberSocialLinks(socialLinks: SocialLinks) {
-        this.socialLinks = socialLinks
+    fun updateMemberSns(snsList: List<Sns>) {
+        if (snsList.size >= 3) {
+            throw IllegalArgumentException("Sns는 최대 3개까지 지정 가능합니다.")
+        }
+        this.snsList.clear()
+        this.snsList.addAll(snsList)
     }
 
     enum class MemberRoleType {
@@ -65,11 +68,5 @@ class Member(email: String) : Base() {
 
     enum class Provider {
         GOOGLE,
-    }
-
-    @Embeddable
-    class SocialLinks(link1: String,
-                      link2: String,
-                      link3: String) {
     }
 }
