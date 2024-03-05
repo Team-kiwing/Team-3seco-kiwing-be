@@ -9,7 +9,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @Configuration
 @EnableRedisRepositories(basePackages = ["com.kw"])
 @ComponentScan(basePackages = ["com.kw"])
-@EnableRedisHttpSession
 class SecurityModuleConfig
 
 
