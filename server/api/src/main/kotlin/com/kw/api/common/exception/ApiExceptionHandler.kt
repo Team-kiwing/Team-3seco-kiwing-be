@@ -1,6 +1,7 @@
 package com.kw.api.common.exception
 
 import com.kw.api.common.dto.response.ErrorResponse
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import org.springframework.http.HttpHeaders
@@ -14,8 +15,11 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.security.SignatureException
 
+private val logger = KotlinLogging.logger {}
+
 @RestControllerAdvice
 class ApiExceptionHandler : ResponseEntityExceptionHandler() {
+
 
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
@@ -23,6 +27,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.BAD_REQUEST
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -34,6 +39,8 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
+        logger.warn(ex.message, ex)
+
         val errorCode = ApiErrorCode.BAD_REQUEST
         val errorResponse = ErrorResponse(errorCode.code, errorCode.message)
 
@@ -46,6 +53,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(AccessDeniedException::class)
     protected fun handleAccessDeniedException(ex: AccessDeniedException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.ACCESS_DENIED
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -53,6 +61,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(SignatureException::class)
     protected fun handleSignatureException(ex: SignatureException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.ACCESS_TOKEN_MALFORMED
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -60,6 +69,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(MalformedJwtException::class)
     protected fun handleMalformedJwtException(ex: MalformedJwtException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.ACCESS_TOKEN_MALFORMED
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -67,6 +77,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(ExpiredJwtException::class)
     protected fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.ACCESS_TOKEN_EXPIRED
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -74,6 +85,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(IllegalArgumentException::class)
     protected fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         val errorCode = ApiErrorCode.BAD_REQUEST
         val errorResponse = ErrorResponse(errorCode.code, ex.message ?: errorCode.message)
         return ResponseEntity.status(errorCode.status).body(errorResponse)
@@ -81,6 +93,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(ApiException::class)
     protected fun handleApiException(ex: ApiException): ResponseEntity<ErrorResponse> {
+        logger.warn(ex.message, ex)
         return ResponseEntity.status(ex.getStatus()).body(ex.getErrorResponse())
     }
 
