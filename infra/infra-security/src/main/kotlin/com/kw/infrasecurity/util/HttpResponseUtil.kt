@@ -10,7 +10,10 @@ class HttpResponseUtil(@Value("\${client-redirect-url}") val REDIRECT_URL: Strin
     fun writeResponse(response : HttpServletResponse, accessToken : String, refreshToken : String, isSignUp : Boolean) {
         var redirectUrl = REDIRECT_URL
         if(isSignUp) {
-            redirectUrl += "/welcome"
+            redirectUrl += "/register"
+        }
+        else {
+            redirectUrl += "/auth"
         }
         val sb = StringBuffer(redirectUrl)
         sb.append("?").append("access-token=").append(accessToken)
