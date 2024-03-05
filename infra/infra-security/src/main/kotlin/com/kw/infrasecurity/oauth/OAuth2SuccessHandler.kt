@@ -53,6 +53,7 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
 
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
 
+        response!!.addHeader("Authorization", "Bearer $accessToken")
         httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
     }
 
