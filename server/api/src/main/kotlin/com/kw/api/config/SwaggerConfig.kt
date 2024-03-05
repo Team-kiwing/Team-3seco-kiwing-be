@@ -14,7 +14,8 @@ import java.util.*
 
 @OpenAPIDefinition(
     info = Info(title = "키윙 API 명세서", version = "1.0"),
-    servers = [Server(url = "https://api-dev.kiwing.kr", description = "키윙 스테이징 서버 URL")]
+    servers = [ Server(url = "/", description = "키윙 현재 서버 URL"),
+        Server(url = "https://api-dev.kiwing.kr", description = "키윙 스테이징 서버 URL")]
 )
 @Configuration
 class SwaggerConfig {
