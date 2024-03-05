@@ -25,6 +25,7 @@ dependencies {
 
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation ("org.springframework.session:spring-session-data-redis")
 
     // swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
