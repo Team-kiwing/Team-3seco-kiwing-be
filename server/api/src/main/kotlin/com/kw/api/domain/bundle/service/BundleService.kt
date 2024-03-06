@@ -35,6 +35,7 @@ class BundleService(
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = request.toEntity(member)
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
+        member.updateBundleOrder((member.bundleOrder + " " + bundle.id).trim())
         return getBundle(bundleRepository.save(bundle).id!!, false, member)
     }
 
@@ -56,6 +57,17 @@ class BundleService(
     @Transactional(readOnly = true)
     fun getMyBundles(getCondition: BundleGetCondition, member: Member): List<BundleResponse> {
         val bundles = bundleRepository.findAllByMemberId(member.id!!, getCondition)
+
+        if (getCondition.sortingType == BundleGetCondition.SortingType.CUSTOM) {
+            val bundleOrder = if (member.bundleOrder.isNotBlank()) {
+                member.bundleOrder.split(" ").map { it.toLong() }
+            } else {
+                emptyList()
+            }
+            val sortedBundles = bundles.sortedBy { bundleOrder.indexOf(it.id) }
+            return sortedBundles.map { BundleResponse.from(it) }
+        }
+
         return bundles.map { BundleResponse.from(it) }
     }
 
