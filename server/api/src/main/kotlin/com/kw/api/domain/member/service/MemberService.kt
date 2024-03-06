@@ -2,6 +2,7 @@ package com.kw.api.domain.member.service
 
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
+import com.kw.api.domain.member.dto.request.MemberInfoUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.data.domain.member.Member
@@ -39,15 +40,7 @@ class MemberService(private val memberRepository: MemberRepository,
     }
 
     fun updateMemberSns(member: Member, memberSnsUpdateRequest: MemberSnsUpdateRequest): MemberInfoResponse {
-        val snsList = memberSnsUpdateRequest.snsRequests.map { snsRequest ->
-            Sns(
-                name = snsRequest.name,
-                url = snsRequest.url,
-                member = member
-            )
-        }.toList()
-
-        member.updateMemberSns(snsList)
+        updateMemberInfoSns(member, memberSnsUpdateRequest.SnsRequests)
         return MemberInfoResponse.from(member)
     }
 
@@ -64,6 +57,28 @@ class MemberService(private val memberRepository: MemberRepository,
     fun getMemberInfoById(id: Long): MemberInfoResponse {
         val member = memberRepository.findByIdOrNull(id) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
         return MemberInfoResponse.from(member)
+    }
+
+    fun updateMemberInfo(member: Member,
+                         memberInfoUpdateRequest: MemberInfoUpdateRequest): MemberInfoResponse {
+        updateMemberNickname(member, memberInfoUpdateRequest.nickname)
+        updateMemberInfoSns(member, memberInfoUpdateRequest.snsRequests)
+        updateMemberTags(member, memberInfoUpdateRequest.tagIds)
+
+        return MemberInfoResponse.from(member)
+    }
+
+    private fun updateMemberInfoSns(member: Member,
+        snsRequests: List<MemberSnsUpdateRequest.SnsRequest>) {
+        val snsList = snsRequests.map { snsRequest ->
+            Sns(
+                name = snsRequest.name,
+                url = snsRequest.url,
+                member = member
+            )
+        }.toList()
+
+        member.updateMemberSns(snsList)
     }
 
     private fun isNicknameUnique(nickname: String) {
