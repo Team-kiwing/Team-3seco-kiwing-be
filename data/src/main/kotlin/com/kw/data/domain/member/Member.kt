@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
     @Column(name = "nickname")
@@ -36,7 +36,11 @@ class Member(email: String) : Base() {
     var deletedAt: LocalDateTime? = null
         protected set
 
-    var memberRoles : MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
+    @Column(name = "bundle_order", nullable = false)
+    var bundleOrder: String = ""
+        protected set
+
+    var memberRoles: MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var snsList: MutableList<Sns> = mutableListOf()
@@ -72,6 +76,10 @@ class Member(email: String) : Base() {
         }
         this.memberTags.clear()
         this.memberTags.addAll(memberTags)
+    }
+
+    fun updateBundleOrder(bundleOrder: String) {
+        this.bundleOrder = bundleOrder
     }
 
     enum class MemberRoleType {
