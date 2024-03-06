@@ -17,7 +17,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
 
         return jpaQueryFactory.selectFrom(question)
             .where(
-                containsKeyword(keyword)
+                keyword?.let { containsKeyword(keyword) }
             )
             .offset((page - 1) * size)
             .limit(size)
@@ -36,7 +36,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         val count = jpaQueryFactory.select(question.count())
             .from(question)
             .where(
-                containsKeyword(keyword)
+                keyword?.let { containsKeyword(keyword) }
             )
             .fetchOne()
         if (count == 0L) {
