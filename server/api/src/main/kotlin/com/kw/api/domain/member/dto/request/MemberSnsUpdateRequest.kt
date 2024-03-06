@@ -1,6 +1,6 @@
 package com.kw.api.domain.member.dto.request
 
-data class MemberSnsUpdateRequest(val snsRequests: List<snsRequest>) {
-    data class snsRequest(val name: String,
+data class MemberSnsUpdateRequest(val SnsRequests: List<SnsRequest>) {
+    data class SnsRequest(val name: String,
                           val url: String)
 }
