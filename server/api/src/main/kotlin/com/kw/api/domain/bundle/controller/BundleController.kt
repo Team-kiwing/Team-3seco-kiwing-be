@@ -6,6 +6,7 @@ import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
+import com.kw.api.domain.member.dto.request.BundleOrderUpdateRequest
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
 import com.kw.data.domain.member.Member
@@ -23,6 +24,16 @@ import org.springframework.web.bind.annotation.*
 class BundleController(
     private val bundleService: BundleService
 ) {
+
+    @Operation(summary = "꾸러미 순서 변경")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/me/bundle-order")
+    fun updateBundleOrder(
+        @AuthToMember member: Member,
+        @RequestBody request: BundleOrderUpdateRequest
+    ) {
+        bundleService.updateBundleOrder(member, request)
+    }
 
     @Operation(summary = "꾸러미 생성")
     @ResponseStatus(HttpStatus.CREATED)

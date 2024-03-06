@@ -1,6 +1,5 @@
 package com.kw.api.domain.member.controller
 
-import com.kw.api.domain.member.dto.request.MemberBundleOrderUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberInfoUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
@@ -9,7 +8,6 @@ import com.kw.data.domain.member.Member
 import com.kw.infrasecurity.resolver.AuthToMember
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -73,17 +71,6 @@ class MemberController(private val memberService: MemberService) {
     ): MemberInfoResponse {
         return memberService.updateMemberProfileImage(member, file)
     }
-
-    @Operation(summary = "회원의 꾸러미 순서 변경")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/me/bundle-order")
-    fun updateBundleOrder(
-        @AuthToMember member: Member,
-        @RequestBody request: MemberBundleOrderUpdateRequest
-    ) {
-        memberService.updateBundleOrder(member, request)
-    }
-
 
     @Operation(summary = "회원 아이디로 회원 정보를 가져옵니다.")
     @GetMapping("/{id}")

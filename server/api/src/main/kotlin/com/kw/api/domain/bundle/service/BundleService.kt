@@ -7,6 +7,7 @@ import com.kw.api.common.exception.ApiException
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
+import com.kw.api.domain.member.dto.request.BundleOrderUpdateRequest
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.BundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
@@ -30,6 +31,10 @@ class BundleService(
     private val tagRepository: TagRepository,
     private val questionRepository: QuestionRepository,
 ) {
+
+    fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {
+        member.updateBundleOrder(request.bundleIds.joinToString(" "))
+    }
 
     fun createBundle(request: BundleCreateRequest, member: Member): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
@@ -59,11 +64,7 @@ class BundleService(
         val bundles = bundleRepository.findAllByMemberId(member.id!!, getCondition)
 
         if (getCondition.sortingType == BundleGetCondition.SortingType.CUSTOM) {
-            val bundleOrder = if (member.bundleOrder.isNotBlank()) {
-                member.bundleOrder.split(" ").map { it.toLong() }
-            } else {
-                emptyList()
-            }
+            val bundleOrder = parseOrderStringToOrderList(member.bundleOrder)
             val sortedBundles = bundles.sortedBy { bundleOrder.indexOf(it.id) }
             return sortedBundles.map { BundleResponse.from(it) }
         }
@@ -88,11 +89,7 @@ class BundleService(
             showOnlyMyQuestions,
             member.id
         )
-        val questionOrder = if (bundle.questionOrder.isNotBlank()) {
-            bundle.questionOrder.split(" ").map { it.toLong() }
-        } else {
-            emptyList()
-        }
+        val questionOrder = parseOrderStringToOrderList(bundle.questionOrder)
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
 
         return BundleDetailResponse.from(bundle, sortedQuestions)
@@ -201,5 +198,13 @@ class BundleService(
             throw ApiException(ApiErrorCode.INCLUDE_NOT_FOUND_QUESTION)
         }
         return questions
+    }
+
+    private fun parseOrderStringToOrderList(orderString: String): List<Long> {
+        return if (orderString.isNotBlank()) {
+            orderString.split(" ").map { it.toLong() }
+        } else {
+            emptyList()
+        }
     }
 }

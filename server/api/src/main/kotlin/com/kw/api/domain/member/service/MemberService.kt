@@ -2,7 +2,6 @@ package com.kw.api.domain.member.service
 
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
-import com.kw.api.domain.member.dto.request.MemberBundleOrderUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberInfoUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
@@ -71,10 +70,6 @@ class MemberService(
         updateMemberTags(member, memberInfoUpdateRequest.tagIds)
 
         return MemberInfoResponse.from(member)
-    }
-
-    fun updateBundleOrder(member: Member, request: MemberBundleOrderUpdateRequest) {
-        member.updateBundleOrder(request.bundleIds.joinToString(" "))
     }
 
     private fun updateMemberInfoSns(
