@@ -23,7 +23,7 @@ class AuthController(val authService: AuthService) {
     }
 
     @Operation(summary = "리프레시 토큰으로 어세스 토큰을 재발급합니다.")
-    @GetMapping("/refresh-access-token")
+    @PostMapping("/refresh-access-token")
     fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): TokenResponse {
         return authService.refreshAccessToken(refreshTokenRequest)
     }
