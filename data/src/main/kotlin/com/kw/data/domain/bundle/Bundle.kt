@@ -10,7 +10,8 @@ class Bundle(
     name: String,
     shareType: ShareType,
     originId: Long? = null,
-    member: Member
+    member: Member,
+    questionOrder: String = ""
 ) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +32,7 @@ class Bundle(
         protected set
 
     @Column(name = "question_order", nullable = false)
-    var questionOrder: String = ""
+    var questionOrder: String = questionOrder
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
@@ -105,7 +106,8 @@ class Bundle(
             name = this.name,
             shareType = ShareType.PRIVATE,
             originId = this.id,
-            member = member
+            member = member,
+            questionOrder = this.questionOrder
         )
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
         bundle.addQuestions(questions.map { it.copy(bundle, member) })
