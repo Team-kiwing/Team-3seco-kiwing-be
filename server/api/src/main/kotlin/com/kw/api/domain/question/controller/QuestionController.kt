@@ -56,15 +56,15 @@ class QuestionController(val questionService: QuestionService) {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/questions/{id}/report")
     fun reportQuestion(
-        @RequestBody reason: QuestionReportRequest,
+        @RequestBody request: QuestionReportRequest,
         @PathVariable id: Long
     ): QuestionReportResponse {
-        return questionService.reportQuestion(reason, id)
+        return questionService.reportQuestion(request, id)
     }
 
     @Operation(summary = "질문 검색")
     @GetMapping("/questions/search")
-    fun searchQuestion(@ParameterObject @ModelAttribute questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
-        return questionService.searchQuestion(questionSearchRequest)
+    fun searchQuestion(@ParameterObject @ModelAttribute request: QuestionSearchRequest): QuestionListResponse {
+        return questionService.searchQuestion(request)
     }
 }

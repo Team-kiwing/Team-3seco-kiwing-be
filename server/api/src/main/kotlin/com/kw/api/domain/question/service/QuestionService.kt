@@ -87,11 +87,11 @@ class QuestionService(
     }
 
     @Transactional(readOnly = true)
-    fun searchQuestion(questionSearchRequest: QuestionSearchRequest): QuestionListResponse {
+    fun searchQuestion(request: QuestionSearchRequest): QuestionListResponse {
         val questionSearchDto = QuestionSearchDto(
-            keyword = questionSearchRequest.keyword,
-            page = questionSearchRequest.page,
-            size = questionSearchRequest.size
+            keyword = request.keyword,
+            page = request.page,
+            size = request.size
         )
         val questions = questionRepository.searchQuestion(questionSearchDto)
         val questionResponses = questions.map { QuestionResponse.from(it) }
