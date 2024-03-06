@@ -27,7 +27,7 @@ class BundleController(
 
     @Operation(summary = "꾸러미 순서 변경")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/me/bundle-order")
+    @PatchMapping("/bundles/bundle-order")
     fun updateBundleOrder(
         @AuthToMember member: Member,
         @RequestBody request: BundleOrderUpdateRequest
