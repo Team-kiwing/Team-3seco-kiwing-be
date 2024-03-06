@@ -1,5 +1,6 @@
 package com.kw.api.domain.member.controller
 
+import com.kw.api.domain.member.dto.request.MemberInfoUpdateRequest
 import com.kw.api.domain.member.dto.request.MemberSnsUpdateRequest
 import com.kw.api.domain.member.dto.response.MemberInfoResponse
 import com.kw.api.domain.member.service.MemberService
@@ -46,6 +47,13 @@ class MemberController(private val memberService: MemberService) {
         return response
     }
 
+    @Operation(summary = "사용자 회원가입 시 회원 정보를 설정합니다.")
+    @PatchMapping("/me")
+    fun updateMemberInfo(@AuthToMember member: Member,
+                         @RequestBody memberInfoUpdateRequest: MemberInfoUpdateRequest): MemberInfoResponse {
+        val response = memberService.updateMemberInfo(member, memberInfoUpdateRequest)
+        return response
+    }
 
     @Operation(summary = "회원 프로필 사진을 저장합니다.")
     @PatchMapping(value = ["/me/profile-image"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
