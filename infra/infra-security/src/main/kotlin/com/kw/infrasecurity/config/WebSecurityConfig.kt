@@ -5,6 +5,7 @@ import com.kw.infrasecurity.jwt.JwtAuthenticationEntryPoint
 import com.kw.infrasecurity.jwt.JwtAuthenticationFilter
 import com.kw.infrasecurity.oauth.OAuth2SuccessHandler
 import com.kw.infrasecurity.oauth.OAuth2UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -25,7 +26,8 @@ class WebSecurityConfig(
     val jwtAccessDeniedHandler: JwtAccessDeniedHandler,
     val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
     val oAuth2SuccessHandler: OAuth2SuccessHandler,
-    val oAuth2UserService: OAuth2UserService
+    val oAuth2UserService: OAuth2UserService,
+    @Value("\${allowed-origins}") private val allowedOrigins: String,
 ) {
 
     @Bean
@@ -68,7 +70,7 @@ class WebSecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOriginPatterns = listOf("*")
+        configuration.allowedOriginPatterns = allowedOrigins.split(",")
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")
         configuration.allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
