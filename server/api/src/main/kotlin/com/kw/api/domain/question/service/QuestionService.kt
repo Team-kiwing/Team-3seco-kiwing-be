@@ -47,6 +47,8 @@ class QuestionService(
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         question.updateQuestionTags(tags.map { QuestionTag(question, it) })
 
+        bundle.updateQuestionOrder(bundle.questionOrder + " " + question.id)
+
         return QuestionResponse.from(questionRepository.save(question))
     }
 
