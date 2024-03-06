@@ -14,17 +14,21 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService(val redisRefreshTokenRepository: RedisRefreshTokenRepository,
+class AuthService(
+    val redisRefreshTokenRepository: RedisRefreshTokenRepository,
     val memberRepository: MemberRepository,
-    val jwtTokenProvider: JwtTokenProvider) {
+    val jwtTokenProvider: JwtTokenProvider
+) {
 
     fun logout(refreshTokenRequest: RefreshTokenRequest) {
         redisRefreshTokenRepository.delete(refreshTokenRequest.refreshToken)
     }
 
-    fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest) : TokenResponse {
-        val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken) ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED)
-        val member = memberRepository.findByIdOrNull(memberId) ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
+    fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
+        val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken)
+            ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED)
+        val member = memberRepository.findByIdOrNull(memberId)
+            ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
 
         val oauth2UserDetails = createOauth2UserDetails(member)
         val accessToken = jwtTokenProvider.generateAccessToken(oauth2UserDetails)
@@ -38,15 +42,17 @@ class AuthService(val redisRefreshTokenRepository: RedisRefreshTokenRepository,
         member.withdrawMember()
     }
 
-    private fun createOauth2UserDetails(member: Member): OAuth2UserDetails{
+    private fun createOauth2UserDetails(member: Member): OAuth2UserDetails {
         val authorities: MutableList<SimpleGrantedAuthority> = member.memberRoles
             .stream()
             .map { memberRole -> SimpleGrantedAuthority(memberRole.toString()) }
             .toList()
             .toMutableList()
 
-        return OAuth2UserDetails(id = member.id!!,
+        return OAuth2UserDetails(
+            id = member.id!!,
             email = member.email,
-            authorities = authorities)
+            authorities = authorities
+        )
     }
 }

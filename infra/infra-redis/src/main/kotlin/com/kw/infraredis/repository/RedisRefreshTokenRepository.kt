@@ -18,9 +18,8 @@ class RedisRefreshTokenRepository(val redisTemplate: RedisTemplate<String, Any>)
         redisTemplate.delete(refreshToken)
     }
 
-    fun findByRefreshToken(refreshToken: String?): Long? {
-        val valueOperations: ValueOperations<String, Long> = redisTemplate.opsForValue() as ValueOperations<String, Long>
-        return valueOperations[refreshToken!!]
+    fun findByRefreshToken(refreshToken: String): Long? {
+        return redisTemplate.opsForValue().get(refreshToken).toString().toLong()
     }
 
     companion object {
