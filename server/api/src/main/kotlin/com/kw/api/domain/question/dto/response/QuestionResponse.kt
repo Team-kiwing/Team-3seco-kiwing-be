@@ -13,6 +13,7 @@ data class QuestionResponse(
     val originId: Long?,
     val tags: List<TagResponse>,
     val isHot: Boolean,
+    val writerId: Long,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -27,6 +28,7 @@ data class QuestionResponse(
                 originId = question.originId,
                 tags = question.questionTags.map { it.tag }.map { TagResponse.from(it) },
                 isHot = question.isHot(),
+                writerId = question.member.id!!,
                 createdAt = question.createdAt,
                 updatedAt = question.updatedAt
             )
