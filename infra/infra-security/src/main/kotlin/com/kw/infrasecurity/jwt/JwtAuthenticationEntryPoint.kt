@@ -9,13 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerExceptionResolver
 
 @Component
-class JwtAuthenticationEntryPoint() : AuthenticationEntryPoint {
-
-    private lateinit var resolver: HandlerExceptionResolver
-
-    constructor (@Qualifier("handlerExceptionResolver") resolver: HandlerExceptionResolver) : this() {
-        this.resolver = resolver
-    }
+class JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") val resolver: HandlerExceptionResolver) : AuthenticationEntryPoint {
 
     override fun commence(
         request: HttpServletRequest?,
