@@ -32,10 +32,6 @@ class BundleService(
     private val questionRepository: QuestionRepository,
 ) {
 
-    fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {
-        member.updateBundleOrder(request.bundleIds.joinToString(" "))
-    }
-
     fun createBundle(request: BundleCreateRequest, member: Member): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = request.toEntity(member)
@@ -110,6 +106,10 @@ class BundleService(
         }
 
         return BundleResponse.from(bundle)
+    }
+
+    fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {
+        member.updateBundleOrder(request.bundleIds.joinToString(" "))
     }
 
     fun deleteBundle(id: Long, member: Member) {

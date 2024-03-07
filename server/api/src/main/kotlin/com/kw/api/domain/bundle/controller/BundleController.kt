@@ -2,7 +2,10 @@ package com.kw.api.domain.bundle.controller
 
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
-import com.kw.api.domain.bundle.dto.request.*
+import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
+import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
+import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
@@ -24,16 +27,6 @@ import org.springframework.web.bind.annotation.*
 class BundleController(
     private val bundleService: BundleService
 ) {
-
-    @Operation(summary = "꾸러미 순서 변경")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/bundles/bundle-order")
-    fun updateBundleOrder(
-        @AuthToMember member: Member,
-        @RequestBody request: BundleOrderUpdateRequest
-    ) {
-        bundleService.updateBundleOrder(member, request)
-    }
 
     @Operation(summary = "꾸러미 생성")
     @ResponseStatus(HttpStatus.CREATED)
@@ -84,6 +77,16 @@ class BundleController(
         return bundleService.updateBundle(id, request, member)
     }
 
+    @Operation(summary = "꾸러미 순서 변경")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/bundles/bundle-order")
+    fun updateBundleOrder(
+        @AuthToMember member: Member,
+        @RequestBody request: BundleOrderUpdateRequest
+    ) {
+        bundleService.updateBundleOrder(member, request)
+    }
+
     @Operation(summary = "꾸러미 삭제")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/bundles/{id}")
@@ -102,17 +105,6 @@ class BundleController(
         @AuthToMember member: Member
     ) {
         bundleService.scrapeBundle(id, member)
-    }
-
-    @Operation(summary = "꾸러미 내 질문 순서 변경")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/bundles/{id}/question-order")
-    fun updateQuestionOrder(
-        @PathVariable id: Long,
-        @RequestBody @Valid request: BundleQuestionOrderUpdateRequest,
-        @AuthToMember member: Member
-    ) {
-        bundleService.updateQuestionOrder(id, request, member)
     }
 
     @Operation(summary = "선택한 질문 여러 꾸러미에 추가")
