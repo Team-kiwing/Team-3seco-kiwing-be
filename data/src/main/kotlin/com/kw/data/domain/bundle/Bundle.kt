@@ -11,7 +11,6 @@ class Bundle(
     shareType: ShareType,
     originId: Long? = null,
     member: Member,
-    questionOrder: String = ""
 ) : Base() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +31,7 @@ class Bundle(
         protected set
 
     @Column(name = "question_order", nullable = false)
-    var questionOrder: String = questionOrder
+    var questionOrder: String = ""
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
@@ -101,16 +100,14 @@ class Bundle(
         updateQuestionOrder(questionOrderList.joinToString(" "))
     }
 
-    fun copy(questions: List<Question>, member: Member): Bundle {
+    fun copy(member: Member): Bundle {
         val bundle = Bundle(
             name = this.name,
             shareType = ShareType.PRIVATE,
             originId = this.id,
-            member = member,
-            questionOrder = this.questionOrder
+            member = member
         )
         bundle.updateBundleTags(this.bundleTags.map { BundleTag(bundle, it.tag) })
-        bundle.addQuestions(questions.map { it.copy(bundle, member) })
         return bundle
     }
 }

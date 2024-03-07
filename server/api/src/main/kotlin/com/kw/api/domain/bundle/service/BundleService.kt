@@ -133,11 +133,15 @@ class BundleService(
             throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)
         }
         bundleRepository.increaseScrapeCount(id)
+        val copiedAndSavedBundle = bundleRepository.save(bundle.copy(member))
+        member.updateBundleOrder((member.bundleOrder + " " + copiedAndSavedBundle.id).trim())
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
         questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
+        val copiedAndSavedQuestions = questions
+            .map { questionRepository.save(it.copy(copiedAndSavedBundle, member)) }
 
-        bundleRepository.save(bundle.copy(questions, member))
+        copiedAndSavedBundle.updateQuestionOrder((copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest, member: Member) {
@@ -163,9 +167,9 @@ class BundleService(
 
             val questions = questionRepository.findAllWithTagsByIdIn(request.questionIds)
             questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
-
             val copiedAndSavedQuestions = questions
                 .map { questionRepository.save(it.copy(bundle, member)) }
+
             bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
         }
     }

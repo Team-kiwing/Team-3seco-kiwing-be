@@ -2,10 +2,7 @@ package com.kw.api.domain.bundle.controller
 
 import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
-import com.kw.api.domain.bundle.dto.request.BundleCreateRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionAddRequest
-import com.kw.api.domain.bundle.dto.request.BundleQuestionRemoveRequest
-import com.kw.api.domain.bundle.dto.request.BundleUpdateRequest
+import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
 import com.kw.api.domain.bundle.service.BundleService
@@ -105,6 +102,17 @@ class BundleController(
         @AuthToMember member: Member
     ) {
         bundleService.scrapeBundle(id, member)
+    }
+
+    @Operation(summary = "꾸러미의 질문 순서 변경")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/bundles/{id}/question-order")
+    fun updateQuestionOrder(
+        @PathVariable id: Long,
+        @RequestBody @Valid request: BundleQuestionOrderUpdateRequest,
+        @AuthToMember member: Member
+    ) {
+        bundleService.updateQuestionOrder(id, request, member)
     }
 
     @Operation(summary = "선택한 질문 여러 꾸러미에 추가")
