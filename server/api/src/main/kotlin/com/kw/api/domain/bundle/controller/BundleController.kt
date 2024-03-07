@@ -115,15 +115,14 @@ class BundleController(
         bundleService.updateQuestionOrder(id, request, member)
     }
 
-    @Operation(summary = "선택한 질문 꾸러미에 추가")
+    @Operation(summary = "선택한 질문 여러 꾸러미에 추가")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/bundles/{id}/questions")
+    @PostMapping("/bundles/questions")
     fun addQuestion(
-        @PathVariable id: Long,
         @RequestBody @Valid request: BundleQuestionAddRequest,
         @AuthToMember member: Member
     ) {
-        bundleService.addQuestion(id, request, member)
+        bundleService.addQuestion(request, member)
     }
 
     @Operation(summary = "선택한 질문 꾸러미에서 삭제")
