@@ -71,11 +71,7 @@ class WebSecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
 
-        configuration.allowedOriginPatterns = listOf(
-            "http://localhost:5173",
-            "http:kiwing.kr",
-            "https://kiwing.kr",
-        )
+        configuration.allowedOriginPatterns = allowedOrigins.split(",").map { it.trim() }
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")
         configuration.allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
