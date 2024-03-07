@@ -18,12 +18,14 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 @Transactional
-class MemberService(private val memberRepository: MemberRepository,
-                    private val s3Service: S3Service,
-                    private val tagRepository: TagRepository) {
+class MemberService(
+    private val memberRepository: MemberRepository,
+    private val s3Service: S3Service,
+    private val tagRepository: TagRepository
+) {
 
     @Transactional(readOnly = true)
-    fun getMemberInfo(member: Member): MemberInfoResponse{
+    fun getMemberInfo(member: Member): MemberInfoResponse {
         return MemberInfoResponse.from(member)
     }
 
@@ -59,8 +61,10 @@ class MemberService(private val memberRepository: MemberRepository,
         return MemberInfoResponse.from(member)
     }
 
-    fun updateMemberInfo(member: Member,
-                         memberInfoUpdateRequest: MemberInfoUpdateRequest): MemberInfoResponse {
+    fun updateMemberInfo(
+        member: Member,
+        memberInfoUpdateRequest: MemberInfoUpdateRequest
+    ): MemberInfoResponse {
         updateMemberNickname(member, memberInfoUpdateRequest.nickname)
         updateMemberInfoSns(member, memberInfoUpdateRequest.snsRequests)
         updateMemberTags(member, memberInfoUpdateRequest.tagIds)
@@ -68,8 +72,10 @@ class MemberService(private val memberRepository: MemberRepository,
         return MemberInfoResponse.from(member)
     }
 
-    private fun updateMemberInfoSns(member: Member,
-        snsRequests: List<MemberSnsUpdateRequest.SnsRequest>) {
+    private fun updateMemberInfoSns(
+        member: Member,
+        snsRequests: List<MemberSnsUpdateRequest.SnsRequest>
+    ) {
         val snsList = snsRequests.map { snsRequest ->
             Sns(
                 name = snsRequest.name,
@@ -82,7 +88,7 @@ class MemberService(private val memberRepository: MemberRepository,
     }
 
     private fun isNicknameUnique(nickname: String) {
-        if(memberRepository.existsByNickname(nickname)){
+        if (memberRepository.existsByNickname(nickname)) {
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)
         }
     }

@@ -25,32 +25,40 @@ class MemberController(private val memberService: MemberService) {
 
     @Operation(summary = "사용자의 닉네임을 변경합니다.")
     @PatchMapping("/me/nickname")
-    fun updateMemberNickname(@AuthToMember member: Member,
-                             @RequestParam nickname: String): MemberInfoResponse {
+    fun updateMemberNickname(
+        @AuthToMember member: Member,
+        @RequestParam nickname: String
+    ): MemberInfoResponse {
         val response = memberService.updateMemberNickname(member, nickname)
         return response
     }
 
     @Operation(summary = "사용자의 소셜 링크를 변경합니다.")
     @PatchMapping("/me/sns")
-    fun updateMemberSns(@AuthToMember member: Member,
-                        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest): MemberInfoResponse {
+    fun updateMemberSns(
+        @AuthToMember member: Member,
+        @RequestBody memberSnsUpdateRequest: MemberSnsUpdateRequest
+    ): MemberInfoResponse {
         val response = memberService.updateMemberSns(member, memberSnsUpdateRequest)
         return response
     }
 
     @Operation(summary = "사용자의 관심 태그를 변경합니다.")
     @PatchMapping("/me/tags")
-    fun updateMemberTags(@AuthToMember member: Member,
-                        @RequestParam tagIds: List<Long>): MemberInfoResponse {
+    fun updateMemberTags(
+        @AuthToMember member: Member,
+        @RequestParam tagIds: List<Long>
+    ): MemberInfoResponse {
         val response = memberService.updateMemberTags(member, tagIds)
         return response
     }
 
     @Operation(summary = "사용자 회원가입 시 회원 정보를 설정합니다.")
     @PatchMapping("/me")
-    fun updateMemberInfo(@AuthToMember member: Member,
-                         @RequestBody memberInfoUpdateRequest: MemberInfoUpdateRequest): MemberInfoResponse {
+    fun updateMemberInfo(
+        @AuthToMember member: Member,
+        @RequestBody memberInfoUpdateRequest: MemberInfoUpdateRequest
+    ): MemberInfoResponse {
         val response = memberService.updateMemberInfo(member, memberInfoUpdateRequest)
         return response
     }
@@ -70,4 +78,5 @@ class MemberController(private val memberService: MemberService) {
         val response = memberService.getMemberInfoById(id)
         return response
     }
+
 }

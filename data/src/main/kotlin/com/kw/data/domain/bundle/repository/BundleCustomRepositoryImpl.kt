@@ -67,6 +67,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
                     bundle.updatedAt.desc()
                 } else {
                     when (condition.sortingType) {
+                        BundleGetCondition.SortingType.CUSTOM -> bundle.id.asc() // 서비스에서 재정렬
                         BundleGetCondition.SortingType.LATEST -> bundle.createdAt.desc()
                         BundleGetCondition.SortingType.CREATED -> bundle.createdAt.asc()
                         BundleGetCondition.SortingType.UPDATED -> bundle.updatedAt.desc()

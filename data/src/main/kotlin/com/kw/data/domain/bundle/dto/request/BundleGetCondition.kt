@@ -4,6 +4,7 @@ data class BundleGetCondition(
     val sortingType: SortingType?,
 ) {
     enum class SortingType {
+        CUSTOM,
         LATEST,
         CREATED,
         UPDATED;

@@ -70,7 +70,12 @@ class WebSecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOriginPatterns = allowedOrigins.split(",")
+
+        configuration.allowedOriginPatterns = listOf(
+            "http://localhost:5173",
+            "http:kiwing.kr",
+            "https://kiwing.kr",
+        )
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")
         configuration.allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
