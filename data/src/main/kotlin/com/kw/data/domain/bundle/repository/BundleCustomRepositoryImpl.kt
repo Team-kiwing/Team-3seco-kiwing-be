@@ -1,5 +1,6 @@
 package com.kw.data.domain.bundle.repository
 
+import com.kw.data.common.dto.SearchSortingType
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.QBundle.Companion.bundle
 import com.kw.data.domain.bundle.QBundleTag.Companion.bundleTag
@@ -21,7 +22,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
 
         if (condition.tagIds != null) {
             query
-                .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+                .leftJoin(bundle.bundleTags, bundleTag)
                 .where(bundleTag.tag.id.`in`(condition.tagIds))
         }
 
@@ -41,9 +42,9 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
                     bundle.scrapeCount.desc()
                 } else {
                     when (condition.sortingType) {
-//                        BundleSearchCondition.SortingType.RECOMMENDED -> TODO() //TODO
-                        BundleSearchCondition.SortingType.LATEST -> bundle.createdAt.desc()
-                        BundleSearchCondition.SortingType.POPULAR -> bundle.scrapeCount.desc()
+//                        SortingType.RECOMMENDED -> TODO() //TODO
+                        SearchSortingType.LATEST -> bundle.createdAt.desc()
+                        SearchSortingType.POPULAR -> bundle.scrapeCount.desc()
                     }
                 }
             )
