@@ -36,8 +36,11 @@ class BundleService(
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = request.toEntity(member)
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
-        member.updateBundleOrder((member.bundleOrder + " " + bundle.id).trim())
-        return getBundle(bundleRepository.save(bundle).id!!, false, member)
+
+        val savedBundle = bundleRepository.save(bundle)
+        member.updateBundleOrder((member.bundleOrder + " " + savedBundle.id).trim())
+
+        return getBundle(savedBundle.id!!, false, member)
     }
 
     @Transactional(readOnly = true)
