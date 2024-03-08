@@ -9,13 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerExceptionResolver
 
 @Component
-class JwtAccessDeniedHandler() : AccessDeniedHandler {
-
-    private lateinit var resolver: HandlerExceptionResolver
-
-    constructor (@Qualifier("handlerExceptionResolver") resolver: HandlerExceptionResolver) : this() {
-        this.resolver = resolver
-    }
+class JwtAccessDeniedHandler(@Qualifier("handlerExceptionResolver") val resolver: HandlerExceptionResolver) : AccessDeniedHandler {
 
     override fun handle(
         request: HttpServletRequest?,
