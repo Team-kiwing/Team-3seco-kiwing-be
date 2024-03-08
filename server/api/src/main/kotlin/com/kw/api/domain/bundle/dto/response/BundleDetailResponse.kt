@@ -12,9 +12,10 @@ data class BundleDetailResponse(
     val shareType: String,
     val tags: List<TagResponse>? = null,
     val questions: List<QuestionResponse>? = null,
+    val originId: Long? = null,
+    val writerId: Long,
     val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null,
-    val originId: Long? = null
+    val updatedAt: LocalDateTime? = null
 ) {
     companion object {
         fun from(bundle: Bundle, questions: List<Question>): BundleDetailResponse {
@@ -25,6 +26,7 @@ data class BundleDetailResponse(
                 tags = bundle.bundleTags.map { it.tag }.map { TagResponse.from(it) },
                 questions = questions.map { QuestionResponse.from(it) },
                 originId = bundle.originId,
+                writerId = bundle.member.id!!,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )
