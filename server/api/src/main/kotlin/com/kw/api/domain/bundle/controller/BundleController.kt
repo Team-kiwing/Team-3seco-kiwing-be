@@ -25,16 +25,6 @@ class BundleController(
     private val bundleService: BundleService
 ) {
 
-    @Operation(summary = "꾸러미 순서 변경")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/bundles/bundle-order")
-    fun updateBundleOrder(
-        @AuthToMember member: Member,
-        @RequestBody request: BundleOrderUpdateRequest
-    ) {
-        bundleService.updateBundleOrder(member, request)
-    }
-
     @Operation(summary = "꾸러미 생성")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/bundles")
@@ -84,6 +74,16 @@ class BundleController(
         return bundleService.updateBundle(id, request, member)
     }
 
+    @Operation(summary = "꾸러미 순서 변경")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping("/bundles/bundle-order")
+    fun updateBundleOrder(
+        @AuthToMember member: Member,
+        @RequestBody request: BundleOrderUpdateRequest
+    ) {
+        bundleService.updateBundleOrder(member, request)
+    }
+
     @Operation(summary = "꾸러미 삭제")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/bundles/{id}")
@@ -104,7 +104,7 @@ class BundleController(
         bundleService.scrapeBundle(id, member)
     }
 
-    @Operation(summary = "꾸러미 내 질문 순서 변경")
+    @Operation(summary = "꾸러미의 질문 순서 변경")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/bundles/{id}/question-order")
     fun updateQuestionOrder(
@@ -115,15 +115,14 @@ class BundleController(
         bundleService.updateQuestionOrder(id, request, member)
     }
 
-    @Operation(summary = "선택한 질문 꾸러미에 추가")
+    @Operation(summary = "선택한 질문 여러 꾸러미에 추가")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping("/bundles/{id}/questions")
+    @PostMapping("/bundles/questions")
     fun addQuestion(
-        @PathVariable id: Long,
         @RequestBody @Valid request: BundleQuestionAddRequest,
         @AuthToMember member: Member
     ) {
-        bundleService.addQuestion(id, request, member)
+        bundleService.addQuestion(request, member)
     }
 
     @Operation(summary = "선택한 질문 꾸러미에서 삭제")

@@ -11,6 +11,7 @@ enum class ApiErrorCode(
     // bundle
     FORBIDDEN_BUNDLE(HttpStatus.FORBIDDEN, "FORBIDDEN_BUNDLE", "비공개 꾸러미입니다."),
     NOT_FOUND_BUNDLE(HttpStatus.NOT_FOUND, "NOT_FOUND_BUNDLE", "존재하지 않는 꾸러미입니다."),
+    INCLUDE_INVALID_BUNDLE(HttpStatus.NOT_FOUND, "INCLUDE_INVALID_BUNDLE", "권한이 없거나 존재하지 않는 꾸러미가 포함되어 있습니다."),
 
     // question
     NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, "NOT_FOUND_QUESTION", "존재하지 않는 질문입니다."),
