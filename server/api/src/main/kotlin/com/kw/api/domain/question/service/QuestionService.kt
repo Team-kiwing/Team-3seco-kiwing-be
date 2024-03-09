@@ -15,11 +15,11 @@ import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.QuestionReport
 import com.kw.data.domain.question.QuestionTag
+import com.kw.data.domain.question.dto.QuestionSearchDto
 import com.kw.data.domain.question.repository.QuestionReportRepository
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
-import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -92,9 +92,11 @@ class QuestionService(
     @Transactional(readOnly = true)
     fun searchQuestion(request: QuestionSearchRequest): QuestionListResponse {
         val questionSearchDto = QuestionSearchDto(
+            sortingType = request.sortingType,
+            tagIds = request.tagIds,
             keyword = request.keyword,
             page = request.page,
-            size = request.size
+            size = request.size,
         )
         val questions = questionRepository.searchQuestion(questionSearchDto)
         val questionResponses = questions.map { QuestionResponse.from(it) }

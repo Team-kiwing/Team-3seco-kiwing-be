@@ -1,9 +1,10 @@
 package com.kw.data.domain.question.repository
 
+import com.kw.data.common.dto.SearchSortingType
 import com.kw.data.domain.question.QQuestion.Companion.question
 import com.kw.data.domain.question.QQuestionTag.Companion.questionTag
 import com.kw.data.domain.question.Question
-import com.kw.infraquerydsl.domain.question.dto.QuestionSearchDto
+import com.kw.data.domain.question.dto.QuestionSearchDto
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
@@ -15,13 +16,32 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         val page = questionSearchDto.page
         val size = questionSearchDto.size
 
-        return jpaQueryFactory.selectFrom(question)
+        val query = jpaQueryFactory
+            .selectFrom(question)
+            .leftJoin(question.questionTags, questionTag).fetchJoin()
             .where(
                 keyword?.let { containsKeyword(keyword) }
             )
+            .orderBy(
+                if (questionSearchDto.sortingType == null) {
+                    question.shareCount.desc()
+                } else {
+                    when (questionSearchDto.sortingType) {
+//                        SortingType.RECOMMENDED -> TODO() //TODO
+                        SearchSortingType.LATEST -> question.createdAt.desc()
+                        SearchSortingType.POPULAR -> question.shareCount.desc()
+                    }
+                }
+            )
             .offset((page - 1) * size)
             .limit(size)
-            .fetch()
+
+        if (questionSearchDto.tagIds != null) {
+            query
+                .where(questionTag.tag.id.`in`(questionSearchDto.tagIds))
+        }
+
+        return query.fetch()
     }
 
     private fun containsKeyword(keyword: String): BooleanExpression? {
@@ -33,12 +53,21 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         val page = questionSearchDto.page
         val size = questionSearchDto.size
 
-        val count = jpaQueryFactory.select(question.count())
+        val query = jpaQueryFactory
+            .select(question.count())
             .from(question)
             .where(
                 keyword?.let { containsKeyword(keyword) }
             )
-            .fetchOne()
+
+        if (questionSearchDto.tagIds != null) {
+            query
+                .leftJoin(question.questionTags, questionTag)
+                .where(questionTag.tag.id.`in`(questionSearchDto.tagIds))
+        }
+
+        val count = query.fetchOne()
+
         if (count == 0L) {
             return 1L
         }
