@@ -82,6 +82,10 @@ class Member(email: String) : Base() {
         this.bundleOrder = bundleOrder
     }
 
+    fun updateLastLoggedInAt() {
+        this.lastLoggedInAt = LocalDateTime.now()
+    }
+
     enum class MemberRoleType {
         ROLE_USER,
         ROLE_ADMIN

@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Transactional
-class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
+class OAuth2SuccessHandler(
+    private val jwtTokenProvider: JwtTokenProvider,
     private val memberRepository: MemberRepository,
     private val redisRefreshTokenRepository: RedisRefreshTokenRepository,
-    private val httpResponseUtil: HttpResponseUtil) : AuthenticationSuccessHandler {
+    private val httpResponseUtil: HttpResponseUtil
+) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest?,
@@ -31,10 +33,9 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
 
         var member = Member(email = email!!)
         var isSignUp = false
-        if(isMember(email)){
+        if (isMember(email)) {
             member = getMember(email)
-        }
-        else {
+        } else {
             member = createMember(member)
             isSignUp = true
         }
@@ -52,20 +53,21 @@ class OAuth2SuccessHandler(private val jwtTokenProvider: JwtTokenProvider,
         val refreshToken = jwtTokenProvider.generateRefreshToken()
 
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
+        member.updateLastLoggedInAt()
 
         response!!.addHeader("Authorization", "Bearer $accessToken")
         httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
     }
 
-    private fun getMember(email : String) : Member {
+    private fun getMember(email: String): Member {
         return memberRepository.findMemberByEmail(email) ?: throw RuntimeException("회원이 존재하지 않습니다")
     }
 
-    private fun createMember(member : Member) : Member {
+    private fun createMember(member: Member): Member {
         return memberRepository.save(member)
     }
 
-    private fun isMember(email : String) : Boolean {
+    private fun isMember(email: String): Boolean {
         return memberRepository.findMemberByEmail(email) != null
     }
 }
