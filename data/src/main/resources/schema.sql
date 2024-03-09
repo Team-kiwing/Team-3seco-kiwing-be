@@ -1,16 +1,16 @@
 CREATE TABLE IF NOT EXISTS member
 (
     id                BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nickname          VARCHAR(20) NULL,
-    email             VARCHAR(50) NOT NULL,
-    provider          VARCHAR(10) NOT NULL,
-    profile_image     TEXT        NULL,
-    bundle_order      TEXT        NOT NULL,
-    member_roles      VARCHAR(20) NULL,
-    last_logged_in_at DATETIME    NOT NULL,
-    created_at        DATETIME    NOT NULL,
-    updated_at        DATETIME    NOT NULL,
-    deleted_at        DATETIME    NULL,
+    nickname          VARCHAR(20)    NULL,
+    email             VARCHAR(50)    NOT NULL,
+    provider          VARCHAR(10)    NOT NULL,
+    profile_image     TEXT           NULL,
+    bundle_order      TEXT           NOT NULL,
+    member_roles      VARBINARY(255) NULL,
+    last_logged_in_at DATETIME       NOT NULL,
+    created_at        DATETIME       NOT NULL,
+    updated_at        DATETIME       NOT NULL,
+    deleted_at        DATETIME       NULL,
     UNIQUE INDEX member_unique_idx_nickname (nickname),
     UNIQUE INDEX member_unique_idx_email (email)
 );
