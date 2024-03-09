@@ -6,8 +6,6 @@ import com.kw.data.domain.bundle.QBundle.Companion.bundle
 import com.kw.data.domain.bundle.QBundleTag.Companion.bundleTag
 import com.kw.data.domain.bundle.dto.request.BundleGetCondition
 import com.kw.data.domain.bundle.dto.request.BundleSearchCondition
-import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.core.types.dsl.Expressions.booleanTemplate
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.data.domain.Pageable
 
@@ -19,12 +17,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .from(bundle)
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
-                condition.keyword?.let {
-//                    Expressions.booleanTemplate(
-//                        "MATCH({0}) AGAINST({1} IN BOOLEAN MODE)", bundle.name, it
-//                    )
-                    containsKeyword(it)
-                }
+                condition.keyword?.let { bundle.name.contains(it) }
             )
 
         if (condition.tagIds != null) {
@@ -34,11 +27,6 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         }
 
         return query.fetchOne()!!
-    }
-
-    private fun containsKeyword(keyword: String): BooleanExpression? {
-        if (keyword.isBlank()) return null
-        return booleanTemplate("MATCH(bundle.name) AGAINST({0} IN BOOLEAN MODE)", keyword)
     }
 
     override fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
@@ -89,5 +77,4 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             )
             .fetch()
     }
-
 }
