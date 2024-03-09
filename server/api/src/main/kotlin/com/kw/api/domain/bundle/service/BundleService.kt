@@ -32,16 +32,15 @@ class BundleService(
     private val questionRepository: QuestionRepository,
 ) {
 
-    fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {
-        member.updateBundleOrder(request.bundleIds.joinToString(" "))
-    }
-
     fun createBundle(request: BundleCreateRequest, member: Member): BundleDetailResponse {
         val tags = request.tagIds?.let { getExistTags(it) } ?: emptyList()
         val bundle = request.toEntity(member)
         bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
-        member.updateBundleOrder((member.bundleOrder + " " + bundle.id).trim())
-        return getBundle(bundleRepository.save(bundle).id!!, false, member)
+
+        val savedBundle = bundleRepository.save(bundle)
+        member.updateBundleOrder((member.bundleOrder + " " + savedBundle.id).trim())
+
+        return getBundle(savedBundle.id!!, false, member)
     }
 
     @Transactional(readOnly = true)
@@ -80,7 +79,8 @@ class BundleService(
             return BundleDetailResponse(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
-                originId = bundle.originId
+                originId = bundle.originId,
+                writerId = bundle.member.id!!,
             )
         }
 
@@ -112,6 +112,10 @@ class BundleService(
         return BundleResponse.from(bundle)
     }
 
+    fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {
+        member.updateBundleOrder(request.bundleIds.joinToString(" "))
+    }
+
     fun deleteBundle(id: Long, member: Member) {
         val bundle = getExistBundle(id)
         if (bundle.member.id != member.id) {
@@ -132,11 +136,15 @@ class BundleService(
             throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)
         }
         bundleRepository.increaseScrapeCount(id)
+        val copiedAndSavedBundle = bundleRepository.save(bundle.copy(member))
+        member.updateBundleOrder((member.bundleOrder + " " + copiedAndSavedBundle.id).trim())
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
         questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
+        val copiedAndSavedQuestions = questions
+            .map { questionRepository.save(it.copy(copiedAndSavedBundle, member)) }
 
-        bundleRepository.save(bundle.copy(questions, member))
+        copiedAndSavedBundle.updateQuestionOrder((copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest, member: Member) {
@@ -148,23 +156,25 @@ class BundleService(
         bundle.updateQuestionOrder(request.questionOrder.joinToString(" "))
     }
 
-    fun addQuestion(id: Long, request: BundleQuestionAddRequest, member: Member) {
-        val bundle = getExistBundle(id)
-        if (bundle.member.id != member.id) {
-            throw ApiException(ApiErrorCode.FORBIDDEN)
+    fun addQuestion(request: BundleQuestionAddRequest, member: Member) {
+        val bundles = bundleRepository.findAllByMemberIdAndIdIn(member.id!!, request.bundleIds)
+        if (bundles.size != request.bundleIds.size) {
+            throw ApiException(ApiErrorCode.INCLUDE_INVALID_BUNDLE)
         }
 
-        val questionCount = questionRepository.countAllByBundleId(id)
-        if (questionCount + request.questionIds.size >= 100) {
-            throw ApiException(ApiErrorCode.OVER_QUESTION_LIMIT)
+        bundles.forEach { bundle ->
+            val questionCount = questionRepository.countAllByBundleId(bundle.id!!)
+            if (questionCount + request.questionIds.size >= 100) {
+                throw ApiException(ApiErrorCode.OVER_QUESTION_LIMIT)
+            }
+
+            val questions = questionRepository.findAllWithTagsByIdIn(request.questionIds)
+            questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
+            val copiedAndSavedQuestions = questions
+                .map { questionRepository.save(it.copy(bundle, member)) }
+
+            bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
         }
-
-        val questions = questionRepository.findAllWithTagsByIdIn(request.questionIds)
-        questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
-
-        val copiedAndSavedQuestions = questions
-            .map { questionRepository.save(it.copy(bundle, member)) }
-        bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest, member: Member) {

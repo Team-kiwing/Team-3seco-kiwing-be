@@ -72,6 +72,12 @@ class MemberService(
         return MemberInfoResponse.from(member)
     }
 
+    fun isMemberNicknameDuplicate(
+        nickname: String
+    ) {
+        isNicknameUnique(nickname);
+    }
+
     private fun updateMemberInfoSns(
         member: Member,
         snsRequests: List<MemberSnsUpdateRequest.SnsRequest>

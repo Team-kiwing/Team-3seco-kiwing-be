@@ -79,4 +79,9 @@ class MemberController(private val memberService: MemberService) {
         return response
     }
 
+    @Operation(summary = "회원 닉네임 중복검사를 합니다.")
+    @GetMapping("/nickname/validate-duplicate")
+    fun isMemberNicknameDuplicate(@RequestParam nickname: String) {
+        memberService.isMemberNicknameDuplicate(nickname)
+    }
 }

@@ -17,9 +17,8 @@ import java.security.SignatureException
 
 private val logger = KotlinLogging.logger {}
 
-@RestControllerAdvice
+@RestControllerAdvice("com.kw")
 class ApiExceptionHandler : ResponseEntityExceptionHandler() {
-
 
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,

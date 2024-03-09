@@ -26,9 +26,9 @@ class JwtAuthenticationFilter(private val tokenProvider: JwtTokenProvider) : Onc
                 } catch (e: Exception) {
                     request.setAttribute("exception", e)
                 }
+            } else {
+                request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
             }
-        } else {
-            request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
         }
         filterChain.doFilter(request, response)
     }
