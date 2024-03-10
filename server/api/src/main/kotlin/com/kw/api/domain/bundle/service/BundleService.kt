@@ -92,7 +92,7 @@ class BundleService(
         val questionOrder = parseOrderStringToOrderList(bundle.questionOrder)
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
 
-        return BundleDetailResponse.from(bundle, sortedQuestions)
+        return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
