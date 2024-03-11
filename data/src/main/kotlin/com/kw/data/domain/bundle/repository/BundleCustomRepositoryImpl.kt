@@ -77,5 +77,4 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             )
             .fetch()
     }
-
 }

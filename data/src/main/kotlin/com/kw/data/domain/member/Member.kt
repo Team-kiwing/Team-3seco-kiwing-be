@@ -28,8 +28,8 @@ class Member(email: String) : Base() {
     @Column(name = "provider", nullable = false, updatable = false)
     val provider: Provider = Provider.GOOGLE
 
-    @Column(name = "last_logined_at", nullable = false)
-    var lastLoginedAt: LocalDateTime = LocalDateTime.now()
+    @Column(name = "last_logged_in_at", nullable = false)
+    var lastLoggedInAt: LocalDateTime = LocalDateTime.now()
         protected set
 
     @Column(name = "deleted_at")
@@ -80,6 +80,10 @@ class Member(email: String) : Base() {
 
     fun updateBundleOrder(bundleOrder: String) {
         this.bundleOrder = bundleOrder
+    }
+
+    fun updateLastLoggedInAt() {
+        this.lastLoggedInAt = LocalDateTime.now()
     }
 
     enum class MemberRoleType {
