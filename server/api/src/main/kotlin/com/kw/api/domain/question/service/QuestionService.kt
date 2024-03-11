@@ -50,7 +50,7 @@ class QuestionService(
         val savedQuestion = questionRepository.save(question)
         bundle.updateQuestionOrder((bundle.questionOrder + " " + savedQuestion.id).trim())
 
-        return QuestionResponse.from(savedQuestion)
+        return QuestionResponse.from(savedQuestion, member.id)
     }
 
     fun updateQuestion(id: Long, request: QuestionUpdateRequest, member: Member): QuestionResponse {
@@ -67,7 +67,7 @@ class QuestionService(
             question.updateQuestionTags(tags.map { QuestionTag(question, it) })
         }
 
-        return QuestionResponse.from(question)
+        return QuestionResponse.from(question, member.id)
     }
 
     fun deleteQuestion(id: Long, member: Member) {
@@ -99,7 +99,7 @@ class QuestionService(
             size = request.size,
         )
         val questions = questionRepository.searchQuestion(questionSearchDto)
-        val questionResponses = questions.map { QuestionResponse.from(it) }
+        val questionResponses = questions.map { QuestionResponse.from(it, null) }
         val lastPageNum = questionRepository.getPageNum(questionSearchDto)
 
         return QuestionListResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))

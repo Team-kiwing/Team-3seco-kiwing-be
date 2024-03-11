@@ -17,12 +17,13 @@ data class QuestionResponse(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
+
     companion object {
-        fun from(question: Question): QuestionResponse {
+        fun from(question: Question, memberId: Long?): QuestionResponse {
             return QuestionResponse(
                 id = question.id!!,
                 content = question.content,
-                answer = question.answer,
+                answer = if (isAnswerVisible(question, memberId)) question.answer else null,
                 answerShareType = question.answerShareType,
                 shareCount = question.shareCount,
                 originId = question.originId,
@@ -32,6 +33,10 @@ data class QuestionResponse(
                 createdAt = question.createdAt,
                 updatedAt = question.updatedAt
             )
+        }
+
+        private fun isAnswerVisible(question: Question, memberId: Long?): Boolean {
+            return !(question.answerShareType == Question.AnswerShareType.PRIVATE && question.member.id != memberId)
         }
     }
 }

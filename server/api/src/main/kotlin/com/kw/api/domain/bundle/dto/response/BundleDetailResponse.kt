@@ -18,13 +18,13 @@ data class BundleDetailResponse(
     val updatedAt: LocalDateTime? = null
 ) {
     companion object {
-        fun from(bundle: Bundle, questions: List<Question>): BundleDetailResponse {
+        fun from(bundle: Bundle, questions: List<Question>, memberId: Long?): BundleDetailResponse {
             return BundleDetailResponse(
                 id = bundle.id!!,
                 name = bundle.name,
                 shareType = bundle.shareType.name,
                 tags = bundle.bundleTags.map { it.tag }.map { TagResponse.from(it) },
-                questions = questions.map { QuestionResponse.from(it) },
+                questions = questions.map { QuestionResponse.from(it, memberId) },
                 originId = bundle.originId,
                 writerId = bundle.member.id!!,
                 createdAt = bundle.createdAt,
