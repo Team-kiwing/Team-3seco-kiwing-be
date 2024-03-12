@@ -1,11 +1,11 @@
 package com.kw.data.domain.question.repository
 
 import com.kw.data.common.dto.SearchSortingType
+import com.kw.data.common.util.CustomFunction
 import com.kw.data.domain.question.QQuestion.Companion.question
 import com.kw.data.domain.question.QQuestionTag.Companion.questionTag
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.dto.QuestionSearchDto
-import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
 
@@ -20,7 +20,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .selectFrom(question)
             .leftJoin(question.questionTags, questionTag).fetchJoin()
             .where(
-                keyword?.let { containsKeyword(keyword) }
+                keyword?.let { CustomFunction.match(question.content, keyword) }
             )
             .orderBy(
                 if (questionSearchDto.sortingType == null) {
@@ -44,10 +44,6 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         return query.fetch()
     }
 
-    private fun containsKeyword(keyword: String): BooleanExpression? {
-        return question.content.contains(keyword)
-    }
-
     override fun getPageNum(questionSearchDto: QuestionSearchDto): Long {
         val keyword = questionSearchDto.keyword
         val page = questionSearchDto.page
@@ -57,7 +53,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .select(question.count())
             .from(question)
             .where(
-                keyword?.let { containsKeyword(keyword) }
+                keyword?.let { CustomFunction.match(question.content, keyword) }
             )
 
         if (questionSearchDto.tagIds != null) {

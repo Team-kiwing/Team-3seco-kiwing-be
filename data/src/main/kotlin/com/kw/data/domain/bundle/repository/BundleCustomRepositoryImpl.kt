@@ -1,6 +1,7 @@
 package com.kw.data.domain.bundle.repository
 
 import com.kw.data.common.dto.SearchSortingType
+import com.kw.data.common.util.CustomFunction
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.QBundle.Companion.bundle
 import com.kw.data.domain.bundle.QBundleTag.Companion.bundleTag
@@ -17,7 +18,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .from(bundle)
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
-                condition.keyword?.let { bundle.name.contains(it) }
+                condition.keyword?.let { CustomFunction.match(bundle.name, it) }
             )
 
         if (condition.tagIds != null) {
@@ -35,7 +36,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
-                condition.keyword?.let { bundle.name.contains(it) }
+                condition.keyword?.let { CustomFunction.match(bundle.name, it) }
             )
             .orderBy(
                 if (condition.sortingType == null) {
