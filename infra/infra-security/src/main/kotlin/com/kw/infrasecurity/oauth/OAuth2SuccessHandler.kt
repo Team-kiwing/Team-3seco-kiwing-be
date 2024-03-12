@@ -53,7 +53,6 @@ class OAuth2SuccessHandler(
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
         member.updateLastLoggedInAt()
 
-        response!!.addHeader("Authorization", "Bearer $accessToken")
         httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
     }
 
