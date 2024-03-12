@@ -4,7 +4,7 @@ import org.hibernate.boot.model.FunctionContributions
 import org.hibernate.boot.model.FunctionContributor
 import org.hibernate.type.StandardBasicTypes.DOUBLE
 
-class CustomFunctionContributor : FunctionContributor {
+class MatchFunctionContributor : FunctionContributor {
 
     companion object {
         private const val FUNCTION_NAME = "MATCH_AGAINST"
