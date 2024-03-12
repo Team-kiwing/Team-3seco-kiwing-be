@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS member
     provider          VARCHAR(10)    NOT NULL,
     profile_image     TEXT           NULL,
     bundle_order      TEXT           NOT NULL,
-    member_roles      VARBINARY(255) NULL,
+    member_role       VARCHAR(50)    NULL,
     last_logged_in_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_at        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
