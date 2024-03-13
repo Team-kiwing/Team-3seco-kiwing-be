@@ -16,7 +16,7 @@ class JwtAuthenticationFilter(private val tokenProvider: JwtTokenProvider) : Onc
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (SecurityContextHolder.getContext().authentication == null) {
+//        if (SecurityContextHolder.getContext().authentication == null) {
             val accessToken = resolveToken(request)
             if (accessToken != null) {
                 try {
@@ -29,7 +29,7 @@ class JwtAuthenticationFilter(private val tokenProvider: JwtTokenProvider) : Onc
             } else {
                 request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
             }
-        }
+//        }
         filterChain.doFilter(request, response)
     }
 

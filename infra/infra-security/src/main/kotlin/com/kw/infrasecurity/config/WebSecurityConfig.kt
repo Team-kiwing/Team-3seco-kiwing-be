@@ -63,11 +63,11 @@ class WebSecurityConfig(
             authorizeHttpRequests {
                 authorize(CorsUtils::isPreFlightRequest, permitAll)
 
-//                bundleRequests()
-//                claimRequests()
-//                tagRequests()
-//                questionRequests()
-//                memberRequests()
+                bundleRequests()
+                claimRequests()
+                tagRequests()
+                questionRequests()
+                memberRequests()
 
                 authorize(anyRequest, permitAll)
             }

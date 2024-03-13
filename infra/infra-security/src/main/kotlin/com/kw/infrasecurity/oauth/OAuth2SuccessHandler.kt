@@ -39,9 +39,7 @@ class OAuth2SuccessHandler(
             member = createMember(member)
             isSignUp = true
         }
-        val authorities = member.memberRoles.map { memberRole ->
-            SimpleGrantedAuthority(memberRole.toString())
-        }.toMutableList()
+        val authorities = mutableListOf(SimpleGrantedAuthority(member.role.toString()))
 
         val oAuth2UserDetails = OAuth2UserDetails(
             id = member.id!!,
@@ -55,7 +53,6 @@ class OAuth2SuccessHandler(
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
         member.updateLastLoggedInAt()
 
-        response!!.addHeader("Authorization", "Bearer $accessToken")
         httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
     }
 

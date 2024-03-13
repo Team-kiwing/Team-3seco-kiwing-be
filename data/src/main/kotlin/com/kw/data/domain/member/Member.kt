@@ -40,7 +40,8 @@ class Member(email: String) : Base() {
     var bundleOrder: String = ""
         protected set
 
-    var memberRoles: MutableList<MemberRoleType> = mutableListOf(MemberRoleType.ROLE_USER)
+    @Enumerated(value = EnumType.STRING)
+    var role: MemberRoleType = MemberRoleType.ROLE_USER
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var snsList: MutableList<Sns> = mutableListOf()

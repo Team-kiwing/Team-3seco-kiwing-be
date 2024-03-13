@@ -30,7 +30,9 @@ class MemberService(
     }
 
     fun updateMemberNickname(member: Member, nickname: String): MemberInfoResponse {
-        isNicknameUnique(nickname)
+        if(!isNicknameMine(member, nickname)) {
+            isNicknameUnique(nickname)
+        }
         member.updateMemberNickname(nickname)
         return MemberInfoResponse.from(member)
     }
@@ -65,6 +67,8 @@ class MemberService(
         member: Member,
         memberInfoUpdateRequest: MemberInfoUpdateRequest
     ): MemberInfoResponse {
+
+
         updateMemberNickname(member, memberInfoUpdateRequest.nickname)
         updateMemberInfoSns(member, memberInfoUpdateRequest.snsRequests)
         updateMemberTags(member, memberInfoUpdateRequest.tagIds)
@@ -97,5 +101,9 @@ class MemberService(
         if (memberRepository.existsByNickname(nickname)) {
             throw ApiException(ApiErrorCode.NICKNAME_ALREADY_EXISTS)
         }
+    }
+
+    private fun isNicknameMine(member:Member, nickname: String): Boolean {
+        return member.nickname.equals(nickname)
     }
 }
