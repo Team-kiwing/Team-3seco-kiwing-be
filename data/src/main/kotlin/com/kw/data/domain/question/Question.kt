@@ -36,6 +36,11 @@ class Question(
     var answerShareType: AnswerShareType = answerShareType
         protected set
 
+    /**
+     * originId가 null인 경우 원본이므로 isSearchable=true 여야 한다.
+     * 복제본은 isSearchable=false이되, 원본과 content가 달라질 경우, isSearchable=true로 변경되어야 한다.
+     * 원본이 삭제될 경우, 복제본 중 isSearchable=false이면서 가장 먼저 생성된 복제본은 isSearchable=true로 변경되어야 한다.
+     */
     @Column(name = "is_searchable", nullable = false, updatable = true)
     var isSearchable: Boolean = isSearchable
         protected set

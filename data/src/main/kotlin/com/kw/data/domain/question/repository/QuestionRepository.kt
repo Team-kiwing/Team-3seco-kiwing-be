@@ -12,6 +12,9 @@ interface QuestionRepository : JpaRepository<Question, Long>, QuestionCustomRepo
 
     fun findAllByBundleId(bundleId: Long): List<Question>
 
+    @Query("SELECT q FROM Question q WHERE q.originId = :originId AND q.isSearchable = false")
+    fun findNotSearchableFirstOneByOriginId(originId: Long): Question?
+
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.questionTags qt LEFT JOIN FETCH qt.tag WHERE q.id IN :ids")
     fun findAllWithTagsByIdIn(ids: List<Long>): List<Question>
 
