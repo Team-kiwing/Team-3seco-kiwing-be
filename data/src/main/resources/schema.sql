@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS question
     answer            VARCHAR(1500)   NULL,
     answer_share_type VARCHAR(10)     NOT NULL,
     share_count       BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    issearchable      BOOLEAN         NOT NULL,
     origin_id         BIGINT UNSIGNED NULL,
     bundle_id         BIGINT UNSIGNED NOT NULL,
     member_id         BIGINT UNSIGNED NOT NULL,
