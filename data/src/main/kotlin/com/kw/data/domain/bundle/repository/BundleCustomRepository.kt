@@ -9,7 +9,7 @@ interface BundleCustomRepository {
 
     fun count(condition: BundleSearchCondition): Long
 
-    fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle>
+    fun search(condition: BundleSearchCondition, pageable: Pageable): List<Bundle>
 
     fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle>
 
