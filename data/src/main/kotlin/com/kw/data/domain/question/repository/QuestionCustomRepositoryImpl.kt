@@ -20,6 +20,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .selectFrom(question)
             .leftJoin(question.questionTags, questionTag).fetchJoin()
             .where(
+                question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
             )
             .orderBy(
@@ -53,6 +54,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .select(question.count())
             .from(question)
             .where(
+                question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
             )
 
