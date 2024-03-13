@@ -10,6 +10,7 @@ class Question(
     content: String,
     answer: String? = null,
     answerShareType: AnswerShareType,
+    isSearchable: Boolean,
     originId: Long? = null,
     bundle: Bundle,
     member: Member
@@ -33,6 +34,10 @@ class Question(
     @Enumerated(EnumType.STRING)
     @Column(name = "answer_share_type", nullable = false, updatable = true)
     var answerShareType: AnswerShareType = answerShareType
+        protected set
+
+    @Column(name = "is_searchable", nullable = false, updatable = true)
+    var isSearchable: Boolean = isSearchable
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
@@ -81,6 +86,10 @@ class Question(
         this.answerShareType = answerShareType
     }
 
+    fun updateSearchableStatus(isSearchable: Boolean) {
+        this.isSearchable = isSearchable
+    }
+
     fun updateQuestionTags(questionTags: List<QuestionTag>) {
         if (questionTags.size > 3) {
             throw IllegalArgumentException("태그는 최대 3개까지 지정 가능합니다.")
@@ -94,6 +103,7 @@ class Question(
             content = this.content,
             answer = if (this.answerShareType === AnswerShareType.PUBLIC) this.answer else null,
             answerShareType = AnswerShareType.PUBLIC,
+            isSearchable = false,
             originId = this.id,
             bundle = bundle,
             member = member

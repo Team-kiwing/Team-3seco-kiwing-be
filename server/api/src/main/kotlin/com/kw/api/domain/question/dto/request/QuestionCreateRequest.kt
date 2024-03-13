@@ -26,6 +26,7 @@ data class QuestionCreateRequest(
             content = content,
             answer = answer,
             answerShareType = answerShareType,
+            isSearchable = true,
             bundle = bundle,
             member = member
         )
