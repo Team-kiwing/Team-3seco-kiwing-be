@@ -77,23 +77,23 @@ class WebSecurityConfig(
     }
 
     private fun AuthorizeHttpRequestsDsl.memberRequests() {
+        authorize(GET, "/api/v1/members/{id}", permitAll)
+
         authorize(GET, "/api/v1/members/me", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/nickname", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/sns", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/tags", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/profile-image", hasRole("USER"))
-
-        authorize(GET, "/api/v1/members/{id}", permitAll)
     }
 
     private fun AuthorizeHttpRequestsDsl.questionRequests() {
+        authorize(GET, "/api/*/questions/search", permitAll)
+
         authorize(POST, "/api/*/questions", hasRole("USER"))
         authorize(PATCH, "/api/*/questions/{id}", hasRole("USER"))
         authorize(DELETE, "/api/*/questions/{id}", hasRole("USER"))
         authorize(POST, "/api/*/questions/{id}/report", hasRole("USER"))
-
-        authorize(GET, "/api/*/questions/search", permitAll)
     }
 
     private fun AuthorizeHttpRequestsDsl.tagRequests() {
@@ -105,6 +105,8 @@ class WebSecurityConfig(
     }
 
     private fun AuthorizeHttpRequestsDsl.bundleRequests() {
+        authorize(GET, "/api/*/bundles/search", permitAll)
+
         authorize(POST, "/api/*/bundles", hasRole("USER"))
         authorize(POST, "/api/*/bundles", hasRole("USER"))
         authorize(PATCH, "/api/*/bundles/bundle-order", hasRole("USER"))
@@ -117,7 +119,6 @@ class WebSecurityConfig(
         authorize(POST, "/api/*/bundles/questions", hasRole("USER"))
         authorize(DELETE, "/api/*/bundles/{id}/questions", hasRole("USER"))
 
-        authorize(GET, "/api/*/bundles/search", permitAll)
     }
 
     @Bean
