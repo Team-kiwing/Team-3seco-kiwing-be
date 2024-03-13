@@ -63,7 +63,7 @@ class QuestionService(
         request.content?.let {
             question.originId?.let { originId ->
                 val origin = questionRepository.findById(originId)
-                if (isEqualToOriginContent(origin, it)) {
+                if (!isEqualToOriginContent(origin, it)) {
                     question.updateSearchableStatus(true)
                 }
             }
