@@ -39,7 +39,7 @@ class OAuth2SuccessHandler(
             member = createMember(member)
             isSignUp = true
         }
-        val authorities = mutableListOf(SimpleGrantedAuthority(member.memberRole.toString()))
+        val authorities = mutableListOf(SimpleGrantedAuthority(member.role.toString()))
 
         val oAuth2UserDetails = OAuth2UserDetails(
             id = member.id!!,

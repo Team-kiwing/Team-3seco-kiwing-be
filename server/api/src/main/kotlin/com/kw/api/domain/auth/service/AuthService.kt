@@ -43,7 +43,8 @@ class AuthService(
     }
 
     private fun createOauth2UserDetails(member: Member): OAuth2UserDetails {
-        val authorities: MutableList<SimpleGrantedAuthority> = mutableListOf(SimpleGrantedAuthority(member.memberRole.toString()))
+        val authorities: MutableList<SimpleGrantedAuthority> =
+            mutableListOf(SimpleGrantedAuthority(member.role.toString()))
 
         return OAuth2UserDetails(
             id = member.id!!,

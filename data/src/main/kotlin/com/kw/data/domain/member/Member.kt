@@ -41,7 +41,7 @@ class Member(email: String) : Base() {
         protected set
 
     @Enumerated(value = EnumType.STRING)
-    var memberRole: MemberRoleType = MemberRoleType.ROLE_USER
+    var role: MemberRoleType = MemberRoleType.ROLE_USER
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     var snsList: MutableList<Sns> = mutableListOf()
