@@ -46,12 +46,12 @@ class HttpResponseUtil(@Value("\${client-redirect-url}") val REDIRECT_URL: Strin
         companion object {
             fun of(e: Exception): ErrorResponse {
                 return when (e) {
-                    is AccessDeniedException -> ErrorResponse("ACCESS_DENIED", "접근이 거부되었습니다.")
-                    is SignatureException -> ErrorResponse("ACCESS_TOKEN_MALFORMED", "올바르지 않은 토큰입니다.")
-                    is MalformedJwtException -> ErrorResponse("ACCESS_TOKEN_MALFORMED", "올바르지 않은 토큰입니다.")
-                    is ExpiredJwtException -> ErrorResponse("ACCESS_TOKEN_EXPIRED", "어세스 토큰이 만료되었으니 재발급 해주세요")
+                    is AccessDeniedException -> ErrorResponse("ACCESS_DENIED", "접근이 거부되었습니다. 엑세스 토큰을 담아 다시 보내주세요.")
+                    is SignatureException -> ErrorResponse("ACCESS_TOKEN_MALFORMED", "올바르지 않은 토큰입니다. 엑세스 토큰을 다시 확인하거나, 재발급해주세요.")
+                    is MalformedJwtException -> ErrorResponse("ACCESS_TOKEN_MALFORMED", "올바르지 않은 토큰입니다. 엑세스 토큰을 다시 확인하거나, 재발급해주세요.")
+                    is ExpiredJwtException -> ErrorResponse("ACCESS_TOKEN_EXPIRED", "엑세스 토큰이 만료되었으니 재발급 해주세요")
 
-                    else -> ErrorResponse("FORBIDDEN", "권한이 없습니다.")
+                    else -> ErrorResponse("FORBIDDEN", "권한이 없습니다. 필요한 경우 백엔드 담당자에게 문의 해주세요.")
                 }
             }
         }
