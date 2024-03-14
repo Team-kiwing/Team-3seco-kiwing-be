@@ -77,14 +77,14 @@ class WebSecurityConfig(
     }
 
     private fun AuthorizeHttpRequestsDsl.memberRequests() {
-        authorize(GET, "/api/v1/members/{id}", permitAll)
-
         authorize(GET, "/api/v1/members/me", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/nickname", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/sns", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/tags", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me", hasRole("USER"))
         authorize(PATCH, "/api/v1/members/me/profile-image", hasRole("USER"))
+
+        authorize(GET, "/api/v1/members/{id}", permitAll)
     }
 
     private fun AuthorizeHttpRequestsDsl.questionRequests() {
@@ -111,12 +111,12 @@ class WebSecurityConfig(
         authorize(POST, "/api/*/bundles", hasRole("USER"))
         authorize(PATCH, "/api/*/bundles/bundle-order", hasRole("USER"))
         authorize(GET, "/api/*/bundles/my", hasRole("USER"))
+        authorize(POST, "/api/*/bundles/questions", hasRole("USER"))
         authorize(GET, "/api/*/bundles/{id}", hasRole("USER"))
         authorize(PATCH, "/api/*/bundles/{id}", hasRole("USER"))
         authorize(DELETE, "/api/*/bundles/{id}", hasRole("USER"))
         authorize(POST, "/api/*/bundles/{id}/scrape", hasRole("USER"))
         authorize(PATCH, "/api/*/bundles/{id}/question-order", hasRole("USER"))
-        authorize(POST, "/api/*/bundles/questions", hasRole("USER"))
         authorize(DELETE, "/api/*/bundles/{id}/questions", hasRole("USER"))
 
     }

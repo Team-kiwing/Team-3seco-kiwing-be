@@ -17,7 +17,7 @@ class AuthController(val authService: AuthService) {
 
     @Operation(summary = "로그아웃을 합니다.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     fun logout(@RequestBody refreshTokenRequest: RefreshTokenRequest) {
         authService.logout(refreshTokenRequest)
     }
