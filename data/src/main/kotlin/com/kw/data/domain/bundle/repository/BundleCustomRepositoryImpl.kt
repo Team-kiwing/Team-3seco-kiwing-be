@@ -30,7 +30,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         return query.fetchOne()!!
     }
 
-    override fun findAll(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
+    override fun search(condition: BundleSearchCondition, pageable: Pageable): List<Bundle> {
         val query = queryFactory
             .selectFrom(bundle)
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()

@@ -9,4 +9,5 @@ interface QuestionCustomRepository {
 
     fun findAllWithTagsByBundleId(bundleId: Long, showOnlyMyQuestions: Boolean?, memberId: Long?): List<Question>
 
+    fun findNotSearchableFirstOneByOriginId(originId: Long): Question?
 }

@@ -13,7 +13,7 @@ interface QuestionRepository : JpaRepository<Question, Long>, QuestionCustomRepo
     fun findAllByBundleId(bundleId: Long): List<Question>
 
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.questionTags qt LEFT JOIN FETCH qt.tag WHERE q.id IN :ids")
-    fun findAllWithTagsByIdIn(ids: List<Long>): List<Question>
+    fun findAllWithTagsByIdIn(@Param("ids") ids: List<Long>): List<Question>
 
     @Query("SELECT q FROM Question q LEFT JOIN FETCH q.questionTags qt LEFT JOIN FETCH qt.tag WHERE q.bundle.id = :bundleId")
     fun findAllWithTagsByBundleId(@Param("bundleId") bundleId: Long): List<Question>

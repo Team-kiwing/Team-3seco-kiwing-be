@@ -20,6 +20,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .selectFrom(question)
             .leftJoin(question.questionTags, questionTag).fetchJoin()
             .where(
+                question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
             )
             .orderBy(
@@ -53,6 +54,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .select(question.count())
             .from(question)
             .where(
+                question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
             )
 
@@ -92,4 +94,15 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         return query.fetch()
     }
 
+    override fun findNotSearchableFirstOneByOriginId(originId: Long): Question? {
+        return jpaQueryFactory
+            .selectFrom(question)
+            .where(
+                question.originId.eq(originId),
+                question.isSearchable.isFalse
+            )
+            .orderBy(question.id.asc())
+            .limit(1)
+            .fetchOne()
+    }
 }

@@ -22,6 +22,7 @@ import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 @Transactional
@@ -59,7 +60,15 @@ class QuestionService(
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
-        request.content?.let { question.updateContent(it) }
+        request.content?.let {
+            question.originId?.let { originId ->
+                val origin = questionRepository.findById(originId)
+                if (!isEqualToOriginContent(origin, it)) {
+                    question.updateSearchableStatus(true)
+                }
+            }
+            question.updateContent(it)
+        }
         request.answer?.let { question.updateAnswer(it) }
         request.answerShareType?.let { question.updateAnswerShareStatus(it) }
         request.tagIds?.let { it ->
@@ -74,6 +83,13 @@ class QuestionService(
         val question = getExistQuestion(id)
         if (question.member.id != member.id) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
+        }
+
+        if (question.originId == null) {
+            val copiedQuestion = questionRepository.findNotSearchableFirstOneByOriginId(id)
+            copiedQuestion?.let {
+                copiedQuestion.updateSearchableStatus(true)
+            }
         }
 
         questionRepository.delete(question)
@@ -116,5 +132,9 @@ class QuestionService(
     private fun getExistQuestion(id: Long): Question {
         return questionRepository.findById(id)
             .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_QUESTION) }
+    }
+
+    private fun isEqualToOriginContent(origin: Optional<Question>, content: String): Boolean {
+        return origin.isPresent && origin.get().content == content
     }
 }

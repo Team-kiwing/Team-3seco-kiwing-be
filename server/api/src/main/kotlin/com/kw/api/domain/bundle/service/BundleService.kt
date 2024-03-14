@@ -49,7 +49,7 @@ class BundleService(
         pageCondition: PageCondition
     ): PageResponse<BundleResponse> {
         val pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
-        val bundles = bundleRepository.findAll(searchCondition, pageable)
+        val bundles = bundleRepository.search(searchCondition, pageable)
             .map { BundleResponse.from(it) }
         return PageResponse.from(
             PageableExecutionUtils.getPage(
