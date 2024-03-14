@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS member
     created_at        DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at        DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at        DATETIME    NULL,
-    UNIQUE INDEX member_unique_idx_nickname (nickname),
-    UNIQUE INDEX member_unique_idx_email (email)
+    UNIQUE INDEX member_unique_idx_nickname_and_deleted_at (nickname, deleted_at),
+    UNIQUE INDEX member_unique_idx_email_and_deleted_at (email, deleted_at)
 );
 
 CREATE TABLE IF NOT EXISTS sns
