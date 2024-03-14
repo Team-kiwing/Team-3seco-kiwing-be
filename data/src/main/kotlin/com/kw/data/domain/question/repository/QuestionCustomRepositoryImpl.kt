@@ -94,4 +94,15 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         return query.fetch()
     }
 
+    override fun findNotSearchableFirstOneByOriginId(originId: Long): Question? {
+        return jpaQueryFactory
+            .selectFrom(question)
+            .where(
+                question.originId.eq(originId),
+                question.isSearchable.isFalse
+            )
+            .orderBy(question.id.asc())
+            .limit(1)
+            .fetchOne()
+    }
 }
