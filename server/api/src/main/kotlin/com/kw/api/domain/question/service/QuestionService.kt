@@ -135,12 +135,6 @@ class QuestionService(
     }
 
     private fun isEqualToOriginContent(origin: Optional<Question>, content: String): Boolean {
-        if (!origin.isPresent) {
-            return false
-        }
-        if (origin.get().content != content) {
-            return false
-        }
-        return true
+        return origin.isPresent && origin.get().content == content
     }
 }
