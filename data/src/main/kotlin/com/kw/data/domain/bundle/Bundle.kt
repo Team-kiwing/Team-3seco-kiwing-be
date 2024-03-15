@@ -26,12 +26,23 @@ class Bundle(
     var shareType: ShareType = shareType
         protected set
 
+    @Column(name = "question_order", nullable = false)
+    var questionOrder: String = ""
+        protected set
+
     @Column(name = "scrape_count", nullable = false)
     var scrapeCount: Long = 0
         protected set
 
-    @Column(name = "question_order", nullable = false)
-    var questionOrder: String = ""
+    /**
+     * 작성자의 조회수는 포함되지 않는다.
+     */
+    @Column(name = "view_count", nullable = false)
+    var viewCount: Long = 0
+        protected set
+
+    @Column(name = "popularity", nullable = false)
+    var popularity: Double = 0.0
         protected set
 
     @Column(name = "origin_id", nullable = true, updatable = true)
