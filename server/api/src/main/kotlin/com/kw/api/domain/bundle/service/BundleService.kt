@@ -235,7 +235,6 @@ class BundleService(
 
     private fun increaseQuestionsExposeCount(question: List<Question>) {
         val targetQuestionIds = question.mapNotNull { if (it.isSearchable) it.id else it.originId }
-
         try {
             questionRepository.increaseExposeCountByIdIn(targetQuestionIds)
         } catch (e: Exception) {
