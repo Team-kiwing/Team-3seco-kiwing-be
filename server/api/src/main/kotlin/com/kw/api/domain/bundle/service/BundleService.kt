@@ -18,11 +18,14 @@ import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.function.LongSupplier
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 @Transactional
@@ -45,15 +48,15 @@ class BundleService(
 
     @Transactional(readOnly = true)
     fun searchBundles(
-        searchCondition: BundleSearchCondition,
-        pageCondition: PageCondition
+        searchCondition: BundleSearchCondition, pageCondition: PageCondition
     ): PageResponse<BundleResponse> {
         val pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
-        val bundles = bundleRepository.search(searchCondition, pageable)
-            .map { BundleResponse.from(it) }
+        val bundles = bundleRepository.search(searchCondition, pageable).map { BundleResponse.from(it) }
         return PageResponse.from(
             PageableExecutionUtils.getPage(
-                bundles, pageable, LongSupplier { bundleRepository.count(searchCondition) }
+                bundles,
+                pageable,
+                LongSupplier { bundleRepository.count(searchCondition) }
             )
         )
     }
@@ -71,11 +74,10 @@ class BundleService(
         return bundles.map { BundleResponse.from(it) }
     }
 
-    @Transactional(readOnly = true)
     fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
-        if (bundle.shareType == Bundle.ShareType.PRIVATE && bundle.member.id != member.id) {
+        if (bundle.shareType == Bundle.ShareType.PRIVATE && !bundle.isWriter(member.id)) {
             return BundleDetailResponse(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
@@ -85,12 +87,14 @@ class BundleService(
         }
 
         val questions = questionRepository.findAllWithTagsByBundleId(
-            id,
-            showOnlyMyQuestions,
-            member.id
+            id, showOnlyMyQuestions, member.id
         )
         val questionOrder = parseOrderStringToOrderList(bundle.questionOrder)
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
+
+        if (!bundle.isWriter(member.id)) {
+            increaseInteractionCounts(id, questions)
+        }
 
         return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
     }
@@ -98,7 +102,7 @@ class BundleService(
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
-        if (bundle.member.id != member.id) {
+        if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
@@ -118,7 +122,7 @@ class BundleService(
 
     fun deleteBundle(id: Long, member: Member) {
         val bundle = getExistBundle(id)
-        if (bundle.member.id != member.id) {
+        if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
         bundle.originId?.let { bundleRepository.decreaseScrapeCount(it) }
@@ -141,15 +145,14 @@ class BundleService(
 
         val questions = questionRepository.findAllWithTagsByBundleId(id)
         questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
-        val copiedAndSavedQuestions = questions
-            .map { questionRepository.save(it.copy(copiedAndSavedBundle, member)) }
+        val copiedAndSavedQuestions = questions.map { questionRepository.save(it.copy(copiedAndSavedBundle, member)) }
 
         copiedAndSavedBundle.updateQuestionOrder((copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
     }
 
     fun updateQuestionOrder(id: Long, request: BundleQuestionOrderUpdateRequest, member: Member) {
         val bundle = getExistBundle(id)
-        if (bundle.member.id != member.id) {
+        if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
@@ -170,8 +173,7 @@ class BundleService(
 
             val questions = questionRepository.findAllWithTagsByIdIn(request.questionIds)
             questionRepository.increaseShareCountByIdIn(questions.map { it.id!! })
-            val copiedAndSavedQuestions = questions
-                .map { questionRepository.save(it.copy(bundle, member)) }
+            val copiedAndSavedQuestions = questions.map { questionRepository.save(it.copy(bundle, member)) }
 
             bundle.updateQuestionOrder((bundle.questionOrder + " " + copiedAndSavedQuestions.joinToString(" ") { it.id.toString() }).trim())
         }
@@ -179,7 +181,7 @@ class BundleService(
 
     fun removeQuestion(id: Long, request: BundleQuestionRemoveRequest, member: Member) {
         val bundle = getExistBundle(id)
-        if (bundle.member.id != member.id) {
+        if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
@@ -215,6 +217,28 @@ class BundleService(
             orderString.split(" ").map { it.toLong() }
         } else {
             emptyList()
+        }
+    }
+
+    private fun increaseInteractionCounts(bundleId: Long, question: List<Question>) {
+        increaseBundleViewCount(bundleId)
+        increaseQuestionsExposeCount(question)
+    }
+
+    private fun increaseBundleViewCount(bundleId: Long) {
+        try {
+            bundleRepository.increaseViewCount(bundleId)
+        } catch (e: Exception) {
+            logger.error(e) { "Failed increaseBundleViewCount(bundleId: ${bundleId})" }
+        }
+    }
+
+    private fun increaseQuestionsExposeCount(question: List<Question>) {
+        val targetQuestionIds = question.mapNotNull { if (it.isSearchable) it.id else it.originId }
+        try {
+            questionRepository.increaseExposeCountByIdIn(targetQuestionIds)
+        } catch (e: Exception) {
+            logger.error(e) { "Failed increaseQuestionsExposeCount(questionIds: ${targetQuestionIds})" }
         }
     }
 }

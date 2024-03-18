@@ -37,6 +37,19 @@ class Question(
         protected set
 
     /**
+     * 질문의 꾸러미가 조회될 때 마다
+     * isSearchable이 true이면 exposeCount가 1 증가한다.
+     * isSearchable이 false이면 원본의 exposeCount가 1 증가한다.
+     */
+    @Column(name = "expose_count", nullable = false)
+    var exposeCount: Long = 0
+        protected set
+
+    @Column(name = "popularity", nullable = false)
+    var popularity: Double = 0.0
+        protected set
+
+    /**
      * originId가 null인 경우 원본이므로 isSearchable=true 여야 한다.
      * 복제본은 isSearchable=false이되, 원본과 content가 달라질 경우, isSearchable=true로 변경되어야 한다.
      * 원본이 삭제될 경우, 복제본 중 isSearchable=false이면서 가장 먼저 생성된 복제본은 isSearchable=true로 변경되어야 한다.
@@ -77,6 +90,10 @@ class Question(
 
     fun isHot(): Boolean {
         return shareCount >= 30
+    }
+
+    fun isWriter(memberId: Long?): Boolean {
+        return member.id == memberId
     }
 
     fun updateAnswer(answer: String?) {
