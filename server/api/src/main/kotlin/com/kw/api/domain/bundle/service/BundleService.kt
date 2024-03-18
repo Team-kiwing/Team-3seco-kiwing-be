@@ -93,7 +93,7 @@ class BundleService(
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
 
         if (!bundle.isWriter(member.id)) {
-            increaseInteractionCounts(id, questions.map { it.id!! })
+            increaseInteractionCounts(id, questions)
         }
 
         return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
@@ -220,9 +220,9 @@ class BundleService(
         }
     }
 
-    private fun increaseInteractionCounts(bundleId: Long, questionIds: List<Long>) {
+    private fun increaseInteractionCounts(bundleId: Long, question: List<Question>) {
         increaseBundleViewCount(bundleId)
-        increaseQuestionsExposeCount(questionIds)
+        increaseQuestionsExposeCount(question)
     }
 
     private fun increaseBundleViewCount(bundleId: Long) {
@@ -233,11 +233,13 @@ class BundleService(
         }
     }
 
-    private fun increaseQuestionsExposeCount(questionIds: List<Long>) {
+    private fun increaseQuestionsExposeCount(question: List<Question>) {
+        val targetQuestionIds = question.mapNotNull { if (it.isSearchable) it.id else it.originId }
+
         try {
-            questionRepository.increaseExposeCountByIdIn(questionIds)
+            questionRepository.increaseExposeCountByIdIn(targetQuestionIds)
         } catch (e: Exception) {
-            logger.error(e) { "Failed increaseQuestionsExposeCount(questionIds: ${questionIds})" }
+            logger.error(e) { "Failed increaseQuestionsExposeCount(questionIds: ${targetQuestionIds})" }
         }
     }
 }
