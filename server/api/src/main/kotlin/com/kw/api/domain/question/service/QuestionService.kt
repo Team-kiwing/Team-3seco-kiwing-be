@@ -35,7 +35,7 @@ class QuestionService(
     fun createQuestion(request: QuestionCreateRequest, member: Member): QuestionResponse {
         val bundle = bundleRepository.findById(request.bundleId)
             .orElseThrow { ApiException(ApiErrorCode.NOT_FOUND_BUNDLE) }
-        if (bundle.member.id != member.id) {
+        if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
@@ -56,7 +56,7 @@ class QuestionService(
 
     fun updateQuestion(id: Long, request: QuestionUpdateRequest, member: Member): QuestionResponse {
         val question = getExistQuestion(id)
-        if (question.member.id != member.id) {
+        if (!question.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 
@@ -81,7 +81,7 @@ class QuestionService(
 
     fun deleteQuestion(id: Long, member: Member) {
         val question = getExistQuestion(id)
-        if (question.member.id != member.id) {
+        if (!question.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)
         }
 

@@ -79,6 +79,10 @@ class Bundle(
         return scrapeCount >= 30
     }
 
+    fun isWriter(memberId: Long?): Boolean {
+        return member.id == memberId
+    }
+
     fun updateName(name: String) {
         this.name = name
     }

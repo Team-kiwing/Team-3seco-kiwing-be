@@ -92,6 +92,10 @@ class Question(
         return shareCount >= 30
     }
 
+    fun isWriter(memberId: Long?): Boolean {
+        return member.id == memberId
+    }
+
     fun updateAnswer(answer: String?) {
         this.answer = answer
     }
