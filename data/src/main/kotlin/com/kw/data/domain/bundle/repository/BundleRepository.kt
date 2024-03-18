@@ -21,4 +21,8 @@ interface BundleRepository : JpaRepository<Bundle, Long>, BundleCustomRepository
     @Modifying
     @Query("UPDATE Bundle b SET b.scrapeCount = b.scrapeCount - 1 WHERE b.id = :id")
     fun decreaseScrapeCount(@Param("id") id: Long)
+
+    @Modifying
+    @Query("UPDATE Bundle b SET b.viewCount = b.viewCount + 1 WHERE b.id = :id")
+    fun increaseViewCount(@Param("id") id: Long)
 }

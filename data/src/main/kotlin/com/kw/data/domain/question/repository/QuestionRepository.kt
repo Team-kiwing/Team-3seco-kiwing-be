@@ -25,4 +25,8 @@ interface QuestionRepository : JpaRepository<Question, Long>, QuestionCustomRepo
     @Modifying
     @Query("UPDATE Question q SET q.shareCount = q.shareCount - 1 WHERE q.id IN :ids")
     fun decreaseShareCountByIdIn(@Param("ids") ids: List<Long>)
+
+    @Modifying
+    @Query("UPDATE Question q SET q.exposeCount = q.exposeCount + 1 WHERE q.id IN :ids")
+    fun increaseExposeCountByIdIn(@Param("ids") ids: List<Long>)
 }

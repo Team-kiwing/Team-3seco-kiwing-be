@@ -18,11 +18,14 @@ import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
 import com.kw.data.domain.tag.Tag
 import com.kw.data.domain.tag.repository.TagRepository
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.support.PageableExecutionUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.function.LongSupplier
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 @Transactional
@@ -71,7 +74,6 @@ class BundleService(
         return bundles.map { BundleResponse.from(it) }
     }
 
-    @Transactional(readOnly = true)
     fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
         val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
@@ -91,6 +93,10 @@ class BundleService(
         )
         val questionOrder = parseOrderStringToOrderList(bundle.questionOrder)
         val sortedQuestions = questions.sortedBy { questionOrder.indexOf(it.id) }
+
+        if (bundle.member.id != member.id) {
+            increaseInteractionCounts(id, questions.map { it.id!! })
+        }
 
         return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
     }
@@ -215,6 +221,27 @@ class BundleService(
             orderString.split(" ").map { it.toLong() }
         } else {
             emptyList()
+        }
+    }
+
+    private fun increaseInteractionCounts(bundleId: Long, questionIds: List<Long>) {
+        increaseBundleViewCount(bundleId)
+        increaseQuestionsExposeCount(questionIds)
+    }
+
+    private fun increaseBundleViewCount(bundleId: Long) {
+        try {
+            bundleRepository.increaseViewCount(bundleId)
+        } catch (e: Exception) {
+            logger.error(e) { "Failed increaseBundleViewCount(bundleId: ${bundleId})" }
+        }
+    }
+
+    private fun increaseQuestionsExposeCount(questionIds: List<Long>) {
+        try {
+            questionRepository.increaseExposeCountByIdIn(questionIds)
+        } catch (e: Exception) {
+            logger.error(e) { "Failed increaseQuestionsExposeCount(questionIds: ${questionIds})" }
         }
     }
 }
