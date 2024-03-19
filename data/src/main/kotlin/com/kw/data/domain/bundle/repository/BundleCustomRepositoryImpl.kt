@@ -34,6 +34,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         val query = queryFactory
             .selectFrom(bundle)
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+            .leftJoin(bundle.member).fetchJoin()
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
                 condition.keyword?.let { CustomFunction.match(bundle.name, it) }
@@ -59,10 +60,11 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         return query.fetch()
     }
 
-    override fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle> {
+    override fun findAllWithMemberByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle> {
         return queryFactory
             .selectFrom(bundle)
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+            .leftJoin(bundle.member).fetchJoin()
             .where(bundle.member.id.eq(memberId))
             .orderBy(
                 if (condition.sortingType == null) {

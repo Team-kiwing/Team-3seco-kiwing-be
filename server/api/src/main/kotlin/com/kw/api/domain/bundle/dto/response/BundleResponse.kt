@@ -2,6 +2,7 @@ package com.kw.api.domain.bundle.dto.response
 
 import com.kw.api.domain.tag.dto.response.TagResponse
 import com.kw.data.domain.bundle.Bundle
+import com.kw.data.domain.member.Member
 import java.time.LocalDateTime
 
 data class BundleResponse(
@@ -12,7 +13,7 @@ data class BundleResponse(
     val tags: List<TagResponse>,
     val isHot: Boolean,
     val originId: Long? = null,
-    val writerId: Long?,
+    val writer: Member?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -26,7 +27,7 @@ data class BundleResponse(
                 tags = bundle.bundleTags.map { TagResponse.from(it.tag) },
                 isHot = bundle.isHot(),
                 originId = bundle.originId,
-                writerId = bundle.member?.id,
+                writer = bundle.member,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )

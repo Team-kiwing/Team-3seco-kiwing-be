@@ -63,7 +63,7 @@ class BundleService(
 
     @Transactional(readOnly = true)
     fun getMyBundles(getCondition: BundleGetCondition, member: Member): List<BundleResponse> {
-        val bundles = bundleRepository.findAllByMemberId(member.id!!, getCondition)
+        val bundles = bundleRepository.findAllWithMemberByMemberId(member.id!!, getCondition)
 
         if (getCondition.sortingType == BundleGetCondition.SortingType.CUSTOM) {
             val bundleOrder = parseOrderStringToOrderList(member.bundleOrder)
