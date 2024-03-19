@@ -16,20 +16,18 @@ class JwtAuthenticationFilter(private val tokenProvider: JwtTokenProvider) : Onc
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-//        if (SecurityContextHolder.getContext().authentication == null) {
-            val accessToken = resolveToken(request)
-            if (accessToken != null) {
-                try {
-                    tokenProvider.validateAccessToken(accessToken)
-                    val authentication = tokenProvider.getAuthentication(accessToken)
-                    SecurityContextHolder.getContext().authentication = authentication
-                } catch (e: Exception) {
-                    request.setAttribute("exception", e)
-                }
-            } else {
-                request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
+        val accessToken = resolveToken(request)
+        if (accessToken != null) {
+            try {
+                tokenProvider.validateAccessToken(accessToken)
+                val authentication = tokenProvider.getAuthentication(accessToken)
+                SecurityContextHolder.getContext().authentication = authentication
+            } catch (e: Exception) {
+                request.setAttribute("exception", e)
             }
-//        }
+        } else {
+            request.setAttribute("exception", AccessDeniedException("요청이 거부되었습니다"))
+        }
         filterChain.doFilter(request, response)
     }
 
