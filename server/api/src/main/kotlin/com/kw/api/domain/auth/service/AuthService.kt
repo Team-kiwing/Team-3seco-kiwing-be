@@ -39,7 +39,7 @@ class AuthService(
     }
 
     fun withdrawMember(member: Member) {
-        member.withdrawMember()
+        memberRepository.delete(member)
     }
 
     private fun createOauth2UserDetails(member: Member): OAuth2UserDetails {

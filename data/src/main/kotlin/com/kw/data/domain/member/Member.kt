@@ -2,11 +2,9 @@ package com.kw.data.domain.member
 
 import com.kw.data.domain.Base
 import jakarta.persistence.*
-import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 
 @Entity
-@SQLRestriction("deleted_at is null")
 class Member(email: String) : Base() {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
@@ -32,10 +30,6 @@ class Member(email: String) : Base() {
     var lastLoggedInAt: LocalDateTime = LocalDateTime.now()
         protected set
 
-    @Column(name = "deleted_at")
-    var deletedAt: LocalDateTime? = null
-        protected set
-
     @Column(name = "bundle_order", nullable = false)
     var bundleOrder: String = ""
         protected set
@@ -57,10 +51,6 @@ class Member(email: String) : Base() {
 
     fun updateMemberProfileImage(url: String) {
         this.profileImage = url
-    }
-
-    fun withdrawMember() {
-        this.deletedAt = LocalDateTime.now()
     }
 
     fun updateMemberSns(snsList: List<Sns>) {
