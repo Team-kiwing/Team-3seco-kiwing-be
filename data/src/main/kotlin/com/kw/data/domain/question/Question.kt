@@ -66,7 +66,7 @@ class Question(
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    @JoinColumn(name = "member_id", nullable = false, updatable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: Member = member
 
     @ManyToOne(fetch = FetchType.LAZY)
