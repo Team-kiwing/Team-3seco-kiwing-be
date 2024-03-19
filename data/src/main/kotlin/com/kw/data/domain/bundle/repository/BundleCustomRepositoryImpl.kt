@@ -34,6 +34,7 @@ class BundleCustomRepositoryImpl(private val queryFactory: JPAQueryFactory) : Bu
         val query = queryFactory
             .selectFrom(bundle)
             .leftJoin(bundle.bundleTags, bundleTag).fetchJoin()
+            .leftJoin(bundleTag.tag).fetchJoin()
             .leftJoin(bundle.member).fetchJoin()
             .where(
                 bundle.shareType.eq(Bundle.ShareType.PUBLIC),
