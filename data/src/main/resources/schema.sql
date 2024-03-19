@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS member
 (
     id                BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nickname          VARCHAR(20) NULL,
+    nickname          VARCHAR(50) NULL,
     email             VARCHAR(50) NOT NULL,
     provider          VARCHAR(10) NOT NULL,
     profile_image     TEXT        NULL,
