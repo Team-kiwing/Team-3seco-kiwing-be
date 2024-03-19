@@ -82,7 +82,7 @@ class BundleService(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
                 originId = bundle.originId,
-                writerId = bundle.member.id!!,
+                writerId = bundle.member?.id,
             )
         }
 

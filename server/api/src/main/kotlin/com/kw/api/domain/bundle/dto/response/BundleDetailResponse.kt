@@ -13,7 +13,7 @@ data class BundleDetailResponse(
     val tags: List<TagResponse>? = null,
     val questions: List<QuestionResponse>? = null,
     val originId: Long? = null,
-    val writerId: Long,
+    val writerId: Long?,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null
 ) {
@@ -26,7 +26,7 @@ data class BundleDetailResponse(
                 tags = bundle.bundleTags.map { it.tag }.map { TagResponse.from(it) },
                 questions = questions.map { QuestionResponse.from(it, memberId) },
                 originId = bundle.originId,
-                writerId = bundle.member.id!!,
+                writerId = bundle.member?.id,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )
