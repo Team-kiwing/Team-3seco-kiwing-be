@@ -4,6 +4,8 @@ import com.kw.data.domain.Base
 import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.member.Member
 import jakarta.persistence.*
+import org.hibernate.annotations.NotFound
+import org.hibernate.annotations.NotFoundAction
 
 @Entity
 class Question(
@@ -65,9 +67,10 @@ class Question(
     var questionTags: MutableList<QuestionTag> = mutableListOf()
         protected set
 
+    @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false, updatable = false)
-    val member: Member = member
+    val member: Member? = member
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bundle_id", nullable = false, updatable = false)
@@ -93,7 +96,10 @@ class Question(
     }
 
     fun isWriter(memberId: Long?): Boolean {
-        return member.id == memberId
+        if (memberId == null) {
+            return false
+        }
+        return member?.id == memberId
     }
 
     fun updateAnswer(answer: String?) {
