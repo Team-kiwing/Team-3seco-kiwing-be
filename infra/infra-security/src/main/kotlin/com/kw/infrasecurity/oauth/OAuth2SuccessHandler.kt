@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Component
 @Transactional
@@ -38,6 +39,7 @@ class OAuth2SuccessHandler(
         } else {
             member = createMember(member)
             isSignUp = true
+            member.updateMemberNickname(getDefaultNickname())
         }
         val authorities = mutableListOf(SimpleGrantedAuthority(member.role.toString()))
 
@@ -50,10 +52,19 @@ class OAuth2SuccessHandler(
         val accessToken = jwtTokenProvider.generateAccessToken(oAuth2UserDetails)
         val refreshToken = jwtTokenProvider.generateRefreshToken()
 
+
         redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
         member.updateLastLoggedInAt()
 
-        httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp)
+        httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp, member.nickname)
+    }
+
+    private fun getDefaultNickname(): String {
+        var nickname: String
+        do {
+            nickname = "kiwing-" + UUID.randomUUID().toString()
+        } while (memberRepository.existsByNickname(nickname))
+        return nickname
     }
 
     private fun getMember(email: String): Member {

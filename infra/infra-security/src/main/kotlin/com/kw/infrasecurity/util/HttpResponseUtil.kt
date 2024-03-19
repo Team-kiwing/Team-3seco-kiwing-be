@@ -16,17 +16,14 @@ class HttpResponseUtil(@Value("\${client-redirect-url}") val REDIRECT_URL: Strin
 
     private val objectMapper = ObjectMapper()
 
-    fun writeResponse(response : HttpServletResponse, accessToken : String, refreshToken : String, isSignUp : Boolean) {
-        var redirectUrl = REDIRECT_URL
-        if(isSignUp) {
-            redirectUrl += "/register"
-        }
-        else {
-            redirectUrl += "/auth"
-        }
+    fun writeResponse(response : HttpServletResponse, accessToken : String, refreshToken : String, isSignUp : Boolean, nickname: String?) {
+        var redirectUrl = REDIRECT_URL + "/auth"
+
         val sb = StringBuffer(redirectUrl)
         sb.append("?").append("access-token=").append(accessToken)
         sb.append("&").append("refresh-token=").append(refreshToken)
+        sb.append("&").append("isFirstLogin=").append(isSignUp)
+        sb.append("&").append("nickname=").append(nickname)
 
         response.sendRedirect(sb.toString())
     }
