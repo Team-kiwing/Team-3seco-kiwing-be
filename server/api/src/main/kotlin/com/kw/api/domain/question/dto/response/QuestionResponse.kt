@@ -1,6 +1,7 @@
 package com.kw.api.domain.question.dto.response
 
 import com.kw.api.domain.tag.dto.response.TagResponse
+import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
 import java.time.LocalDateTime
 
@@ -13,7 +14,7 @@ data class QuestionResponse(
     val originId: Long?,
     val tags: List<TagResponse>,
     val isHot: Boolean,
-    val writerId: Long?,
+    val writer: Member?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -29,7 +30,7 @@ data class QuestionResponse(
                 originId = question.originId,
                 tags = question.questionTags.map { it.tag }.map { TagResponse.from(it) },
                 isHot = question.isHot(),
-                writerId = question.member?.id,
+                writer = question.member,
                 createdAt = question.createdAt,
                 updatedAt = question.updatedAt
             )

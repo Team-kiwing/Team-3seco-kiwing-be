@@ -7,9 +7,9 @@ import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
-import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
+import com.kw.api.domain.question.dto.response.QuestionSearchResponse
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.question.Question
@@ -106,7 +106,7 @@ class QuestionService(
     }
 
     @Transactional(readOnly = true)
-    fun searchQuestion(request: QuestionSearchRequest): QuestionListResponse {
+    fun searchQuestion(request: QuestionSearchRequest): QuestionSearchResponse {
         val questionSearchDto = QuestionSearchDto(
             sortingType = request.sortingType,
             tagIds = request.tagIds,
@@ -114,11 +114,11 @@ class QuestionService(
             page = request.page,
             size = request.size,
         )
-        val questions = questionRepository.searchQuestion(questionSearchDto)
+        val questions = questionRepository.search(questionSearchDto)
         val questionResponses = questions.map { QuestionResponse.from(it, null) }
         val lastPageNum = questionRepository.getPageNum(questionSearchDto)
 
-        return QuestionListResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))
+        return QuestionSearchResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))
     }
 
     private fun getExistTags(tagIds: List<Long>): List<Tag> {
