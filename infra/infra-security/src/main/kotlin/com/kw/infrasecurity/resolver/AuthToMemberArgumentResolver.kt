@@ -42,14 +42,6 @@ class AuthToMemberArgumentResolver(val memberRepository: MemberRepository) : Han
 
         val member = memberRepository.findMemberByEmail(email) ?: throw IllegalArgumentException("존재하지 않는 회원입니다.")
 
-        isMemberWithdraw(member)
-
         return member
-    }
-
-    private fun isMemberWithdraw(member: Member) {
-        if (member.deletedAt != null) {
-            throw IllegalArgumentException("탈퇴한 회원입니다.")
-        }
     }
 }
