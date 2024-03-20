@@ -63,7 +63,7 @@ class BundleService(
 
     @Transactional(readOnly = true)
     fun getMyBundles(getCondition: BundleGetCondition, member: Member): List<BundleResponse> {
-        val bundles = bundleRepository.findAllWithMemberByMemberId(member.id!!, getCondition)
+        val bundles = bundleRepository.findAllByMemberId(member.id!!, getCondition)
 
         if (getCondition.sortingType == BundleGetCondition.SortingType.CUSTOM) {
             val bundleOrder = parseOrderStringToOrderList(member.bundleOrder)
@@ -100,7 +100,7 @@ class BundleService(
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
-        val bundle = bundleRepository.findWithTagsAndMemberById(id)
+        val bundle = bundleRepository.findWithTagsById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
         if (!bundle.isWriter(member.id)) {
             throw ApiException(ApiErrorCode.FORBIDDEN)

@@ -11,6 +11,6 @@ interface BundleCustomRepository {
 
     fun search(condition: BundleSearchCondition, pageable: Pageable): List<Bundle>
 
-    fun findAllWithMemberByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle>
+    fun findAllByMemberId(memberId: Long, condition: BundleGetCondition): List<Bundle>
 
 }

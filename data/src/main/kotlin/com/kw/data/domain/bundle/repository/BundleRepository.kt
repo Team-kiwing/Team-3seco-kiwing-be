@@ -15,6 +15,14 @@ interface BundleRepository : JpaRepository<Bundle, Long>, BundleCustomRepository
         "SELECT b FROM Bundle b " +
                 "LEFT JOIN FETCH b.bundleTags bt " +
                 "LEFT JOIN FETCH bt.tag " +
+                "WHERE b.id = :id"
+    )
+    fun findWithTagsById(@Param("id") id: Long): Bundle?
+
+    @Query(
+        "SELECT b FROM Bundle b " +
+                "LEFT JOIN FETCH b.bundleTags bt " +
+                "LEFT JOIN FETCH bt.tag " +
                 "LEFT JOIN fetch b.member " +
                 "WHERE b.id = :id"
     )
