@@ -20,7 +20,6 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
             .selectFrom(question)
             .leftJoin(question.questionTags, questionTag).fetchJoin()
             .leftJoin(questionTag.tag).fetchJoin()
-            .leftJoin(question.member).fetchJoin()
             .where(
                 question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
