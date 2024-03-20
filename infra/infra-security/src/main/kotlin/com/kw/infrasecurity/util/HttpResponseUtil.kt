@@ -23,7 +23,7 @@ class HttpResponseUtil(@Value("\${client-redirect-url}") val REDIRECT_URL: Strin
         sb.append("?").append("access-token=").append(accessToken)
         sb.append("&").append("refresh-token=").append(refreshToken)
         sb.append("&").append("isFirstLogin=").append(isSignUp)
-        sb.append("&").append("nickname=@").append(nickname)
+        sb.append("&").append("nickname=").append(nickname)
 
         response.sendRedirect(sb.toString())
     }
