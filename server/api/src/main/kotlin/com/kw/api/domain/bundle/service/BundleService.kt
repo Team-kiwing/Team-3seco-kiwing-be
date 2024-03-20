@@ -96,7 +96,7 @@ class BundleService(
             increaseInteractionCounts(id, questions)
         }
 
-        return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
+        return BundleDetailResponse.of(bundle, sortedQuestions, member.id)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {

@@ -19,7 +19,7 @@ data class BundleDetailResponse(
     val updatedAt: LocalDateTime? = null
 ) {
     companion object {
-        fun from(bundle: Bundle, questions: List<Question>, memberId: Long?): BundleDetailResponse {
+        fun of(bundle: Bundle, questions: List<Question>, memberId: Long?): BundleDetailResponse {
             return BundleDetailResponse(
                 id = bundle.id!!,
                 name = bundle.name,
