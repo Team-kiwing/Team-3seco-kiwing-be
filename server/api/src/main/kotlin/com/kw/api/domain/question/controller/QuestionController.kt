@@ -4,9 +4,9 @@ import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
 import com.kw.api.domain.question.dto.request.QuestionUpdateRequest
-import com.kw.api.domain.question.dto.response.QuestionListResponse
 import com.kw.api.domain.question.dto.response.QuestionReportResponse
 import com.kw.api.domain.question.dto.response.QuestionResponse
+import com.kw.api.domain.question.dto.response.QuestionSearchResponse
 import com.kw.api.domain.question.service.QuestionService
 import com.kw.data.domain.member.Member
 import com.kw.infrasecurity.resolver.AuthToMember
@@ -64,7 +64,7 @@ class QuestionController(val questionService: QuestionService) {
 
     @Operation(summary = "질문 검색")
     @GetMapping("/questions/search")
-    fun searchQuestion(@ParameterObject @ModelAttribute request: QuestionSearchRequest): QuestionListResponse {
+    fun searchQuestion(@ParameterObject @ModelAttribute request: QuestionSearchRequest): QuestionSearchResponse {
         return questionService.searchQuestion(request)
     }
 }

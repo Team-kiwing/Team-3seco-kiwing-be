@@ -75,14 +75,14 @@ class BundleService(
     }
 
     fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
-        val bundle = bundleRepository.findWithTagsById(id)
+        val bundle = bundleRepository.findWithTagsAndMemberById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
         if (bundle.shareType == Bundle.ShareType.PRIVATE && !bundle.isWriter(member.id)) {
             return BundleDetailResponse(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
                 originId = bundle.originId,
-                writerId = bundle.member.id!!,
+                writer = bundle.member?.let { BundleDetailResponse.WriterResponse.from(it) },
             )
         }
 
@@ -96,7 +96,7 @@ class BundleService(
             increaseInteractionCounts(id, questions)
         }
 
-        return BundleDetailResponse.from(bundle, sortedQuestions, member.id)
+        return BundleDetailResponse.of(bundle, sortedQuestions, member.id)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
@@ -134,7 +134,7 @@ class BundleService(
     }
 
     fun scrapeBundle(id: Long, member: Member) {
-        val bundle = bundleRepository.findWithTagsById(id)
+        val bundle = bundleRepository.findWithTagsAndMemberById(id)
             ?: throw ApiException(ApiErrorCode.NOT_FOUND_BUNDLE)
         if (bundle.shareType == Bundle.ShareType.PRIVATE) {
             throw ApiException(ApiErrorCode.FORBIDDEN_BUNDLE)

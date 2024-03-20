@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : QuestionCustomRepository {
-    override fun searchQuestion(questionSearchDto: QuestionSearchDto): List<Question> {
+    override fun search(questionSearchDto: QuestionSearchDto): List<Question> {
         val keyword = questionSearchDto.keyword
         val page = questionSearchDto.page
         val size = questionSearchDto.size
@@ -19,6 +19,7 @@ class QuestionCustomRepositoryImpl(val jpaQueryFactory: JPAQueryFactory) : Quest
         val query = jpaQueryFactory
             .selectFrom(question)
             .leftJoin(question.questionTags, questionTag).fetchJoin()
+            .leftJoin(questionTag.tag).fetchJoin()
             .where(
                 question.isSearchable.isTrue,
                 keyword?.let { CustomFunction.match(question.content, keyword) }
