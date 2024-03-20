@@ -12,7 +12,7 @@ class MemberTag(member: Member, tag: Tag): Base() {
     val id: Long? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: Member = member
 
     @ManyToOne(fetch = FetchType.LAZY)

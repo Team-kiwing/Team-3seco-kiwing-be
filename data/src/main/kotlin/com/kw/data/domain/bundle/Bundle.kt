@@ -52,7 +52,7 @@ class Bundle(
 
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, updatable = false)
+    @JoinColumn(name = "member_id", nullable = false, updatable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: Member? = member
 
     @OneToMany(mappedBy = "bundle", cascade = [CascadeType.ALL], orphanRemoval = true)

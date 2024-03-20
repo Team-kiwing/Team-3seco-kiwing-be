@@ -19,6 +19,6 @@ class Sns(name: String, url: String, member: Member) : Base() {
         protected set
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: Member = member
 }

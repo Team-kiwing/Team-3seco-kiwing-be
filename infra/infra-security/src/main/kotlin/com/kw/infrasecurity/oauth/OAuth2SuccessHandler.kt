@@ -62,7 +62,7 @@ class OAuth2SuccessHandler(
     private fun getDefaultNickname(): String {
         var nickname: String
         do {
-            nickname = "kiwing-" + UUID.randomUUID().toString()
+            nickname = "@kiwing-" + UUID.randomUUID().toString()
         } while (memberRepository.existsByNickname(nickname))
         return nickname
     }
