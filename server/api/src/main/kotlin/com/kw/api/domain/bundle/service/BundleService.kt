@@ -82,7 +82,7 @@ class BundleService(
                 id = bundle.id!!,
                 shareType = bundle.shareType.name,
                 originId = bundle.originId,
-                writer = bundle.member,
+                writer = bundle.member?.let { BundleDetailResponse.WriterResponse.from(it) },
             )
         }
 
