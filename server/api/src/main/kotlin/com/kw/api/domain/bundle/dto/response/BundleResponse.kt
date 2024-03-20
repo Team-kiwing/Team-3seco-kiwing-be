@@ -12,7 +12,7 @@ data class BundleResponse(
     val tags: List<TagResponse>,
     val isHot: Boolean,
     val originId: Long? = null,
-    val writerId: Long,
+    val writerId: Long?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
@@ -26,7 +26,7 @@ data class BundleResponse(
                 tags = bundle.bundleTags.map { TagResponse.from(it.tag) },
                 isHot = bundle.isHot(),
                 originId = bundle.originId,
-                writerId = bundle.member.id!!,
+                writerId = bundle.member?.id,
                 createdAt = bundle.createdAt,
                 updatedAt = bundle.updatedAt
             )

@@ -11,8 +11,22 @@ interface BundleRepository : JpaRepository<Bundle, Long>, BundleCustomRepository
     @Query("SELECT b FROM Bundle b WHERE b.member.id = :memberId AND b.id IN :ids")
     fun findAllByMemberIdAndIdIn(@Param("memberId") memberId: Long, @Param("ids") ids: List<Long>): List<Bundle>
 
-    @Query("SELECT b FROM Bundle b LEFT JOIN FETCH b.bundleTags bt LEFT JOIN FETCH bt.tag WHERE b.id = :id")
+    @Query(
+        "SELECT b FROM Bundle b " +
+                "LEFT JOIN FETCH b.bundleTags bt " +
+                "LEFT JOIN FETCH bt.tag " +
+                "WHERE b.id = :id"
+    )
     fun findWithTagsById(@Param("id") id: Long): Bundle?
+
+    @Query(
+        "SELECT b FROM Bundle b " +
+                "LEFT JOIN FETCH b.bundleTags bt " +
+                "LEFT JOIN FETCH bt.tag " +
+                "LEFT JOIN fetch b.member " +
+                "WHERE b.id = :id"
+    )
+    fun findWithTagsAndMemberById(@Param("id") id: Long): Bundle?
 
     @Modifying
     @Query("UPDATE Bundle b SET b.scrapeCount = b.scrapeCount + 1 WHERE b.id = :id")
