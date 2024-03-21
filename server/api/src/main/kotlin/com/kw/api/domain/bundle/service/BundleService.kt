@@ -4,6 +4,7 @@ import com.kw.api.common.dto.request.PageCondition
 import com.kw.api.common.dto.response.PageResponse
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
+import com.kw.api.common.properties.ApiProperties
 import com.kw.api.domain.bundle.dto.request.*
 import com.kw.api.domain.bundle.dto.response.BundleDetailResponse
 import com.kw.api.domain.bundle.dto.response.BundleResponse
@@ -30,6 +31,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 @Transactional
 class BundleService(
+    private val apiProperties: ApiProperties,
     private val bundleRepository: BundleRepository,
     private val tagRepository: TagRepository,
     private val questionRepository: QuestionRepository,
@@ -51,7 +53,8 @@ class BundleService(
         searchCondition: BundleSearchCondition, pageCondition: PageCondition
     ): PageResponse<BundleResponse> {
         val pageable = PageRequest.of(pageCondition.page.minus(1), pageCondition.size)
-        val bundles = bundleRepository.search(searchCondition, pageable).map { BundleResponse.from(it) }
+        val bundles = bundleRepository.search(searchCondition, pageable)
+            .map { BundleResponse.from(it, apiProperties.hotThreshold) }
         return PageResponse.from(
             PageableExecutionUtils.getPage(
                 bundles,
@@ -68,10 +71,10 @@ class BundleService(
         if (getCondition.sortingType == BundleGetCondition.SortingType.CUSTOM) {
             val bundleOrder = parseOrderStringToOrderList(member.bundleOrder)
             val sortedBundles = bundles.sortedBy { bundleOrder.indexOf(it.id) }
-            return sortedBundles.map { BundleResponse.from(it) }
+            return sortedBundles.map { BundleResponse.from(it, apiProperties.hotThreshold) }
         }
 
-        return bundles.map { BundleResponse.from(it) }
+        return bundles.map { BundleResponse.from(it, apiProperties.hotThreshold) }
     }
 
     fun getBundle(id: Long, showOnlyMyQuestions: Boolean? = false, member: Member): BundleDetailResponse {
@@ -96,7 +99,7 @@ class BundleService(
             increaseInteractionCounts(id, questions)
         }
 
-        return BundleDetailResponse.of(bundle, sortedQuestions, member.id)
+        return BundleDetailResponse.of(bundle, sortedQuestions, member.id, apiProperties.hotThreshold)
     }
 
     fun updateBundle(id: Long, request: BundleUpdateRequest, member: Member): BundleResponse {
@@ -113,7 +116,7 @@ class BundleService(
             bundle.updateBundleTags(tags.map { BundleTag(bundle, it) })
         }
 
-        return BundleResponse.from(bundle)
+        return BundleResponse.from(bundle, apiProperties.hotThreshold)
     }
 
     fun updateBundleOrder(member: Member, request: BundleOrderUpdateRequest) {

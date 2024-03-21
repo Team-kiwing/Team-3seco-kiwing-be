@@ -16,15 +16,16 @@ data class BundleResponse(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 ) {
+
     companion object {
-        fun from(bundle: Bundle): BundleResponse {
+        fun from(bundle: Bundle, hotThreshold: Double): BundleResponse {
             return BundleResponse(
                 id = bundle.id!!,
                 name = bundle.name,
                 shareType = bundle.shareType.name,
                 scrapeCount = bundle.scrapeCount,
                 tags = bundle.bundleTags.map { TagResponse.from(it.tag) },
-                isHot = bundle.isHot(),
+                isHot = bundle.isHot(hotThreshold),
                 originId = bundle.originId,
                 writerId = bundle.member?.id,
                 createdAt = bundle.createdAt,
