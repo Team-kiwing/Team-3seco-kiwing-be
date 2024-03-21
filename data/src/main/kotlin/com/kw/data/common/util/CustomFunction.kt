@@ -14,7 +14,7 @@ class CustomFunction {
                 java.lang.Double::class.java,
                 "FUNCTION('MATCH_AGAINST', {0}, {1})",
                 target,
-                "$keyword*"
+                keyword.trim().split(" ").joinToString(" ") { "+$it" }
             ).gt(0)
         }
     }
