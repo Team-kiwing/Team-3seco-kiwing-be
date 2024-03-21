@@ -15,5 +15,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // lambda
-    implementation("org.springframework.cloud:spring-cloud-function-web")
+    implementation("org.springframework.cloud:spring-cloud-function-web:4.1.0")
 }

@@ -30,7 +30,7 @@ class LambdaConsumer(private val questionRepository: QuestionRepository,
     private fun updateBundlesPopularity() {
         val bundles = bundleRepository.findAll()
         bundles.forEach { bundle ->
-            val hours = ChronoUnit.HOURS.between(LocalDateTime.now(), bundle.createdAt).toDouble()
+            val hours = ChronoUnit.HOURS.between(bundle.createdAt, LocalDateTime.now()).toDouble()
             val popularity = getBundlePopularity(bundle, hours)
             bundle.updatePopularity(popularity)
         }
@@ -42,7 +42,7 @@ class LambdaConsumer(private val questionRepository: QuestionRepository,
     private fun updateQuestionPopularity() {
         val questions = questionRepository.findAll()
         questions.forEach { question ->
-            val hours = ChronoUnit.HOURS.between(LocalDateTime.now(), question.createdAt).toDouble()
+            val hours = ChronoUnit.HOURS.between(question.createdAt, LocalDateTime.now()).toDouble()
             val popularity = getQuestionPopularity(question, hours)
             question.updatePopularity(popularity)
         }
