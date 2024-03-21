@@ -27,20 +27,28 @@ dependencies {
     implementation("org.springframework.boot.experimental:spring-boot-thin-layout:1.0.28.RELEASE")
 }
 
-configurations {
-    create("shaded")
-}
-
-val shade by tasks.registering(Jar::class) {
-    from(configurations["shaded"].map { if (it.isDirectory) it else zipTree(it) })
-    configurations["shaded"].forEach { dep ->
-        from(dep) {
-            exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
-        }
+tasks.withType<Jar> {
+    // Spring Application 시작점
+    manifest {
+        attributes["Start-Class"] = "com.kw.infralamda.LambdaBatchApplication"
     }
-    archiveClassifier.set("aws")
 }
 
-artifacts {
-    add("archives", shade)
+tasks.assemble {
+    dependsOn("shadowJar")
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveFileName.set("batch.jar")
+    dependencies {
+        exclude("org.springframework.cloud:spring-cloud-function-web")
+    }
+    mergeServiceFiles()
+    append("META-INF/spring.handlers")
+    append("META-INF/spring.schemas")
+    append("META-INF/spring.tooling")
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer::class.java) {
+        paths.add("META-INF/spring.factories")
+        mergeStrategy = "append"
+    }
 }

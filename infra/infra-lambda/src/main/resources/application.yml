@@ -4,4 +4,6 @@ spring:
     active: dev
   cloud:
     function:
-      definition: lambdaConsumer
+      definition: batchPopularity
+    main:
+      banner-mode: off

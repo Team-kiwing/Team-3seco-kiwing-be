@@ -4,17 +4,17 @@ import com.kw.data.domain.bundle.Bundle
 import com.kw.data.domain.bundle.repository.BundleRepository
 import com.kw.data.domain.question.Question
 import com.kw.data.domain.question.repository.QuestionRepository
+import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.util.function.Consumer
 import kotlin.math.pow
 
 @Component
 @Transactional
 class LambdaConsumer(private val questionRepository: QuestionRepository,
-                     private val bundleRepository: BundleRepository): Consumer<Any>
+                     private val bundleRepository: BundleRepository)
 {
     private val G = 0.8
     private val EXPOSECOUNT_WEIGHT = 1
@@ -22,9 +22,12 @@ class LambdaConsumer(private val questionRepository: QuestionRepository,
     private val VIEWCOUNT_WEIGHT = 1
     private val SCRAPCOUNT_WEIGHT = 1
 
-    override fun accept(t: Any) {
-        updateQuestionPopularity()
-        updateBundlesPopularity()
+    @Bean
+    fun batchPopularity(): () -> Unit {
+        return {
+            updateQuestionPopularity()
+            updateBundlesPopularity()
+        }
     }
 
     private fun updateBundlesPopularity() {
