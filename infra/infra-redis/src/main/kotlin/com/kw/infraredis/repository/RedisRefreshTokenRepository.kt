@@ -19,7 +19,8 @@ class RedisRefreshTokenRepository(val redisTemplate: RedisTemplate<String, Any>)
     }
 
     fun findByRefreshToken(refreshToken: String): Long? {
-        return redisTemplate.opsForValue().get(refreshToken).toString().toLong()
+        val memberId = redisTemplate.opsForValue().get(refreshToken) ?: return null
+        return memberId.toString().toLong()
     }
 
     companion object {
