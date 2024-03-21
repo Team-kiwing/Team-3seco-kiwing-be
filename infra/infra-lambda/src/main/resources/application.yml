@@ -2,3 +2,6 @@ spring:
   profiles:
     include: rdb
     active: dev
+  cloud:
+    function:
+      definition: lambdaConsumer
