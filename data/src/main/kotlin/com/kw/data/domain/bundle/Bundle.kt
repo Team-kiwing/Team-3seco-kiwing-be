@@ -109,6 +109,10 @@ class Bundle(
         this.bundleTags.addAll(bundleTags)
     }
 
+    fun updatePopularity(popularity: Double) {
+        this.popularity = popularity
+    }
+
     fun addQuestions(questions: List<Question>) {
         this.questions.addAll(questions)
         updateQuestionOrder((this.questionOrder + " " + questions.joinToString(" ") { it.id.toString() }).trim())

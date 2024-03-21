@@ -9,5 +9,11 @@ bootJar.enabled = false
 jar.enabled = true
 
 dependencies {
+    implementation(project(":data"))
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // lambda
     implementation("org.springframework.cloud:spring-cloud-function-web")
 }
