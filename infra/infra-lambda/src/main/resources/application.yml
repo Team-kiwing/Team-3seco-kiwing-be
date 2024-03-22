@@ -1,9 +1,9 @@
 spring:
   profiles:
     include: rdb
-    active: dev
+    active: prod
   cloud:
     function:
-      definition: batchPopularity
+      definition: lambdaConsumer
     main:
       banner-mode: off
