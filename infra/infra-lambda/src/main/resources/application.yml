@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    include: rdb
+    active: prod
+  cloud:
+    function:
+      definition: lambdaConsumer
+    main:
+      banner-mode: off
