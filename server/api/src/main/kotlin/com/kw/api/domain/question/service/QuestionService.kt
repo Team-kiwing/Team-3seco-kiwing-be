@@ -3,6 +3,7 @@ package com.kw.api.domain.question.service
 import com.kw.api.common.dto.PageResponse
 import com.kw.api.common.exception.ApiErrorCode
 import com.kw.api.common.exception.ApiException
+import com.kw.api.common.properties.ApiProperties
 import com.kw.api.domain.question.dto.request.QuestionCreateRequest
 import com.kw.api.domain.question.dto.request.QuestionReportRequest
 import com.kw.api.domain.question.dto.request.QuestionSearchRequest
@@ -27,6 +28,7 @@ import java.util.*
 @Service
 @Transactional
 class QuestionService(
+    private val apiProperties: ApiProperties,
     private val questionRepository: QuestionRepository,
     private val questionReportRepository: QuestionReportRepository,
     private val tagRepository: TagRepository,
@@ -51,7 +53,7 @@ class QuestionService(
         val savedQuestion = questionRepository.save(question)
         bundle.updateQuestionOrder((bundle.questionOrder + " " + savedQuestion.id).trim())
 
-        return QuestionResponse.from(savedQuestion, member.id)
+        return QuestionResponse.from(savedQuestion, member.id, apiProperties.hotThreshold)
     }
 
     fun updateQuestion(id: Long, request: QuestionUpdateRequest, member: Member): QuestionResponse {
@@ -76,7 +78,7 @@ class QuestionService(
             question.updateQuestionTags(tags.map { QuestionTag(question, it) })
         }
 
-        return QuestionResponse.from(question, member.id)
+        return QuestionResponse.from(question, member.id, apiProperties.hotThreshold)
     }
 
     fun deleteQuestion(id: Long, member: Member) {
@@ -115,7 +117,7 @@ class QuestionService(
             size = request.size,
         )
         val questions = questionRepository.search(questionSearchDto)
-        val questionResponses = questions.map { QuestionResponse.from(it, null) }
+        val questionResponses = questions.map { QuestionResponse.from(it, null, apiProperties.hotThreshold) }
         val lastPageNum = questionRepository.getPageNum(questionSearchDto)
 
         return QuestionSearchResponse(questionResponses, PageResponse(questionSearchDto.page, lastPageNum))

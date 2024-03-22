@@ -36,9 +36,9 @@ env:
   ECS_SERVICE: kiwing-service-prod                  # set this to your Amazon ECS service name
   ECS_CLUSTER: kiwing-cluster                # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/kiwing-task-def-prod.json # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
+  # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: kiwing-container-prod           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+  # containerDefinitions section of your task definition
 
 permissions:
   contents: read
@@ -65,6 +65,7 @@ jobs:
           echo "${{ secrets.APPLICATION_SECURITY }}" > infra/infra-security/src/main/resources/application-security.yml
           echo "${{ secrets.APPLICATION_S3 }}" > infra/infra-s3/src/main/resources/application-s3.yml
           echo "${{ secrets.APPLICATION_RDB }}" > data/src/main/resources/application-rdb.yml
+          echo "${{ secrets.APPLICATION }}" > api/src/main/resources/application.yml
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3

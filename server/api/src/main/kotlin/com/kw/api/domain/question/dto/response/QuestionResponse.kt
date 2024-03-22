@@ -19,7 +19,7 @@ data class QuestionResponse(
 ) {
 
     companion object {
-        fun from(question: Question, requestMemberId: Long?): QuestionResponse {
+        fun from(question: Question, requestMemberId: Long?, hotThreshold: Double): QuestionResponse {
             return QuestionResponse(
                 id = question.id!!,
                 content = question.content,
@@ -28,7 +28,7 @@ data class QuestionResponse(
                 shareCount = question.shareCount,
                 originId = question.originId,
                 tags = question.questionTags.map { it.tag }.map { TagResponse.from(it) },
-                isHot = question.isHot(),
+                isHot = question.isHot(hotThreshold),
                 writerId = question.member?.id,
                 createdAt = question.createdAt,
                 updatedAt = question.updatedAt

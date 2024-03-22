@@ -22,13 +22,18 @@ data class BundleDetailResponse(
 
 
     companion object {
-        fun of(bundle: Bundle, questions: List<Question>, requestMemberId: Long?): BundleDetailResponse {
+        fun of(
+            bundle: Bundle,
+            questions: List<Question>,
+            requestMemberId: Long?,
+            hotThreshold: Double
+        ): BundleDetailResponse {
             return BundleDetailResponse(
                 id = bundle.id!!,
                 name = bundle.name,
                 shareType = bundle.shareType.name,
                 tags = bundle.bundleTags.map { it.tag }.map { TagResponse.from(it) },
-                questions = questions.map { QuestionResponse.from(it, requestMemberId) },
+                questions = questions.map { QuestionResponse.from(it, requestMemberId, hotThreshold) },
                 originId = bundle.originId,
                 writer = bundle.member?.let { WriterResponse.from(it) },
                 createdAt = bundle.createdAt,

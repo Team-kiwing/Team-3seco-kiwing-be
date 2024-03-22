@@ -69,7 +69,12 @@ class Question(
 
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, updatable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(
+        name = "member_id",
+        nullable = false,
+        updatable = false,
+        foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT)
+    )
     val member: Member? = member
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -91,8 +96,8 @@ class Question(
         }
     }
 
-    fun isHot(): Boolean {
-        return shareCount >= 30
+    fun isHot(threshold: Double): Boolean {
+        return shareCount >= threshold
     }
 
     fun isWriter(memberId: Long?): Boolean {
