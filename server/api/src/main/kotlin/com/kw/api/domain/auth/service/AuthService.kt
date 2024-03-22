@@ -28,7 +28,7 @@ class AuthService(
         val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken)
             ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED)
         val member = memberRepository.findByIdOrNull(memberId)
-            ?: throw ApiException(ApiErrorCode.NOT_FOUND_MEMBER)
+            ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_NOT_FOUND_MEMBER)
 
         val oauth2UserDetails = createOauth2UserDetails(member)
         val accessToken = jwtTokenProvider.generateAccessToken(oauth2UserDetails)
