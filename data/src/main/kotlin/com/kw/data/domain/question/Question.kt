@@ -97,7 +97,7 @@ class Question(
     }
 
     fun isHot(threshold: Double): Boolean {
-        return shareCount >= threshold
+        return popularity >= threshold
     }
 
     fun isWriter(memberId: Long?): Boolean {
