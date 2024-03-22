@@ -7,4 +7,4 @@ server:
   port: 8080
 
 api:
-  hot-threshold: 0.1
+  hot-threshold: 10
