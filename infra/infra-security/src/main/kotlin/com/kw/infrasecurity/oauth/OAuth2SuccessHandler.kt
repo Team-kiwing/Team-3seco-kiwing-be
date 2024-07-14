@@ -3,7 +3,7 @@ package com.kw.infrasecurity.oauth
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
 import com.kw.infrasecurity.jwt.JwtTokenProvider
-import com.kw.infrasecurity.repository.RefreshTokenRepository
+import com.kw.infrasecurity.refreshToken.repository.RefreshTokenRepository
 import com.kw.infrasecurity.util.HttpResponseUtil
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

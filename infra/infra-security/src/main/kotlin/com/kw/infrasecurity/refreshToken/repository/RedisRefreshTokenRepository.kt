@@ -1,4 +1,4 @@
-package com.kw.infrasecurity.repository
+package com.kw.infrasecurity.refreshToken.repository
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ValueOperations

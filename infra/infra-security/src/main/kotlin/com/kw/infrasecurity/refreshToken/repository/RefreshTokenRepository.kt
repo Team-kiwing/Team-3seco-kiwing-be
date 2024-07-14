@@ -1,4 +1,4 @@
-package com.kw.infrasecurity.repository
+package com.kw.infrasecurity.refreshToken.repository
 
 interface RefreshTokenRepository {
     fun save(refreshToken: String, memberId: Long)

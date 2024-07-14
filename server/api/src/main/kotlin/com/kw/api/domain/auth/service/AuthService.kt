@@ -8,7 +8,7 @@ import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
 import com.kw.infrasecurity.jwt.JwtTokenProvider
 import com.kw.infrasecurity.oauth.OAuth2UserDetails
-import com.kw.infrasecurity.repository.RefreshTokenRepository
+import com.kw.infrasecurity.refreshToken.repository.RefreshTokenRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
