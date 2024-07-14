@@ -1,4 +1,4 @@
-package com.kw.infraredis.repository
+package com.kw.infrasecurity.repository
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ValueOperations
@@ -7,18 +7,18 @@ import java.util.concurrent.TimeUnit
 
 
 @Repository
-class RedisRefreshTokenRepository(val redisTemplate: RedisTemplate<String, Any>) {
-    fun save(refreshToken: String, memberId: Long) {
+class RedisRefreshTokenRepository(val redisTemplate: RedisTemplate<String, Any>): RefreshTokenRepository {
+    override fun save(refreshToken: String, memberId: Long) {
         val valueOperations: ValueOperations<String, Any> = redisTemplate.opsForValue()
         valueOperations[refreshToken] = memberId
         redisTemplate.expire(refreshToken, REFRESH_TOKEN_EXPIRE_LONG, TimeUnit.SECONDS)
     }
 
-    fun delete(refreshToken: String) {
+    override fun delete(refreshToken: String) {
         redisTemplate.delete(refreshToken)
     }
 
-    fun findByRefreshToken(refreshToken: String): Long? {
+    override fun findByRefreshToken(refreshToken: String): Long? {
         val memberId = redisTemplate.opsForValue().get(refreshToken) ?: return null
         return memberId.toString().toLong()
     }

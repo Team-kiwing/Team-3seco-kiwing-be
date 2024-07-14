@@ -2,8 +2,8 @@ package com.kw.infrasecurity.oauth
 
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
-import com.kw.infraredis.repository.RedisRefreshTokenRepository
 import com.kw.infrasecurity.jwt.JwtTokenProvider
+import com.kw.infrasecurity.repository.RefreshTokenRepository
 import com.kw.infrasecurity.util.HttpResponseUtil
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -18,10 +18,10 @@ import java.util.*
 @Component
 @Transactional
 class OAuth2SuccessHandler(
-    private val jwtTokenProvider: JwtTokenProvider,
-    private val memberRepository: MemberRepository,
-    private val redisRefreshTokenRepository: RedisRefreshTokenRepository,
-    private val httpResponseUtil: HttpResponseUtil
+        private val jwtTokenProvider: JwtTokenProvider,
+        private val memberRepository: MemberRepository,
+        private val refreshTokenRepository: RefreshTokenRepository,
+        private val httpResponseUtil: HttpResponseUtil
 ) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
@@ -53,7 +53,7 @@ class OAuth2SuccessHandler(
         val refreshToken = jwtTokenProvider.generateRefreshToken()
 
 
-        redisRefreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
+        refreshTokenRepository.save(refreshToken = refreshToken, memberId = member.id!!)
         member.updateLastLoggedInAt()
 
         httpResponseUtil.writeResponse(response!!, accessToken, refreshToken, isSignUp, member.nickname)
