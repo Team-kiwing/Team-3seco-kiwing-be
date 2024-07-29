@@ -6,26 +6,26 @@ import com.kw.api.domain.auth.dto.request.RefreshTokenRequest
 import com.kw.api.domain.auth.dto.response.TokenResponse
 import com.kw.data.domain.member.Member
 import com.kw.data.domain.member.repository.MemberRepository
-import com.kw.infraredis.repository.RedisRefreshTokenRepository
 import com.kw.infrasecurity.jwt.JwtTokenProvider
 import com.kw.infrasecurity.oauth.OAuth2UserDetails
+import com.kw.infrasecurity.refreshToken.repository.RefreshTokenRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-    val redisRefreshTokenRepository: RedisRefreshTokenRepository,
-    val memberRepository: MemberRepository,
-    val jwtTokenProvider: JwtTokenProvider
+        val refreshTokenRepository: RefreshTokenRepository,
+        val memberRepository: MemberRepository,
+        val jwtTokenProvider: JwtTokenProvider
 ) {
 
     fun logout(refreshTokenRequest: RefreshTokenRequest) {
-        redisRefreshTokenRepository.delete(refreshTokenRequest.refreshToken)
+        refreshTokenRepository.delete(refreshTokenRequest.refreshToken)
     }
 
     fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest): TokenResponse {
-        val memberId = redisRefreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken)
+        val memberId = refreshTokenRepository.findByRefreshToken(refreshTokenRequest.refreshToken)
             ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED)
         val member = memberRepository.findByIdOrNull(memberId)
             ?: throw ApiException(ApiErrorCode.REFRESH_TOKEN_NOT_FOUND_MEMBER)
@@ -33,7 +33,7 @@ class AuthService(
         val oauth2UserDetails = createOauth2UserDetails(member)
         val accessToken = jwtTokenProvider.generateAccessToken(oauth2UserDetails)
         val refreshToken = jwtTokenProvider.generateRefreshToken()
-        redisRefreshTokenRepository.save(refreshToken, memberId)
+        refreshTokenRepository.save(refreshToken, memberId)
 
         return TokenResponse(accessToken, refreshToken)
     }
